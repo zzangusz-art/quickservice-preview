@@ -1,0 +1,719 @@
+[
+  {
+    "id": "quick-surcharge-night-weekend",
+    "title": "퀵 야간·주말 할증은 몇 시부터 붙을까",
+    "angle": "할증 4가지(평일 18시, 주말 16시, 기상 악화, 대기 20분)를 시간표처럼 설명. 할증을 피하는 접수 요령. 구체 할증 금액·비율은 쓰지 말 것(사실 목록에 없음).",
+    "category": "요금 가이드",
+    "keywords": [
+      "퀵 야간 할증",
+      "주말 퀵 요금",
+      "퀵 할증 시간"
+    ],
+    "service": "",
+    "status": "todo"
+  },
+  {
+    "id": "quick-cancel-fee",
+    "title": "퀵 접수 후 취소하면 돈이 드나요? 취소 요금 기준",
+    "angle": "기사 도착 전 취소는 무료, 도착 후 오토바이 3,000원·다마스 라보 5,000원. 취소를 줄이는 접수 확인 사항.",
+    "category": "요금 가이드",
+    "keywords": [
+      "퀵 취소 요금",
+      "퀵 취소비",
+      "퀵 접수 취소"
+    ],
+    "service": "motorcycle",
+    "status": "todo"
+  },
+  {
+    "id": "quick-round-trip-fare",
+    "title": "퀵 왕복 요금은 편도의 두 배일까",
+    "angle": "오토바이·다마스·라보 왕복은 적용 요금의 90%, 연계배송 왕복은 100% 할증. 서류 날인 후 회수 같은 왕복 상황 예시(금액 예시는 쓰지 말 것).",
+    "category": "요금 가이드",
+    "keywords": [
+      "퀵 왕복 요금",
+      "서류 퀵 왕복",
+      "퀵 왕복"
+    ],
+    "service": "motorcycle",
+    "status": "todo"
+  },
+  {
+    "id": "quick-vat-invoice",
+    "title": "퀵 요금에 부가세가 포함될까? 세금계산서 받는 법",
+    "angle": "안내 요금은 부가세 10% 별도, 세금계산서 발행, 월 50만 원 이상 월 정산. 개인과 사업자 구분해서 설명.",
+    "category": "요금 가이드",
+    "keywords": [
+      "퀵 부가세",
+      "퀵 세금계산서",
+      "퀵 영수증"
+    ],
+    "service": "",
+    "status": "todo"
+  },
+  {
+    "id": "quick-fare-overload",
+    "title": "오토바이 퀵 과적 요금은 언제 붙나요",
+    "angle": "라면 상자(세 변 합 1m)보다 크면 5,000원. 과적 대신 다마스를 부르는 게 나은 경우.",
+    "category": "요금 가이드",
+    "keywords": [
+      "퀵 과적 요금",
+      "오토바이 퀵 추가요금",
+      "라면박스 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "todo"
+  },
+  {
+    "id": "quick-relaxed-dispatch",
+    "title": "급하지 않은 퀵, 요금을 아끼는 접수 방법",
+    "angle": "여유 배차는 최소 요금, 급송은 거리 요금 정가. 접수 시 시간 여유를 말하는 법, 할증 시간 피하기.",
+    "category": "요금 가이드",
+    "keywords": [
+      "퀵 싸게 보내는 법",
+      "퀵 요금 절약",
+      "저렴한 퀵"
+    ],
+    "service": "",
+    "status": "todo"
+  },
+  {
+    "id": "public-fare-compare",
+    "title": "퀵·연계배송 공개 요금표, 업체마다 얼마나 다를까",
+    "angle": "사실 목록의 공개 요금 비교(조회일, 시작 요금 기준, 업체명 비공개)를 표로. 시작 요금만으로 고르면 안 되는 이유와 확인할 항목(할증 기준, 취소, 왕복).",
+    "category": "요금 가이드",
+    "keywords": [
+      "퀵 요금 비교",
+      "KTX 퀵 요금 비교",
+      "다마스 요금 비교"
+    ],
+    "service": "",
+    "status": "todo"
+  },
+  {
+    "id": "damas-fare-structure",
+    "title": "다마스 퀵 요금은 어떻게 정해지나요",
+    "angle": "다마스 20,000원부터, 오토바이 기본요금+10,000원 구조, 라보는 +15,000원. 취소 5,000원, 왕복 90%.",
+    "category": "요금 가이드",
+    "keywords": [
+      "다마스 퀵 요금",
+      "다마스 요금",
+      "라보 요금"
+    ],
+    "service": "damas-labo",
+    "status": "todo"
+  },
+  {
+    "id": "truck-1ton-fare",
+    "title": "1톤 용달 요금, 무엇을 알려 줘야 정확할까",
+    "angle": "1톤 40,000원부터, 용달 협정 요금, 2.5톤 이상은 견적. 다음 날 하차 추가 운임, 상하차 조건 설명.",
+    "category": "요금 가이드",
+    "keywords": [
+      "1톤 용달 요금",
+      "용달 요금",
+      "1톤 트럭 요금"
+    ],
+    "service": "truck",
+    "status": "todo"
+  },
+  {
+    "id": "how-to-order-quick",
+    "title": "퀵서비스 처음 부를 때 접수하는 순서",
+    "angle": "전화·카카오톡·온라인 접수, 알려 줄 정보 5가지, 배차~도착 흐름. 퀵서비스다 5단계 과정 기준.",
+    "category": "보내는 방법",
+    "keywords": [
+      "퀵 부르는 법",
+      "퀵 접수",
+      "퀵서비스 이용 방법"
+    ],
+    "service": "",
+    "status": "todo"
+  },
+  {
+    "id": "quick-packing-tips",
+    "title": "퀵으로 보내기 전 포장은 어떻게 해야 할까",
+    "angle": "이용약관상 포장 의무(고객이 성질·중량에 맞게 포장), 부적합 포장 시 배송 거절 가능, 50만 원 초과 물건 사전 고지, 가액 기재와 손해배상.",
+    "category": "보내는 방법",
+    "keywords": [
+      "퀵 포장",
+      "퀵 파손",
+      "퀵 보낼 때 포장"
+    ],
+    "service": "",
+    "status": "todo"
+  },
+  {
+    "id": "quick-damage-compensation",
+    "title": "퀵 배송 중 파손되면 보상은 어떻게 받나",
+    "angle": "이용약관: 가액 기재 시 그 가액 기준, 미기재 시 한도 50만 원. 접수 때 알릴 것. 사실 목록 범위 밖의 절차·기한은 쓰지 말 것.",
+    "category": "보내는 방법",
+    "keywords": [
+      "퀵 파손 보상",
+      "퀵 분실",
+      "퀵 손해배상"
+    ],
+    "service": "",
+    "status": "todo"
+  },
+  {
+    "id": "quick-items-refused",
+    "title": "퀵으로 보낼 수 없는 물건은 무엇일까",
+    "angle": "사실 목록 범위(가액 300만 원 초과 물건은 이륜차 배송 거절 가능, 50만 원 초과는 사전 고지)만. 대안은 화물·연계 상담.",
+    "category": "보내는 방법",
+    "keywords": [
+      "퀵 배송 불가",
+      "퀵 금지 물품",
+      "퀵 보낼 수 없는 물건"
+    ],
+    "service": "",
+    "status": "todo"
+  },
+  {
+    "id": "contract-documents-quick",
+    "title": "계약서·입찰 서류를 퀵으로 보낼 때 확인할 것",
+    "angle": "오토바이 퀵 소요 시간, 급송 전문 기사, 왕복(날인 후 회수) 90%, 각각 편도. 마감 시간 역산 접수.",
+    "category": "보내는 방법",
+    "keywords": [
+      "서류 퀵",
+      "계약서 퀵",
+      "입찰 서류 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "todo"
+  },
+  {
+    "id": "same-day-urgent-quick",
+    "title": "1시간 안에 도착해야 하는 급한 물건 보내는 법",
+    "angle": "픽업 5~20분, 근거리 30~50분, 급송 전문 기사 추가 요금. 보장 표현 금지, 현실적인 기대치.",
+    "category": "보내는 방법",
+    "keywords": [
+      "급송 퀵",
+      "당일 퀵",
+      "빠른 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "todo"
+  },
+  {
+    "id": "kakao-quick-order",
+    "title": "카카오톡으로 퀵 접수하는 방법",
+    "angle": "카카오톡 채널 '퀵서비스다' 검색 후 채널 추가, 채팅. 보낼 정보 템플릿. 홈페이지 요금 문의 글 만들기 기능 소개.",
+    "category": "보내는 방법",
+    "keywords": [
+      "카카오톡 퀵 접수",
+      "퀵 카톡",
+      "퀵 문의"
+    ],
+    "service": "",
+    "status": "todo"
+  },
+  {
+    "id": "online-order-quick",
+    "title": "퀵 온라인 접수와 전화 접수, 무엇이 다를까",
+    "angle": "온라인 접수 페이지, 전화 24시간, 연계배송은 전화로만, 신용카드는 콜센터 전화 후 온라인 접수.",
+    "category": "보내는 방법",
+    "keywords": [
+      "퀵 온라인 접수",
+      "인터넷 퀵 접수",
+      "퀵 주문"
+    ],
+    "service": "",
+    "status": "todo"
+  },
+  {
+    "id": "receiver-absent",
+    "title": "받는 사람이 자리에 없으면 퀵은 어떻게 될까",
+    "angle": "대기 20분 이상 할증, 받는 사람 사전 연락, 대리 수령 정보 미리 전달. 사실 목록에 없는 처리 절차는 단정하지 말 것.",
+    "category": "보내는 방법",
+    "keywords": [
+      "퀵 부재",
+      "퀵 수령인 부재",
+      "퀵 반송"
+    ],
+    "service": "",
+    "status": "todo"
+  },
+  {
+    "id": "vehicle-choose-guide",
+    "title": "오토바이·다마스·라보·1톤, 내 물건엔 어떤 차가 맞을까",
+    "angle": "작은 차부터 따져 보는 순서, 무게·세 변 합·긴 변 기준, 차량 추천 도구 안내.",
+    "category": "차량·화물",
+    "keywords": [
+      "퀵 차량 선택",
+      "다마스 라보 1톤",
+      "용달 차량"
+    ],
+    "service": "",
+    "status": "todo"
+  },
+  {
+    "id": "truck-ton-cargo-size",
+    "title": "1톤부터 25톤까지 트럭 적재함 크기 한눈에 보기",
+    "angle": "제원표(폭·길이·지상고·부피), 탑차 높이, 적재 한도 4.3m·2.4m, 장재물 허가 차량.",
+    "category": "차량·화물",
+    "keywords": [
+      "트럭 적재함 크기",
+      "1톤 적재함",
+      "5톤 적재함",
+      "11톤 트럭 크기"
+    ],
+    "service": "truck",
+    "status": "todo"
+  },
+  {
+    "id": "wing-body-vs-top",
+    "title": "윙바디·탑차·카고, 적재함 형태별로 언제 쓸까",
+    "angle": "카고·장축·윙바디·리프트·탑차·냉동탑차 설명과 화물 예시. 파레트 지게차 상하차.",
+    "category": "차량·화물",
+    "keywords": [
+      "윙바디",
+      "탑차",
+      "카고 트럭",
+      "리프트 트럭"
+    ],
+    "service": "truck",
+    "status": "todo"
+  },
+  {
+    "id": "refrigerated-truck",
+    "title": "냉동·냉장 화물은 어떤 차로 보내야 할까",
+    "angle": "냉동탑차 설명, 접수 시 알릴 정보, 지방은 현지 차량 수배. 온도 등 사실 목록에 없는 수치 금지.",
+    "category": "차량·화물",
+    "keywords": [
+      "냉동탑차",
+      "냉장 화물 운송",
+      "식자재 운송"
+    ],
+    "service": "truck",
+    "status": "todo"
+  },
+  {
+    "id": "lift-truck-no-staff",
+    "title": "상하차 인력이 없을 때 리프트 차량을 쓰는 이유",
+    "angle": "리프트(파워게이트) 100~500kg, 무거운 물건. 작업 시간 추가 운임 가능성.",
+    "category": "차량·화물",
+    "keywords": [
+      "리프트 차량",
+      "파워게이트 트럭",
+      "무거운 물건 운송"
+    ],
+    "service": "truck",
+    "status": "todo"
+  },
+  {
+    "id": "trailer-special-cargo",
+    "title": "츄레라·특수 화물 운송은 어떻게 진행될까",
+    "angle": "츄레라 폭 3.6m·길이 16m·27톤(장재물 허가), 특수 화물, 적재 한도. 견적 상담 절차.",
+    "category": "차량·화물",
+    "keywords": [
+      "츄레라",
+      "특수 화물 운송",
+      "중량물 운송"
+    ],
+    "service": "truck",
+    "status": "todo"
+  },
+  {
+    "id": "small-move-damas-1ton",
+    "title": "원룸 짐 옮길 때 다마스와 1톤 중 무엇을 부를까",
+    "angle": "다마스 350kg·상자 20개, 라보 450kg, 1톤 적재함 길이 270~285cm. 가구 유무로 판단. 운송 관점으로만(포장이사 서비스처럼 쓰지 말 것).",
+    "category": "차량·화물",
+    "keywords": [
+      "원룸 짐 옮기기",
+      "소형 이사 다마스",
+      "1톤 용달 이사"
+    ],
+    "service": "damas-labo",
+    "status": "todo"
+  },
+  {
+    "id": "appliance-quick",
+    "title": "냉장고·세탁기 같은 가전은 퀵으로 보낼 수 있을까",
+    "angle": "다마스는 가전제품에 맞음(지붕), 크기가 크면 라보·1톤, 상하차 작업 추가 운임 가능, 포장과 가액 고지.",
+    "category": "차량·화물",
+    "keywords": [
+      "가전 퀵",
+      "가전제품 운송",
+      "세탁기 용달"
+    ],
+    "service": "damas-labo",
+    "status": "todo"
+  },
+  {
+    "id": "long-items-labo",
+    "title": "길고 무거운 자재는 라보와 1톤 중 무엇이 맞을까",
+    "angle": "라보 450kg 미만 적재함 개방, 1톤 길이 270~285cm, 장축 적재함. 길이 기준으로 판단.",
+    "category": "차량·화물",
+    "keywords": [
+      "자재 운송",
+      "라보 퀵",
+      "장축 트럭"
+    ],
+    "service": "damas-labo",
+    "status": "todo"
+  },
+  {
+    "id": "ktx-intercity-how",
+    "title": "KTX 연계 퀵은 어떻게 진행되나요",
+    "angle": "문전 픽업, KTX 탁송, 도착지 협약 업체 문전 배송. 최대 5시간, 25,000원부터, 접수 체크사항, 전화 접수만.",
+    "category": "지방·연계배송",
+    "keywords": [
+      "KTX 퀵",
+      "KTX 연계배송",
+      "KTX 택배"
+    ],
+    "service": "intercity",
+    "status": "todo"
+  },
+  {
+    "id": "bus-intercity",
+    "title": "고속버스 연계 퀵, KTX가 없는 도시로 오늘 보내는 법",
+    "angle": "최대 7시간, 25,000원부터, 5대 광역시와 주요 도시. KTX와 비교.",
+    "category": "지방·연계배송",
+    "keywords": [
+      "고속버스 퀵",
+      "고속버스 탁송",
+      "터미널 퀵"
+    ],
+    "service": "intercity",
+    "status": "todo"
+  },
+  {
+    "id": "air-intercity-jeju",
+    "title": "제주도로 오늘 물건 보내는 방법: 항공 연계 퀵",
+    "angle": "항공 최대 4시간, 40,000원부터, 제주·부산·울산·여수(순천)·포항. 큰 화물은 배로 들어가는 차량 수배.",
+    "category": "지방·연계배송",
+    "keywords": [
+      "제주 퀵",
+      "항공 퀵",
+      "제주 당일배송"
+    ],
+    "service": "intercity",
+    "status": "todo"
+  },
+  {
+    "id": "daegu-same-day",
+    "title": "서울·경기에서 대구로 당일 배송하는 방법",
+    "angle": "KTX·고속버스 연계 모두 가능한 구간. 시간·요금 기준과 접수 정보. 구간 요금 단정 금지.",
+    "category": "지방·연계배송",
+    "keywords": [
+      "대구 퀵",
+      "대구 당일배송",
+      "서울 대구 퀵"
+    ],
+    "service": "intercity",
+    "status": "todo"
+  },
+  {
+    "id": "gwangju-mokpo-same-day",
+    "title": "광주·목포로 오늘 보내야 할 때 고르는 방법",
+    "angle": "KTX 연계 구간(광주, 목포), 고속버스 대안. 큰 화물은 현지 차량.",
+    "category": "지방·연계배송",
+    "keywords": [
+      "광주 퀵",
+      "목포 퀵",
+      "전라도 당일배송"
+    ],
+    "service": "intercity",
+    "status": "todo"
+  },
+  {
+    "id": "daejeon-same-day",
+    "title": "대전으로 당일 배송, 연계배송과 화물차 비교",
+    "angle": "대전은 KTX·고속버스 연계 가능. 작은 짐은 연계, 큰 짐은 화물차(현지 차량·혼적).",
+    "category": "지방·연계배송",
+    "keywords": [
+      "대전 퀵",
+      "대전 당일배송",
+      "서울 대전 퀵"
+    ],
+    "service": "intercity",
+    "status": "todo"
+  },
+  {
+    "id": "local-cargo-mixed",
+    "title": "지방 화물 운송비 줄이는 혼적과 현지 차량 수배",
+    "angle": "지방 혼적 화물, 현지 차량 수배, 빈 차 귀로 비용. 작은 짐은 연계배송이 유리한 이유.",
+    "category": "지방·연계배송",
+    "keywords": [
+      "지방 화물",
+      "혼적",
+      "화물 운송비 절감"
+    ],
+    "service": "truck",
+    "status": "todo"
+  },
+  {
+    "id": "jeju-cargo-ship",
+    "title": "제주로 화물차 짐 보내는 방법",
+    "angle": "배로 제주에 들어가는 차량 수배해 직접 운송, 항공 연계와 비교(작은 짐 vs 화물).",
+    "category": "지방·연계배송",
+    "keywords": [
+      "제주 화물",
+      "제주 용달",
+      "제주 화물 운송"
+    ],
+    "service": "truck",
+    "status": "todo"
+  },
+  {
+    "id": "ulsan-pohang-air",
+    "title": "울산·포항으로 급하게 보낼 때 항공 연계가 맞는 경우",
+    "angle": "항공 연계 구간 울산·포항, 최대 4시간. KTX·버스 대안 비교.",
+    "category": "지방·연계배송",
+    "keywords": [
+      "울산 퀵",
+      "포항 퀵",
+      "항공 연계배송"
+    ],
+    "service": "intercity",
+    "status": "todo"
+  },
+  {
+    "id": "business-quick-contract",
+    "title": "회사 전용 퀵 거래처를 정할 때 확인할 것",
+    "angle": "월 정산 조건, 세금계산서, 할증·취소 기준 공개, 차량 범위, 허가 여부. 비교 체크리스트 활용.",
+    "category": "기업 물류",
+    "keywords": [
+      "법인 퀵",
+      "기업 퀵 거래",
+      "퀵 거래처"
+    ],
+    "service": "",
+    "status": "todo"
+  },
+  {
+    "id": "office-manager-quick",
+    "title": "총무 담당자가 알아 두면 좋은 퀵 접수 요령",
+    "angle": "접수 정보 템플릿, 경유, 여유 배차, 왕복, 월 정산과 증빙. 반복 업무 줄이기.",
+    "category": "기업 물류",
+    "keywords": [
+      "총무 퀵",
+      "사무실 퀵",
+      "회사 퀵 접수"
+    ],
+    "service": "",
+    "status": "todo"
+  },
+  {
+    "id": "ecommerce-return-pickup",
+    "title": "쇼핑몰 반품·교환 물건을 퀵으로 회수할 때",
+    "angle": "오토바이·다마스 차량 선택, 왕복·경유, 포장, 월 정산. 사실 목록에 없는 서비스명을 만들지 말 것.",
+    "category": "기업 물류",
+    "keywords": [
+      "반품 퀵",
+      "교환 회수 퀵",
+      "쇼핑몰 퀵"
+    ],
+    "service": "",
+    "status": "todo"
+  },
+  {
+    "id": "factory-parts-urgent",
+    "title": "공장 라인에 급히 필요한 부품을 보내는 방법",
+    "angle": "소형 부품 오토바이, 무거운 부품 다마스·라보·1톤, 지방 공장은 연계·화물. 급송 기사.",
+    "category": "기업 물류",
+    "keywords": [
+      "부품 퀵",
+      "공장 퀵",
+      "긴급 부품 배송"
+    ],
+    "service": "",
+    "status": "todo"
+  },
+  {
+    "id": "event-goods-delivery",
+    "title": "행사·전시 물품을 시간 맞춰 운송하는 방법",
+    "angle": "다마스·라보·탑차·윙바디 선택, 상하차 조건, 대기 할증, 다음 날 하차 추가 운임.",
+    "category": "기업 물류",
+    "keywords": [
+      "행사 물품 운송",
+      "전시 물품 용달",
+      "행사 퀵"
+    ],
+    "service": "truck",
+    "status": "todo"
+  },
+  {
+    "id": "seoul-dongdaemun-quick",
+    "title": "동대문구 장안동·답십리에서 퀵 보낼 때",
+    "angle": "퀵서비스다 사무실(장안동) 위치, 서울·인천·경기 전 지역 배차, 접수 정보. 지역 거리·교통 단정 금지.",
+    "category": "보내는 방법",
+    "keywords": [
+      "동대문구 퀵",
+      "장안동 퀵",
+      "답십리 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "todo"
+  },
+  {
+    "id": "gangnam-office-quick",
+    "title": "강남·서초 사무실에서 서류 퀵 보낼 때 확인할 것",
+    "angle": "서류 퀵 요령, 할증 시간, 경유, 각각 편도. 구간 요금 단정 금지.",
+    "category": "보내는 방법",
+    "keywords": [
+      "강남 퀵",
+      "서초 퀵",
+      "강남 서류 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "todo"
+  },
+  {
+    "id": "yeouido-guro-quick",
+    "title": "여의도·구로·가산 업무지구 퀵 이용 요령",
+    "angle": "오피스 밀집 지역 접수 팁(건물·층·받는 사람 연락처), 대기 20분 할증, 경유.",
+    "category": "보내는 방법",
+    "keywords": [
+      "여의도 퀵",
+      "구로 퀵",
+      "가산디지털단지 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "todo"
+  },
+  {
+    "id": "incheon-quick",
+    "title": "인천에서 서울·경기로 퀵 보낼 때 알아 둘 것",
+    "angle": "서울·인천·경기 전 지역 배차, 차량 선택, 할증, 접수 정보. 지역 정보 단정 금지.",
+    "category": "보내는 방법",
+    "keywords": [
+      "인천 퀵",
+      "인천 퀵서비스",
+      "인천 용달"
+    ],
+    "service": "",
+    "status": "todo"
+  },
+  {
+    "id": "pangyo-bundang-quick",
+    "title": "판교·분당으로 장비·샘플 보낼 때 차량 고르기",
+    "angle": "경기 지역 배차, 오토바이·다마스 선택 기준, 고가 장비는 다마스, 가액 고지.",
+    "category": "보내는 방법",
+    "keywords": [
+      "판교 퀵",
+      "분당 퀵",
+      "성남 퀵"
+    ],
+    "service": "damas-labo",
+    "status": "todo"
+  },
+  {
+    "id": "suwon-hwaseong-quick",
+    "title": "수원·화성 공장 지역으로 화물 보낼 때",
+    "angle": "경기 남부, 1톤 이상 화물차, 윙바디·리프트. 구간 요금 단정 금지.",
+    "category": "차량·화물",
+    "keywords": [
+      "수원 퀵",
+      "화성 용달",
+      "경기 화물"
+    ],
+    "service": "truck",
+    "status": "todo"
+  },
+  {
+    "id": "goyang-paju-quick",
+    "title": "고양·파주로 큰 짐 보낼 때 다마스·라보·1톤 고르기",
+    "angle": "경기 북부 배차, 차량 선택 순서, 할증.",
+    "category": "차량·화물",
+    "keywords": [
+      "고양 퀵",
+      "파주 용달",
+      "일산 퀵"
+    ],
+    "service": "damas-labo",
+    "status": "todo"
+  },
+  {
+    "id": "gimpo-airport-quick",
+    "title": "김포공항에서 항공 연계로 지방에 보내는 과정",
+    "angle": "항공 연계 흐름(문전 픽업, 항공 탁송, 협약 업체 문전). 공항 정보 단정 금지, 사실 목록의 구간만.",
+    "category": "지방·연계배송",
+    "keywords": [
+      "김포공항 퀵",
+      "공항 퀵",
+      "항공 택배"
+    ],
+    "service": "intercity",
+    "status": "todo"
+  },
+  {
+    "id": "quick-vs-parcel",
+    "title": "택배와 퀵서비스, 언제 무엇을 써야 할까",
+    "angle": "당일·문전 직접 전달, 택배가 거절한 물품은 다마스, 지방은 연계. 택배 요금 수치 금지.",
+    "category": "보내는 방법",
+    "keywords": [
+      "택배 퀵 차이",
+      "당일 배송",
+      "퀵 택배 비교"
+    ],
+    "service": "",
+    "status": "todo"
+  },
+  {
+    "id": "quick-payment-methods",
+    "title": "퀵 요금 결제 방법: 카드·계좌이체·현장 결제",
+    "angle": "결제 수단, 현장 결제는 현금·즉시 계좌이체만, 카드는 콜센터 후 온라인, 연계배송 결제, 월 정산.",
+    "category": "요금 가이드",
+    "keywords": [
+      "퀵 카드 결제",
+      "퀵 결제",
+      "퀵 착불"
+    ],
+    "service": "",
+    "status": "todo"
+  },
+  {
+    "id": "weather-surcharge",
+    "title": "비·눈 오는 날 퀵 요금이 오르는 이유와 대처법",
+    "angle": "기상 악화 할증, 다마스·탑차로 물건 보호, 여유 있게 접수. 할증률 수치 금지.",
+    "category": "요금 가이드",
+    "keywords": [
+      "비오는날 퀵",
+      "눈 퀵 할증",
+      "기상 할증"
+    ],
+    "service": "",
+    "status": "todo"
+  },
+  {
+    "id": "waiting-surcharge",
+    "title": "퀵 기사 대기 시간이 길어지면 요금이 오를까",
+    "angle": "대기 20분 이상 할증, 받는 사람 사전 연락, 상하차 준비. 작업 시간 추가 운임.",
+    "category": "요금 가이드",
+    "keywords": [
+      "퀵 대기 요금",
+      "퀵 대기 할증",
+      "퀵 대기시간"
+    ],
+    "service": "",
+    "status": "todo"
+  },
+  {
+    "id": "next-day-unloading",
+    "title": "오늘 싣고 내일 내리는 화물, 비용과 절차",
+    "angle": "당일 상차 후 익일 하차 추가 운임, 접수 시 일정 고지, 차량 선택.",
+    "category": "차량·화물",
+    "keywords": [
+      "익일 하차",
+      "화물 보관 운송",
+      "다음날 배송 화물"
+    ],
+    "service": "truck",
+    "status": "todo"
+  },
+  {
+    "id": "quick-24h",
+    "title": "새벽·심야에도 퀵을 부를 수 있을까",
+    "angle": "24시간 365일 접수, 야간 할증(평일 18시 이후·주말 16시 이후), 연계배송 영업 외 시간 30~50% 할증.",
+    "category": "보내는 방법",
+    "keywords": [
+      "새벽 퀵",
+      "심야 퀵",
+      "24시간 퀵"
+    ],
+    "service": "",
+    "status": "todo"
+  }
+]
