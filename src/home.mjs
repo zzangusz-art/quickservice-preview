@@ -1,51 +1,69 @@
 // 홈: 히어로 → 접수 5단계 스크롤 시퀀스 → 서비스 → 차량 가로 시퀀스 → 후기 → 요금 → 타사 비교 → 기업 → FAQ → 가이드 → 문의
 import { SITE, SERVICES, PROCESS, START_FARES, FARE_RULES, SAVE_TIPS, REVIEWS, MARKET, CHECKLIST, FAQ, FAQ_CATS, SMALL_VEHICLES, TRUCKS, INTERCITY, MOTO_TIME, ASOF_LABEL, avg } from './data.mjs';
-import { esc, won, nl2br, kdate } from './lib.mjs';
-import { ico, vehicle, vehicleFit, consoleMap, koreaMap } from './art.mjs';
+import { esc, won, nl2br, kdate, webpSize, photo } from './lib.mjs';
+import { ico, consoleMap, koreaMap } from './art.mjs';
 import { ctaBand, faqList } from './layout.mjs';
 
 const svcIcon = { motorcycle: 'moto', 'damas-labo': 'van', truck: 'truck', intercity: 'rail' };
 
 function hero(u) {
+  const [hw, hh] = webpSize('assets/img/photo/hero-ride.webp');
   return `<section class="hero" id="top">
-  <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
-  <div class="hero-shade" aria-hidden="true"></div>
   <div class="wrap hero-in">
     <div class="hero-copy">
-      <p class="eyebrow eyebrow-light"><span class="live-dot" aria-hidden="true"></span>서울·인천·경기 퀵서비스 · 전국 화물운송</p>
-      <h1 class="hero-h1"><span class="sr-only">퀵서비스다 — 서울·경기·인천 퀵서비스와 전국 화물운송. </span><span class="h1-line">오토바이 한 대부터</span> <span class="h1-line">25톤 트럭까지,</span> <span class="h1-line h1-accent">전화 한 통이면 됩니다.</span></h1>
-      <p class="hero-lead">24시간 접수합니다. 출발지와 도착지 동 이름, 물건 크기만 알려 주시면 맞는 차량과 요금을 바로 안내해 드립니다.</p>
+      <img class="hero-logo" src="${u('assets/img/brand/logo.webp')}" alt="퀵서비스다 QUICKEY SERVICE — 최고보다 최선을 다하는 기업" width="698" height="296" fetchpriority="high">
+      <p class="eyebrow"><span class="live-dot" aria-hidden="true"></span>지금도 접수 중 · 24시간 365일</p>
+      <h1 class="hero-h1"><span class="sr-only">퀵서비스다 — 서울·경기·인천 퀵서비스와 전국 화물운송. </span><span class="h1-line">지금 접수하면,</span><span class="h1-line h1-accent"><span class="speed" aria-hidden="true"></span>바로 출발합니다.</span></h1>
+      <p class="hero-lead">출발지와 도착지만 알려 주세요. 가장 가까운 기사를 바로 배차하고, 오토바이는 <strong>보통 5~20분 안에</strong> 물건을 받으러 갑니다. 지방은 KTX·고속버스·항공으로 그날 도착합니다.</p>
+      <form class="qbook" id="quickBook" novalidate aria-label="빠른 접수">
+        <div class="qb-top">
+          <span class="qb-title">${ico('route')}빠른 접수</span>
+          <div class="qb-when" role="radiogroup" aria-label="보낼 시간">
+            <label><input type="radio" name="when" value="지금 바로(급송)" checked><span>지금 바로</span></label>
+            <label><input type="radio" name="when" value="오늘 중 여유 있게"><span>오늘 중</span></label>
+            <label><input type="radio" name="when" value="예약(날짜 지정)"><span>예약</span></label>
+          </div>
+        </div>
+        <div class="qb-row">
+          <input name="from" aria-label="출발지 동 이름" placeholder="출발 동 (예: 장안동)" autocomplete="off">
+          <span class="qb-arrow" aria-hidden="true">${ico('arrow')}</span>
+          <input name="to" aria-label="도착지 동 이름" placeholder="도착 동 (예: 역삼동)" autocomplete="off">
+          <select name="item" aria-label="보낼 물건">
+            <option value="서류·소형 물품">서류·소형</option>
+            <option value="상자·소형 가전">상자·가전</option>
+            <option value="큰 짐·가구">큰 짐·가구</option>
+            <option value="화물(파레트·자재)">화물</option>
+          </select>
+          <button class="btn btn-sky" type="submit">접수하기${ico('arrow')}</button>
+        </div>
+        <p class="qb-note"><span>${ico('check', 'ico-s')}가까운 기사 바로 배차</span><span>${ico('check', 'ico-s')}확정 요금 먼저 안내</span><span>${ico('check', 'ico-s')}${SITE.vat}</span></p>
+      </form>
       <div class="hero-cta">
         <a class="btn btn-signal btn-lg" href="tel:${SITE.tel}" data-track="tel">${ico('phone')}<span>${SITE.phone}</span></a>
-        <button class="btn btn-ghost-light btn-lg" type="button" data-open="modalQuote">${ico('receipt')}요금 문의</button>
-        <a class="btn btn-text-light" href="${SITE.kakaoChat}" target="_blank" rel="noopener">${ico('chat')}카카오톡 상담</a>
+        <a class="btn btn-line btn-lg" href="${SITE.kakaoChat}" target="_blank" rel="noopener">${ico('chat')}카카오톡 접수</a>
+        <a class="btn btn-text" href="${SITE.order}" target="_blank" rel="noopener">${ico('online')}온라인 접수</a>
       </div>
-      <ul class="hero-meta">
-        <li>${ico('shield', 'ico-s')}${SITE.freightLicense}</li>
-        <li>${ico('card', 'ico-s')}카드 결제 · 세금계산서 · 월 정산</li>
-      </ul>
     </div>
-    <aside class="hero-card" aria-label="요금 안내 예시">
-      <div class="hc-hd"><span>요금 문의에 필요한 세 가지</span><span class="hc-tag">예시</span></div>
-      <ol class="hc-steps">
-        <li><span class="hc-k">출발</span><strong>장안동</strong><em>동대문구</em></li>
-        <li><span class="hc-k">도착</span><strong>가산동</strong><em>금천구</em></li>
-        <li><span class="hc-k">물건</span><strong>상자 3개 · 약 40kg</strong><em>오토바이 초과</em></li>
-      </ol>
-      <div class="hc-result">
-        <div class="hc-veh">${vehicleFit('damas', '다마스')}</div>
-        <div><span class="hc-k">추천 차량</span><strong>다마스</strong><em>350kg 미만 · 라면 상자 약 20개</em></div>
+    <div class="hero-visual">
+      <div class="hv-frame">
+        <picture>
+          <source media="(max-width: 640px)" srcset="${u('assets/img/photo/hero-ride-m.webp')}">
+          <img src="${u('assets/img/photo/hero-ride.webp')}" alt="도로를 빠르게 달리는 오토바이" width="${hw}" height="${hh}" fetchpriority="high" decoding="async">
+        </picture>
+        <div class="hv-lines" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <span class="hv-tag">접수 흐름 예시</span>
       </div>
-      <button class="btn btn-dark btn-block" type="button" data-open="modalQuote">내 물건으로 문의하기${ico('arrow')}</button>
-    </aside>
+      <div class="hv-card hv-1"><span class="hv-ico">${ico('check')}</span><div><strong>접수 완료</strong><small>전화·카카오톡·온라인 24시간</small></div></div>
+      <div class="hv-card hv-2"><span class="hv-ico">${ico('route')}</span><div><strong>가까운 기사 배차</strong><small>GPS 관제로 출발지 근처 차량</small></div></div>
+      <div class="hv-card hv-3"><span class="hv-ico">${ico('clock')}</span><div><strong>픽업까지 <b>5~20분</b></strong><small>오토바이 기준, 보통</small></div></div>
+    </div>
   </div>
   <div class="hero-stats wrap" role="list">
     <div role="listitem"><strong>24<small>시간</small></strong><span>365일 접수·배차</span></div>
-    <div role="listitem"><strong><span data-count="25">25</span><small>톤</small></strong><span>오토바이부터 전 차종</span></div>
+    <div role="listitem"><strong><span data-count="20">20</span><small>분 이내</small></strong><span>오토바이 픽업(보통 5~20분)</span></div>
     <div role="listitem"><strong>최대 4<small>시간</small></strong><span>항공 연계 지방 당일 배송</span></div>
-    <div role="listitem"><strong><span data-count="8000">8,000</span><small>원~</small></strong><span>오토바이 퀵 시작 요금</span></div>
+    <div role="listitem"><strong><span data-count="25">25</span><small>톤</small></strong><span>오토바이부터 전 차종</span></div>
   </div>
-  <a class="hero-scroll" href="#process" aria-label="접수 과정 보기"><span></span></a>
 </section>`;
 }
 
@@ -94,8 +112,8 @@ function services(u) {
     </div>
     <div class="svc-grid">${SERVICES.map((s, i) => `
       <article class="svc reveal" style="--d:${i * 70}ms">
-        <div class="svc-ico">${ico(svcIcon[s.id])}</div>
-        <h3>${s.name}</h3>
+        <div class="svc-photo photo-plate">${photo(u, s.photo, s.photoAlt)}</div>
+        <h3>${ico(svcIcon[s.id])}${s.name}</h3>
         <p>${s.card}</p>
         <p class="svc-price"><span>시작 요금</span><strong>${won(s.from)}~</strong></p>
         <div class="svc-act">
@@ -122,27 +140,31 @@ export function serviceDrawers(u) {
   <div class="drawer-scrim" data-close></div>
   <div class="drawer-panel">
     <div class="drawer-hd"><h2 id="ds-${s.id}">${s.name}</h2><button class="icon-btn" type="button" data-close aria-label="닫기">${ico('x')}</button></div>
-    <div class="drawer-body prose"><p class="lead-s">${s.lead}</p>${body[s.id]}<p class="muted">시작 요금 ${won(s.from)}~ · ${SITE.vat}</p></div>
+    <div class="drawer-body prose"><div class="drawer-photo photo-plate">${photo(u, s.photo, s.photoAlt)}</div><p class="lead-s">${s.lead}</p>${body[s.id]}<p class="muted">시작 요금 ${won(s.from)}~ · ${SITE.vat}</p></div>
     <div class="drawer-ft"><a class="btn btn-dark btn-block" href="${u(s.slug)}">${s.name} 자세히 보기${ico('arrow')}</a></div>
   </div>
 </div>`).join('');
 }
 
 function fleet(u) {
+  const maxLen = Math.max(...TRUCKS.map(t => t.len[1]));
   const items = [
-    ...SMALL_VEHICLES.map(v => ({ id: v.id, name: v.name, a: v.max, b: v.size, c: v.note })),
-    ...['t1', 't25', 't5', 't11', 't25t'].map(id => { const t = TRUCKS.find(x => x.id === id); return { id, name: t.ton, a: `적재함 길이 ${t.len[0] === t.len[1] ? t.len[0].toLocaleString() : t.len.join('~')}cm`, b: `폭 ${t.w}cm${t.cbm ? ` · 약 ${t.cbm}CBM` : ''}`, c: id === 't1' ? '용달 이사·가구·가전' : id === 't25t' ? '장거리 대량 화물' : '파레트·자재·대량 화물' }; }),
+    ...SMALL_VEHICLES.map(v => ({ id: v.id, photo: v.photo, name: v.name, a: `최대 ${v.max}`, b: v.size, c: v.note })),
+    ...[['t1', 0, '용달 이사·가구·가전'], ['t25', 1, '파레트·자재'], ['t5', 1, '파레트·대량 화물'], ['t11', 0, '대량·장척 화물'], ['t25t', 0, '장거리 대량 화물']].map(([id, k, c]) => {
+      const t = TRUCKS.find(x => x.id === id);
+      return { id, photo: t.photos[k] || t.photos[0], name: `${t.ton} ${k ? '탑차·윙바디' : '카고'}`, a: `적재함 길이 ${t.len[0] === t.len[1] ? t.len[0].toLocaleString() : t.len.join('~')}cm`, b: `폭 ${t.w}cm${t.cbm ? ` · 약 ${t.cbm}CBM` : ''}`, c, bar: Math.round(t.len[1] / maxLen * 100) };
+    }),
   ];
   return `<section class="fleet" id="fleet" aria-labelledby="fleetTitle">
   <div class="fleet-pin">
     <div class="wrap fleet-hd">
-      <div><p class="eyebrow eyebrow-light">차량</p><h2 id="fleetTitle">오토바이부터 25톤까지,<br>실제 적재함 길이 비율로</h2></div>
-      <p>그림의 차량은 같은 배율로 그렸습니다. 오른쪽으로 갈수록 실을 수 있는 길이가 늘어납니다.</p>
+      <div><p class="eyebrow eyebrow-light">보유 차종</p><h2 id="fleetTitle">오토바이부터 25톤까지,<br>물건에 맞는 차로 바로 갑니다</h2></div>
+      <p>차종별 실제 차량 사진입니다. 막대는 25톤 적재함(1,010cm)과 비교한 적재함 길이입니다.</p>
     </div>
     <div class="fleet-track" id="fleetTrack" tabindex="0" aria-label="차량 목록, 좌우로 스크롤">
       ${items.map(v => `<figure class="fleet-item">
-        <div class="fleet-art">${vehicle(v.id, { scale: 0.34, label: v.name })}</div>
-        <figcaption><strong>${v.name}</strong><span>${v.a}</span><span>${v.b}</span><em>${v.c}</em></figcaption>
+        <div class="fleet-art photo-plate">${photo(u, v.photo, v.name)}</div>
+        <figcaption><strong>${v.name}</strong><span>${v.a}</span><span>${v.b}</span>${v.bar ? `<span class="fl-bar" aria-hidden="true"><i style="--w:${v.bar}%"></i></span>` : ''}<em>${v.c}</em></figcaption>
       </figure>`).join('')}
       <div class="fleet-end"><p>어떤 차가 맞을지 모르겠다면</p><a class="btn btn-signal" href="${u('vehicles/')}#recommend">차량 추천 받기${ico('arrow')}</a></div>
     </div>
@@ -270,6 +292,7 @@ function intercityBand(u) {
       <p class="sec-lead">작은 짐 하나를 지방으로 보내려고 화물차를 통째로 부를 필요는 없습니다. 기사가 문 앞에서 받아 KTX·고속버스·항공에 싣고, 도착지 협약 업체가 받는 분 주소까지 전합니다.</p>
       <div class="ic-tabs" role="tablist" aria-label="연계 수단">${INTERCITY.map((m, i) => `<button role="tab" type="button" data-mode="${m.id}" aria-selected="${i ? 'false' : 'true'}"${i ? ' tabindex="-1"' : ''}>${ico(m.id === 'ktx' ? 'rail' : m.id === 'bus' ? 'bus' : 'plane')}${m.short}</button>`).join('')}</div>
       ${INTERCITY.map((m, i) => `<div class="ic-panel" data-panel="${m.id}"${i ? ' hidden' : ''}>
+        <div class="ic-photo photo-plate">${photo(u, m.photo, m.short)}</div>
         <dl class="ic-dl"><div><dt>도착</dt><dd>최대 ${m.hours}시간 이내</dd></div><div><dt>시작 요금</dt><dd>${won(m.from)}~</dd></div><div><dt>구간</dt><dd>${m.routes}</dd></div></dl>
         <p class="muted">접수 때 확인: ${m.check}</p>
       </div>`).join('')}
@@ -328,7 +351,7 @@ function blogSec(u, posts) {
 export function postCard(p, u) {
   return `<article class="post-card reveal">
   <a href="${u('blog/' + p.slug + '/')}">
-    <div class="pc-cover" data-cat="${esc(p.category)}"><span>${esc(p.category)}</span>${ico(catIcon(p.category), 'pc-ico')}</div>
+    <div class="pc-cover${p.image.fit === 'cover' ? ' fit-cover' : ''}">${photo(u, p.image.file, p.image.alt)}<span class="pc-cat">${esc(p.category)}</span></div>
     <div class="pc-body"><h3>${esc(p.title)}</h3><p>${esc(p.description)}</p><span class="pc-meta"><time datetime="${p.date}">${kdate(p.date)}</time> · ${p.minutes}분</span></div>
   </a>
 </article>`;

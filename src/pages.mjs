@@ -1,7 +1,8 @@
 // 하위 페이지 본문
 import { SITE, SERVICES, START_FARES, FARE_RULES, SAVE_TIPS, MARKET, CHECKLIST, FAQ, FAQ_CATS, SMALL_VEHICLES, TRUCKS, TRUCK_LIMITS, BODY_TYPES, CARGO_TYPES, INTERCITY, INTERCITY_NOTE, MOTO_TIME, MOTO_SIZE, BUSINESS, PAYMENT, COMPANY_INTRO, ASOF, ASOF_LABEL, avg } from './data.mjs';
-import { esc, won, kdate } from './lib.mjs';
-import { ico, vehicle, vehicleFit, koreaMap } from './art.mjs';
+import { esc, won, kdate, photo } from './lib.mjs';
+import { ico, koreaMap } from './art.mjs';
+import { logoImg } from './layout.mjs';
 import { subHero, ctaBand, faqList } from './layout.mjs';
 import { postCard, catIcon } from './home.mjs';
 
@@ -19,6 +20,7 @@ function otherServices(u, cur) {
   <div class="svc-grid svc-grid-3">${SERVICES.filter(s => s.id !== cur).map(s => `<a class="svc svc-link" href="${u(s.slug)}"><div class="svc-ico">${ico({ motorcycle: 'moto', 'damas-labo': 'van', truck: 'truck', intercity: 'rail' }[s.id])}</div><h3>${s.name}</h3><p>${s.card}</p><p class="svc-price"><span>시작 요금</span><strong>${won(s.from)}~</strong></p></a>`).join('')}</div></div></section>`;
 }
 const faqBlock = (id, title = '자주 묻는 질문') => `<section class="sec" id="faq"><div class="wrap faq-grid"><div class="sec-hd sec-hd-left"><p class="eyebrow">FAQ</p><h2>${title}</h2><p class="sec-lead">24시간 ${SITE.phone}로 물어보셔도 됩니다.</p></div><div>${faqList(faqFor(id), { id: 'faq-' + id })}</div></div></section>`;
+const plate = (u, file, alt, cls = 'spec-photo') => `<div class="${cls} photo-plate">${photo(u, file, alt)}</div>`;
 const specCard = (art, rows) => `<aside class="spec-card">${art}<dl>${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl></aside>`;
 const fareRuleList = () => `<ul class="ticks">${FARE_RULES.surchargeWhen.map(s => `<li><strong>${s.k}</strong><span>${s.v}</span></li>`).join('')}</ul>`;
 
@@ -27,7 +29,7 @@ export function motorcycle(u, posts) {
   const s = SERVICES.find(x => x.id === 'motorcycle');
   return [
     subHero({}, u, { eyebrow: '오토바이 퀵서비스', h1: '오토바이 퀵, 서류부터 25kg 소형 물품까지', lead: s.lead, crumbs: crumbsSvc(s),
-      aside: specCard(vehicleFit('moto', '배달 오토바이'), [['시작 요금', '8,000원~'], ['최대 무게', '25kg'], ['크기', '세 변 합 150cm 이내'], ['픽업', '보통 5~20분']]) }),
+      aside: specCard(plate(u, 'rider.webp', '배송 상자를 싣고 달리는 오토바이'), [['시작 요금', '8,000원~'], ['최대 무게', '25kg'], ['크기', '세 변 합 150cm 이내'], ['픽업', '보통 5~20분']]) }),
     `<section class="sec"><div class="wrap prose-grid">
       <div class="prose">
         <h2 id="size">오토바이로 보낼 수 있는 물건은 어디까지인가요?</h2>
@@ -70,10 +72,11 @@ export function damasLabo(u, posts) {
   const [, d, l] = SMALL_VEHICLES;
   return [
     subHero({}, u, { eyebrow: '다마스·라보 퀵', h1: '오토바이에 안 실리는 짐은 다마스·라보로', lead: s.lead, crumbs: crumbsSvc(s),
-      aside: specCard(`<div class="spec-pair">${vehicleFit('damas', '다마스')}${vehicleFit('labo', '라보')}</div>`, [['다마스', '350kg 미만 · 20,000원~'], ['라보', '450kg 미만'], ['접수', '24시간'], ['취소(도착 후)', '5,000원']]) }),
+      aside: specCard(`<div class="spec-photo-pair"><div class="photo-plate">${photo(u, 'opt-damas.webp', '다마스')}</div><div class="photo-plate">${photo(u, 'opt-labo.webp', '라보')}</div></div>`, [['다마스', '350kg 미만 · 20,000원~'], ['라보', '450kg 미만'], ['접수', '24시간'], ['취소(도착 후)', '5,000원']]) }),
     `<section class="sec"><div class="wrap prose-grid">
       <div class="prose">
         <h2 id="diff">다마스와 라보, 무엇이 다른가요?</h2>
+        <div class="prose-photos"><figure><div class="photo-plate">${photo(u, 'opt-damas.webp', '다마스 소형 밴')}</div><figcaption>다마스 — 지붕 있는 밴</figcaption></figure><figure><div class="photo-plate">${photo(u, 'opt-labo.webp', '라보 소형 트럭')}</div><figcaption>라보 — 적재함이 열린 소형 트럭</figcaption></figure></div>
         <p><strong>다마스는 지붕이 있는 밴, 라보는 적재함이 열린 소형 트럭입니다.</strong> 젖으면 안 되는 물건이나 가전은 다마스, 길거나 무거운 자재는 라보가 맞습니다.</p>
         <table class="tbl tbl-compare"><thead><tr><th scope="col"></th><th scope="col">다마스</th><th scope="col">라보</th></tr></thead><tbody>
           <tr><th scope="row">형태</th><td>지붕 있는 소형 밴</td><td>적재함이 열린 소형 트럭</td></tr>
@@ -107,14 +110,14 @@ export function truck(u, posts) {
   const s = SERVICES.find(x => x.id === 'truck');
   return [
     subHero({}, u, { eyebrow: '화물운송 1톤~25톤', h1: '1톤 용달부터 25톤, 특수 화물까지 한 번에 배차', lead: s.lead, crumbs: crumbsSvc(s),
-      aside: specCard(vehicleFit('t5', '5톤 윙바디'), [['1톤 용달', '40,000원~'], ['차종', '1톤~25톤, 츄레라'], ['적재함', '카고·윙바디·탑차·냉동'], ['지역', '전국·제주']]) }),
+      aside: specCard(plate(u, 'small-truck.webp', '퀵서비스다 로고가 들어간 화물 탑차'), [['1톤 용달', '40,000원~'], ['차종', '1톤~25톤, 츄레라'], ['적재함', '카고·윙바디·탑차·냉동'], ['지역', '전국·제주']]) }),
     `<section class="sec"><div class="wrap prose-grid">
       <div class="prose">
         <h2 id="kinds">어떤 화물을 운송하나요?</h2>
         <p><strong>1톤부터 25톤까지 전 차종을 배차합니다.</strong> 츄레라나 노브이처럼 특수 차량이 필요한 화물, 허가를 받은 차량만 실을 수 있는 특수 화물도 운송합니다.</p>
         <div class="acc acc-line" id="cargoAcc">${CARGO_TYPES.map((c, i) => `<div class="acc-item"><h3 class="acc-h"><button class="acc-btn" type="button" aria-expanded="${i ? 'false' : 'true'}" aria-controls="cg${i}">${c.k}${ico('plus', 'acc-ico')}</button></h3><div class="acc-panel" id="cg${i}" role="region"${i ? ' hidden' : ''}><div class="acc-body"><p>${c.v}</p></div></div></div>`).join('')}</div>
         <h2 id="body">적재함은 화물에 맞춰 고릅니다</h2>
-        <div class="body-grid">${BODY_TYPES.map(b => `<div class="body-item">${ico({ cargo: 'truck', long: 'ruler', wing: 'box', lift: 'lift', top: 'shield', cold: 'snow' }[b.id])}<strong>${b.name}</strong><p>${b.desc}</p></div>`).join('')}</div>
+        <div class="body-grid">${BODY_TYPES.map(b => `<div class="body-item"><div class="photo-plate">${photo(u, b.photo, b.name + ' 차량')}</div><strong>${b.name}</strong><p>${b.desc}</p></div>`).join('')}</div>
         <h2 id="size">톤수별 적재함 크기</h2>
         <p>가장 긴 화물의 길이와 전체 무게로 톤수를 고릅니다. 아래는 일반 카고 기준입니다.</p>
         <div class="tbl-scroll"><table class="tbl"><thead><tr><th scope="col">차종</th><th scope="col">폭</th><th scope="col">길이</th><th scope="col">지상고</th><th scope="col">부피</th></tr></thead><tbody>${TRUCKS.map(t => `<tr><th scope="row">${t.ton}</th><td>${t.w}cm</td><td>${t.len[0] === t.len[1] ? t.len[0].toLocaleString() : t.len.map(x => x.toLocaleString()).join('~')}cm</td><td>${t.deck}cm</td><td>${t.cbm ? t.cbm + 'CBM' : '—'}</td></tr>`).join('')}</tbody></table></div>
@@ -136,13 +139,13 @@ export function intercity(u, posts) {
   const s = SERVICES.find(x => x.id === 'intercity');
   return [
     subHero({}, u, { eyebrow: '전국 당일 연계배송', h1: 'KTX·고속버스·항공 연계로 지방도 오늘 받습니다', lead: s.lead, crumbs: crumbsSvc(s),
-      aside: specCard(`<div class="spec-icons">${ico('rail')}${ico('bus')}${ico('plane')}</div>`, INTERCITY.map(m => [m.short, `최대 ${m.hours}시간 · ${won(m.from)}~`])) }),
+      aside: specCard(plate(u, 'ktx.webp', 'KTX 고속열차'), INTERCITY.map(m => [m.short, `최대 ${m.hours}시간 · ${won(m.from)}~`])) }),
     `<section class="sec"><div class="wrap ic-grid">
       <div class="ic-copy">
         <h2>세 가지 방법 중 고르세요</h2>
         <p class="sec-lead"><strong>가장 급하면 항공(최대 4시간), 가장 경제적이면 KTX·고속버스(25,000원부터)</strong>입니다. KTX가 서지 않는 도시는 고속버스로 갑니다.</p>
         <div class="ic-tabs" role="tablist" aria-label="연계 수단">${INTERCITY.map((m, i) => `<button role="tab" type="button" data-mode="${m.id}" aria-selected="${i ? 'false' : 'true'}"${i ? ' tabindex="-1"' : ''}>${ico(m.id === 'ktx' ? 'rail' : m.id === 'bus' ? 'bus' : 'plane')}${m.short}</button>`).join('')}</div>
-        ${INTERCITY.map((m, i) => `<div class="ic-panel" data-panel="${m.id}"${i ? ' hidden' : ''}><p>${m.desc}</p>
+        ${INTERCITY.map((m, i) => `<div class="ic-panel" data-panel="${m.id}"${i ? ' hidden' : ''}><div class="ic-photo photo-plate">${photo(u, m.photo, m.short)}</div><p>${m.desc}</p>
           <dl class="ic-dl"><div><dt>도착</dt><dd>최대 ${m.hours}시간 이내 문전 배송</dd></div><div><dt>시작 요금</dt><dd>${won(m.from)}~ (차등 있음)</dd></div><div><dt>구간</dt><dd>${m.routes}</dd></div><div><dt>접수 때 확인</dt><dd>${m.check}</dd></div></dl></div>`).join('')}
       </div>
       <div class="ic-map" data-mode="ktx">${koreaMap(INTERCITY)}</div>
@@ -222,11 +225,10 @@ export function compareSection() {
 // ── 차량 제원 + 추천 ─────────────────────────────────
 export function vehicles(u, posts) {
   const crumbs = [{ name: '홈', href: '' }, { name: '차량 제원', href: 'vehicles/' }];
-  const lineup = ['moto', 'damas', 'labo', 't1', 't25', 't35', 't5', 't5p', 't11', 't25t'];
   const names = { moto: '오토바이', damas: '다마스', labo: '라보' };
   return [
     subHero({}, u, { eyebrow: '차량 제원', h1: '차종별 적재함 크기와 고르는 법', lead: '오토바이부터 25톤 트럭까지 적재 가능한 크기를 한 곳에 정리했습니다. 물건 크기와 무게를 넣으면 맞는 차를 추천해 드립니다.', crumbs,
-      aside: specCard(vehicleFit('t11', '11톤 윙바디'), [['소형', '오토바이·다마스·라보'], ['화물차', '1톤~25톤'], ['특수', '츄레라 16m·27톤'], ['적재 한도', '높이 4.3m · 폭 2.4m']]) }),
+      aside: specCard(plate(u, 'opt-wing.webp', '옆면이 열린 윙바디 트럭'), [['소형', '오토바이·다마스·라보'], ['화물차', '1톤~25톤'], ['특수', '츄레라 16m·27톤'], ['적재 한도', '높이 4.3m · 폭 2.4m']]) }),
     `<section class="sec" id="recommend"><div class="wrap rec">
       <div class="rec-copy"><p class="eyebrow">차량 추천</p><h2>내 물건엔 어떤 차가 맞을까요?</h2><p class="sec-lead">가장 긴 변, 세 변의 합, 전체 무게를 넣어 보세요. 기존 홈페이지에 공개된 적재 기준으로 계산합니다. 최종 차량은 상담할 때 확정합니다.</p></div>
       <form class="rec-form" id="recForm" novalidate>
@@ -248,12 +250,31 @@ export function vehicles(u, posts) {
       <div class="rec-out" id="recOut" aria-live="polite">
         <div class="rec-empty">${ico('truck')}<p>크기와 무게를 넣으면 여기에 추천 차량이 나옵니다.</p></div>
       </div>
-      <script type="application/json" id="recData">${JSON.stringify({ trucks: TRUCKS.map(t => ({ id: t.id, art: t.id, ton: t.ton, cap: t.cap, w: t.w, lenMax: Math.max(t.len[1], Number(t.topLen) || 0), lenLabel: t.len[0] === t.len[1] ? t.len[0].toLocaleString() : t.len.map(x => x.toLocaleString()).join('~') })) }).replace(/</g, '\\u003c')}</script>
-      ${['moto', 'damas', 'labo', 't1top', 'cold', ...TRUCKS.map(t => t.id)].map(id => `<template id="veh-${id}">${vehicleFit(id, names[id] || (id === 't1top' ? '1톤 탑차' : id === 'cold' ? '냉동탑차' : TRUCKS.find(t => t.id === id).ton))}</template>`).join('')}
+      <script type="application/json" id="recData">${JSON.stringify({ trucks: TRUCKS.map(t => ({ id: t.id, art: t.id, top: !!t.photos[1], ton: t.ton, cap: t.cap, w: t.w, lenMax: Math.max(t.len[1], Number(t.topLen) || 0), lenLabel: t.len[0] === t.len[1] ? t.len[0].toLocaleString() : t.len.map(x => x.toLocaleString()).join('~') })) }).replace(/</g, '\\u003c')}</script>
+      ${[['moto', 'rider.webp', '오토바이'], ['damas', 'opt-damas.webp', '다마스'], ['labo', 'opt-labo.webp', '라보'], ['cold', 'opt-cold.webp', '냉동탑차'], ['lift', 'opt-lift.webp', '리프트 화물차'], ['wing', 'opt-wing.webp', '윙바디'],
+        ...TRUCKS.flatMap(t => [[t.id, t.photos[0], t.ton + ' 카고'], ...(t.photos[1] ? [[t.id + '-top', t.photos[1], t.ton + ' 탑차·윙바디']] : [])])]
+        .map(([id, f, alt]) => `<template id="veh-${id}">${photo(u, f, alt, { lazy: false })}</template>`).join('')}
     </div></section>
-    <section class="sec sec-soft"><div class="wrap">
-      <div class="sec-hd"><h2>같은 배율로 본 차량 크기</h2><p class="sec-lead">모든 그림을 1cm당 같은 픽셀로 그렸습니다. 화면이 좁으면 좌우로 밀어 보세요.</p></div>
-      <div class="lineup" tabindex="0" aria-label="차량 크기 비교, 좌우로 스크롤">${lineup.map(id => { const t = TRUCKS.find(x => x.id === id); return `<figure>${vehicle(id, { scale: 0.26, label: names[id] || t.ton })}<figcaption>${names[id] || t.ton}</figcaption></figure>`; }).join('')}</div>
+    <section class="sec sec-soft" id="fleet-cards"><div class="wrap">
+      <div class="sec-hd"><p class="eyebrow">차종별 실제 차량</p><h2>사진으로 보는 차량과 적재함 제원</h2><p class="sec-lead">톤수별로 <strong>일반 카고</strong>와 <strong>탑차·윙바디</strong>를 눌러 사진과 제원을 바꿔 볼 수 있습니다. 단위는 cm입니다.</p></div>
+      <div class="vgrid">
+        ${SMALL_VEHICLES.map(v => `<article class="vcard"><div class="photo-plate">${photo(u, v.photo, v.name)}</div><h3>${v.name}</h3>
+          <dl><div><dt>최대 적재</dt><dd>${v.max}</dd></div><div><dt>크기 기준</dt><dd>${v.size}</dd></div></dl><p class="muted" style="margin:8px 6px 0;font-size:.86rem">${v.note}</p></article>`).join('')}
+        ${TRUCKS.map(t => {
+          const L = t.len[0] === t.len[1] ? t.len[0].toLocaleString() : t.len.map(x => x.toLocaleString()).join('~');
+          const TL = t.topLen ? (Number.isFinite(t.topLen) ? t.topLen.toLocaleString() : t.topLen) : L;
+          const imgs = t.photos[1]
+            ? `${photo(u, t.photos[0], t.ton + ' 일반 카고').replace('<img ', '<img data-variant="cargo" ')}${photo(u, t.photos[1], t.ton + ' 탑차·윙바디').replace('<img ', '<img data-variant="top" hidden ')}`
+            : photo(u, t.photos[0], t.ton + ' 카고');
+          return `<article class="vcard" data-vcard>
+          <div class="photo-plate">${imgs}</div>
+          <h3>${t.ton}</h3>
+          <div class="vtabs" role="group" aria-label="${t.ton} 적재함 형태"><button type="button" data-v="cargo" aria-pressed="true">일반 카고</button><button type="button" data-v="top" aria-pressed="false">탑차·윙바디</button></div>
+          <dl data-variant="cargo"><div><dt>적재함 넓이</dt><dd>${t.w}</dd></div><div><dt>적재함 길이</dt><dd>${L}</dd></div><div><dt>적재함 지상고</dt><dd>${t.deck}</dd></div><div><dt>적재 부피</dt><dd>${t.cbm ? t.cbm + 'CBM' : '—'}</dd></div></dl>
+          <dl data-variant="top" hidden><div><dt>적재함 넓이</dt><dd>${t.topW || t.w}</dd></div><div><dt>적재함 길이</dt><dd>${TL}</dd></div><div><dt>적재함 지상고</dt><dd>${t.topDeck || t.deck}</dd></div><div><dt>적재함 탑높이</dt><dd>${t.top[0] === t.top[1] ? t.top[0] : t.top.join('~')}</dd></div>${t.topCbm ? `<div><dt>적재 부피</dt><dd>${t.topCbm}CBM</dd></div>` : ''}</dl>
+        </article>`; }).join('')}
+      </div>
+      <p class="muted" style="text-align:center;margin-top:18px">사진은 차종 예시입니다. 실제 배차 차량은 연식·제조사에 따라 모양이 다를 수 있습니다.</p>
     </div></section>
     <section class="sec"><div class="wrap prose-grid">
       <div class="prose">
@@ -269,9 +290,9 @@ export function vehicles(u, posts) {
         </tbody></table></div>
         <ul class="note-list">${TRUCK_LIMITS.map(t => `<li>${t}</li>`).join('')}</ul>
         <h2 id="body">적재함 형태</h2>
-        <div class="body-grid">${BODY_TYPES.map(b => `<div class="body-item">${ico({ cargo: 'truck', long: 'ruler', wing: 'box', lift: 'lift', top: 'shield', cold: 'snow' }[b.id])}<strong>${b.name}</strong><p>${b.desc}</p></div>`).join('')}</div>
+        <div class="body-grid">${BODY_TYPES.map(b => `<div class="body-item"><div class="photo-plate">${photo(u, b.photo, b.name + ' 차량')}</div><strong>${b.name}</strong><p>${b.desc}</p></div>`).join('')}</div>
       </div>
-      <nav class="toc-side" aria-label="이 페이지 목차"><p>이 페이지에서</p><a href="#recommend">차량 추천</a><a href="#small">오토바이·다마스·라보</a><a href="#truck">화물차 제원</a><a href="#body">적재함 형태</a><a href="#faq">자주 묻는 질문</a></nav>
+      <nav class="toc-side" aria-label="이 페이지 목차"><p>이 페이지에서</p><a href="#recommend">차량 추천</a><a href="#fleet-cards">차종별 사진</a><a href="#small">오토바이·다마스·라보</a><a href="#truck">화물차 제원</a><a href="#body">적재함 형태</a><a href="#faq">자주 묻는 질문</a></nav>
     </div></section>`,
     faqBlock('vehicles'), related(u, posts, ['차량', '톤', '다마스', '용달']), ctaBand(u),
   ].join('\n');
@@ -309,7 +330,7 @@ export function about(u) {
   const mapQ = encodeURIComponent('서울 동대문구 천호대로 391');
   return [
     subHero({}, u, { eyebrow: SITE.slogan, h1: '퀵서비스다를 소개합니다', lead: COMPANY_INTRO[0], crumbs,
-      aside: specCard(`<div class="spec-logo">${'<svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#0B2A5B"/><circle cx="19" cy="19" r="10.5" fill="none" stroke="#2EC4D3" stroke-width="5"/><path d="M23.5 23.5 31 31" stroke="#2EC4D3" stroke-width="5" stroke-linecap="round"/></svg>'}<strong>${SITE.name}</strong><span>${SITE.nameEn}</span></div>`, [['접수', '24시간 · 365일'], ['지역', '서울·인천·경기, 전국'], ['허가', '화물운송주선 제90143호'], ['대표전화', SITE.phone]]) }),
+      aside: specCard(`<div class="spec-logo">${logoImg(u, '')}</div>`, [['접수', '24시간 · 365일'], ['지역', '서울·인천·경기, 전국'], ['허가', '화물운송주선 제90143호'], ['대표전화', SITE.phone]]) }),
     `<section class="sec"><div class="wrap prose-grid">
       <div class="prose">
         <h2 id="greet">인사말</h2>
@@ -409,6 +430,7 @@ export function blogPost(u, p, posts) {
     <p class="post-cat">${ico(catIcon(p.category), 'ico-s')}${esc(p.category)}</p>
     <h1>${esc(p.title)}</h1>
     <p class="post-desc">${esc(p.description)}</p>
+    <figure class="post-figure photo-plate${p.image.fit === 'cover' ? ' fit-cover' : ''}">${photo(u, p.image.file, p.image.alt, { lazy: false })}</figure>
     <div class="post-meta"><span>${esc(p.author || '퀵서비스다 운영팀')}</span><time datetime="${p.date}">${kdate(p.date)}</time><span>${p.minutes}분 읽기</span><button class="btn btn-text btn-sm" type="button" data-share>${ico('share', 'ico-s')}공유</button></div>
   </div></header>
   <div class="wrap post-grid-wrap">

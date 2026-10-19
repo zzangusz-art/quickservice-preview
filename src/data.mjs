@@ -103,21 +103,21 @@ export const MOTO_SIZE = [
 
 // ── 차량 (소형 3종 + 화물차 제원표) ───────────────────────
 export const SMALL_VEHICLES = [
-  { id: 'moto', name: '오토바이', max: '25kg', size: '세 변 합 150cm 이내', use: '서류, 도장, 소형 부품, 샘플, 꽃다발, 케이크', note: '가장 빠르고 요금이 낮습니다.' },
-  { id: 'damas', name: '다마스', max: '350kg 미만', size: '라면 상자 약 20개', use: '운동기구, 화분, 꽃 배달, 가전제품, 택배사가 거절한 물품, 장거리 고가 장비', note: '지붕이 있는 밴이라 비·눈에도 물건이 젖지 않습니다.' },
-  { id: 'labo', name: '라보', max: '450kg 미만', size: '다마스보다 큰 물건', use: '건축 자재, 공업용 기계, 장롱·진열장, 많은 짐, 나무·화환, 신문 지국 배송물', note: '적재함이 열린 소형 트럭이라 긴 물건을 싣기 좋습니다.' },
+  { id: 'moto', photo: 'rider.webp', name: '오토바이', max: '25kg', size: '세 변 합 150cm 이내', use: '서류, 도장, 소형 부품, 샘플, 꽃다발, 케이크', note: '가장 빠르고 요금이 낮습니다.' },
+  { id: 'damas', photo: 'opt-damas.webp', name: '다마스', max: '350kg 미만', size: '라면 상자 약 20개', use: '운동기구, 화분, 꽃 배달, 가전제품, 택배사가 거절한 물품, 장거리 고가 장비', note: '지붕이 있는 밴이라 비·눈에도 물건이 젖지 않습니다.' },
+  { id: 'labo', photo: 'opt-labo.webp', name: '라보', max: '450kg 미만', size: '다마스보다 큰 물건', use: '건축 자재, 공업용 기계, 장롱·진열장, 많은 짐, 나무·화환, 신문 지국 배송물', note: '적재함이 열린 소형 트럭이라 긴 물건을 싣기 좋습니다.' },
 ];
 
 // 화물차 제원(cm). len은 [최소, 최대]. 출처: 기존 홈페이지 차량제원
 export const TRUCKS = [
-  { id: 't1', ton: '1톤', w: 160, len: [270, 285], deck: 80, cbm: '6', top: [160, 180], cap: 1000 },
-  { id: 't14', ton: '1.4톤', w: 165, len: [290, 310], deck: 70, cbm: '8', top: [160, 200], cap: 1400, topCbm: '7~8', topDeck: '80~85' },
-  { id: 't25', ton: '2.5톤', w: 180, len: [430, 430], deck: 100, cbm: '14', top: [180, 200], cap: 2500 },
-  { id: 't35', ton: '3.5톤', w: 205, len: [406, 406], deck: 105, cbm: '18', top: [180, 200], cap: 3500, topW: '205~230', topLen: 460 },
-  { id: 't5', ton: '5톤', w: 230, len: [620, 620], deck: '110~120', cbm: '26', top: [180, 230], cap: 5000 },
-  { id: 't5p', ton: '5톤 플러스(축차)', w: 230, len: [730, 800], deck: '110~120', cbm: '33', top: [180, 230], cap: 5000, topDeck: '130~140' },
-  { id: 't11', ton: '11톤', w: 235, len: [900, 900], deck: '130~140', cbm: '50', top: [200, 250], cap: 11000, topLen: '900~1,000' },
-  { id: 't25t', ton: '25톤', w: 235, len: [1010, 1010], deck: 140, cbm: null, top: [250, 250], cap: 25000 },
+  { id: 't1', photos: ['truck-01.webp', 'truck-02.webp'], ton: '1톤', w: 160, len: [270, 285], deck: 80, cbm: '6', top: [160, 180], cap: 1000 },
+  { id: 't14', photos: ['truck-03.webp', 'truck-04.webp'], ton: '1.4톤', w: 165, len: [290, 310], deck: 70, cbm: '8', top: [160, 200], cap: 1400, topCbm: '7~8', topDeck: '80~85' },
+  { id: 't25', photos: ['truck-05.webp', 'truck-06.webp'], ton: '2.5톤', w: 180, len: [430, 430], deck: 100, cbm: '14', top: [180, 200], cap: 2500 },
+  { id: 't35', photos: ['truck-07.webp', 'truck-08.webp'], ton: '3.5톤', w: 205, len: [406, 406], deck: 105, cbm: '18', top: [180, 200], cap: 3500, topW: '205~230', topLen: 460 },
+  { id: 't5', photos: ['truck-09.webp', 'truck-10.webp'], ton: '5톤', w: 230, len: [620, 620], deck: '110~120', cbm: '26', top: [180, 230], cap: 5000 },
+  { id: 't5p', photos: ['truck-11.webp', 'truck-12.webp'], ton: '5톤 플러스(축차)', w: 230, len: [730, 800], deck: '110~120', cbm: '33', top: [180, 230], cap: 5000, topDeck: '130~140' },
+  { id: 't11', photos: ['truck-13.webp', null], ton: '11톤', w: 235, len: [900, 900], deck: '130~140', cbm: '50', top: [200, 250], cap: 11000, topLen: '900~1,000' },
+  { id: 't25t', photos: ['truck-14.webp', null], ton: '25톤', w: 235, len: [1010, 1010], deck: 140, cbm: null, top: [250, 250], cap: 25000 },
 ];
 export const TRUCK_LIMITS = [
   '적재 높이는 최대 4.3m, 적재 폭은 최대 2.4m까지입니다.',
@@ -127,12 +127,12 @@ export const TRUCK_LIMITS = [
 
 // 적재함 형태 옵션
 export const BODY_TYPES = [
-  { id: 'cargo', name: '카고', desc: '적재함이 열린 형태. 화물 종류를 가리지 않아 가장 많이 씁니다.' },
-  { id: 'long', name: '장축', desc: '일반 적재함보다 길이가 긴 적재함이 필요할 때 씁니다.' },
-  { id: 'wing', name: '윙바디', desc: '적재함 옆면이 날개처럼 열려 지게차로 파레트를 싣고 내립니다.' },
-  { id: 'lift', name: '리프트', desc: '적재함 뒤 파워게이트가 100~500kg을 들어 올려 상하차가 편합니다.' },
-  { id: 'top', name: '탑차', desc: '지붕과 뒷문이 있는 화물칸. 비나 눈이 오는 날 많이 씁니다.' },
-  { id: 'cold', name: '냉동탑차', desc: '냉동기를 갖춰 냉동·냉장 식품, 수산물을 운송합니다.' },
+  { id: 'cargo', photo: 'opt-cargo.webp', name: '카고', desc: '적재함이 열린 형태. 화물 종류를 가리지 않아 가장 많이 씁니다.' },
+  { id: 'long', photo: 'opt-long.webp', name: '장축', desc: '일반 적재함보다 길이가 긴 적재함이 필요할 때 씁니다.' },
+  { id: 'wing', photo: 'opt-wing.webp', name: '윙바디', desc: '적재함 옆면이 날개처럼 열려 지게차로 파레트를 싣고 내립니다.' },
+  { id: 'lift', photo: 'opt-lift.webp', name: '리프트', desc: '적재함 뒤 파워게이트가 100~500kg을 들어 올려 상하차가 편합니다.' },
+  { id: 'top', photo: 'opt-top.webp', name: '탑차', desc: '지붕과 뒷문이 있는 화물칸. 비나 눈이 오는 날 많이 씁니다.' },
+  { id: 'cold', photo: 'opt-cold.webp', name: '냉동탑차', desc: '냉동기를 갖춰 냉동·냉장 식품, 수산물을 운송합니다.' },
 ];
 
 // ── 화물 운송 종류 ───────────────────────────────────
@@ -147,21 +147,21 @@ export const CARGO_TYPES = [
 // ── 연계배송 ─────────────────────────────────────────
 export const INTERCITY = [
   {
-    id: 'ktx', name: 'KTX 연계 당일특급', short: 'KTX', from: 25000, hours: 5,
+    id: 'ktx', photo: 'ktx.webp', name: 'KTX 연계 당일특급', short: 'KTX', from: 25000, hours: 5,
     routes: '서울·경기 ↔ 대전, 대구, 부산, 익산(전주), 광주, 목포 등 전국',
     cities: ['daejeon', 'daegu', 'busan', 'iksan', 'gwangju', 'mokpo'],
     check: '출발지·도착지 행정동 이름, 무게(10kg 이상일 때), 가로·세로·높이(cm)',
     desc: '수도권과 지방을 잇는 당일 특급 중 가장 경제적인 방법입니다. 기사가 문 앞에서 받아 KTX로 보내고, 도착역에서 협약 업체가 받아 받는 분 주소까지 전합니다.',
   },
   {
-    id: 'bus', name: '고속버스 연계 당일특급', short: '고속버스', from: 25000, hours: 7,
+    id: 'bus', photo: 'bus.webp', name: '고속버스 연계 당일특급', short: '고속버스', from: 25000, hours: 7,
     routes: '서울·경기 ↔ 5대 광역시와 주요 도시',
     cities: ['daejeon', 'daegu', 'busan', 'gwangju', 'ulsan'],
     check: '출발지·도착지 행정동 이름, 무게(10kg 이상일 때), 가로·세로·높이(cm)',
     desc: 'KTX가 서지 않는 도시까지 터미널을 거쳐 당일에 보냅니다.',
   },
   {
-    id: 'air', name: '항공 연계 당일특급', short: '항공', from: 40000, hours: 4,
+    id: 'air', photo: 'air.webp', name: '항공 연계 당일특급', short: '항공', from: 40000, hours: 4,
     routes: '서울·경기 ↔ 제주, 부산, 울산, 여수(순천), 포항',
     cities: ['jeju', 'busan', 'ulsan', 'yeosu', 'pohang'],
     check: '출발지·도착지 행정동 이름, 무게(20kg 이상일 때), 가로·세로·높이(cm)',
@@ -342,7 +342,7 @@ export const FAQ_CATS = [
 // ── 서비스 페이지 ─────────────────────────────────────
 export const SERVICES = [
   {
-    id: 'motorcycle', slug: 'services/motorcycle/', icon: 'moto', name: '오토바이 퀵',
+    id: 'motorcycle', slug: 'services/motorcycle/', icon: 'moto', photo: 'rider.webp', photoAlt: '배송 상자를 싣고 달리는 오토바이', name: '오토바이 퀵',
     title: '오토바이 퀵서비스 — 서울·경기·인천 8,000원부터, 24시간 접수',
     desc: '서류·소형 물품을 오토바이로 바로 보냅니다. 세 변 합 150cm·25kg까지, 5~20분 안에 픽업하고 근거리는 30~50분 안에 도착합니다. 8,000원부터(부가세 별도).',
     lead: '서류, 도장, 샘플, 소형 부품처럼 한 사람이 들고 갈 수 있는 물건은 오토바이가 가장 빠르고 저렴합니다. 가로·세로·높이 합 150cm, 25kg 이하라면 오토바이로 보낼 수 있습니다.',
@@ -350,7 +350,7 @@ export const SERVICES = [
     from: 8000, keywords: ['오토바이퀵', '퀵서비스', '서류 퀵', '서울 퀵서비스'],
   },
   {
-    id: 'damas-labo', slug: 'services/damas-labo/', icon: 'van', name: '다마스·라보 퀵',
+    id: 'damas-labo', slug: 'services/damas-labo/', icon: 'van', photo: 'damas-labo.webp', photoAlt: '다마스와 라보', name: '다마스·라보 퀵',
     title: '다마스·라보 퀵 — 350kg·450kg 미만 소형 화물, 20,000원부터',
     desc: '오토바이에 싣지 못하는 큰 짐은 다마스(350kg 미만, 라면 상자 약 20개)나 라보(450kg 미만)로 보냅니다. 다마스 20,000원부터, 24시간 접수.',
     lead: '오토바이에 실리지 않는 짐부터는 다마스와 라보입니다. 지붕 있는 밴 다마스는 350kg 미만, 적재함이 열린 라보는 450kg 미만까지 싣습니다.',
@@ -358,7 +358,7 @@ export const SERVICES = [
     from: 20000, keywords: ['다마스퀵', '라보퀵', '다마스 요금', '용달'],
   },
   {
-    id: 'truck', slug: 'services/truck/', icon: 'truck', name: '화물운송 1톤~25톤',
+    id: 'truck', slug: 'services/truck/', icon: 'truck', photo: 'small-truck.webp', photoAlt: '퀵서비스다 로고가 들어간 화물 탑차', name: '화물운송 1톤~25톤',
     title: '화물운송 1톤~25톤 — 카고·윙바디·냉동탑차, 전국 당일 배차',
     desc: '1톤 용달부터 25톤, 츄레라·특수 화물까지 전 차종을 배차합니다. 지방은 현지 차량 수배와 혼적으로 운송비를 줄입니다. 1톤 40,000원부터.',
     lead: '1톤 용달부터 25톤 트럭, 츄레라와 특수 화물까지 차종을 가리지 않고 배차합니다. 카고·탑차·윙바디·리프트·냉동탑차 중 화물에 맞는 적재함을 고릅니다.',
@@ -366,7 +366,7 @@ export const SERVICES = [
     from: 40000, keywords: ['화물운송', '용달', '1톤 용달', '윙바디', '냉동탑차'],
   },
   {
-    id: 'intercity', slug: 'services/intercity/', icon: 'rail', name: 'KTX·고속버스·항공 연계',
+    id: 'intercity', slug: 'services/intercity/', icon: 'rail', photo: 'ktx.webp', photoAlt: 'KTX 고속열차', name: 'KTX·고속버스·항공 연계',
     title: 'KTX·고속버스·항공 연계배송 — 수도권↔지방 당일 문전 배송 25,000원부터',
     desc: '서울·경기에서 부산·대구·광주·제주까지 당일에 받습니다. KTX 최대 5시간·25,000원부터, 고속버스 최대 7시간·25,000원부터, 항공 최대 4시간·40,000원부터.',
     lead: '작은 짐을 지방으로 당일에 보내야 할 때는 화물차보다 KTX·고속버스·항공에 실어 보내는 편이 빠르고 저렴합니다. 문 앞에서 받아 문 앞까지 전합니다.',
@@ -392,5 +392,29 @@ export const COMPANY_INTRO = [
 ];
 
 export const BLOG_CATEGORIES = ['요금 가이드', '보내는 방법', '차량·화물', '지방·연계배송', '기업 물류'];
+
+// ── 블로그 썸네일 사진(기존 퀵서비스다.com 고객사 사진을 다듬은 것, tools/prepare_photos.py) ──
+// 글 제목·태그·카테고리에 아래 단어가 들어 있으면 그 사진을 쓴다(위에서부터 먼저 맞는 것). fit: cover=꽉 채움, cut=흰 배경 차량 사진
+// 머리말에 image: <key> 를 쓰면 그 사진으로 고정된다.
+export const BLOG_IMAGES = [
+  { key: 'cold', file: 'opt-cold.webp', fit: 'cut', alt: '냉동탑차', words: ['냉동', '냉장', '식자재', '수산'] },
+  { key: 'lift', file: 'opt-lift.webp', fit: 'cut', alt: '리프트 화물차', words: ['리프트', '파워게이트', '상하차 인력'] },
+  { key: 'wing', file: 'opt-wing.webp', fit: 'cut', alt: '옆면이 열린 윙바디 트럭', words: ['윙바디', '파레트', '지게차', '행사', '전시'] },
+  { key: 'long', file: 'opt-long.webp', fit: 'cut', alt: '장축 카고 트럭', words: ['장축', '긴 자재', '자재'] },
+  { key: 'bigtruck', file: 'truck-14.webp', fit: 'cut', alt: '대형 카고 트럭', words: ['11톤', '25톤', '츄레라', '특수 화물', '중량물', '대형'] },
+  { key: 'air', file: 'air.webp', fit: 'cut', alt: '여객기', words: ['항공', '제주', '공항', '김포', '울산', '포항', '여수'] },
+  { key: 'bus', file: 'bus.webp', fit: 'cut', alt: '고속버스', words: ['고속버스', '터미널'] },
+  { key: 'ktx', file: 'ktx.webp', fit: 'cut', alt: 'KTX 고속열차', words: ['KTX', '부산', '대구', '대전', '광주', '목포', '익산', '지방', '연계'] },
+  { key: 'damas', file: 'opt-damas.webp', fit: 'cut', alt: '다마스 소형 밴', words: ['다마스', '가전', '택배'] },
+  { key: 'labo', file: 'opt-labo.webp', fit: 'cut', alt: '라보 소형 트럭', words: ['라보'] },
+  { key: 'damas-labo', file: 'damas-labo.webp', fit: 'cut', alt: '다마스와 라보', words: ['원룸', '이사', '짐', '반품', '교환'] },
+  { key: 'top', file: 'opt-top.webp', fit: 'cut', alt: '탑차', words: ['탑차', '비 오는', '눈', '기상'] },
+  { key: 'truck1', file: 'truck-01.webp', fit: 'cut', alt: '1톤 카고 트럭', words: ['1톤', '용달', '톤', '화물', '적재함', '트럭', '하차', '혼적'] },
+  { key: 'brand-truck', file: 'small-truck.webp', fit: 'cut', alt: '퀵서비스다 로고가 들어간 화물 탑차', words: ['기업', '정산', '세금계산서', '거래처', '총무', '법인', '부가세', '결제', '공장', '부품'] },
+  { key: 'ride', file: 'ride.webp', fit: 'cover', alt: '도로를 빠르게 달리는 오토바이', words: ['급송', '급한', '빠른', '당일', '야간', '심야', '새벽', '24시간', '1시간'] },
+  { key: 'fleet', file: 'truck-scooter.webp', fit: 'cut', alt: '화물 탑차와 오토바이', words: ['요금', '비용', '계산', '차종', '차량 선택', '택배와'] },
+  { key: 'rider', file: 'rider.webp', fit: 'cut', alt: '배송 상자를 싣고 달리는 오토바이', words: ['오토바이', '서류', '계약서', '퀵', '경유', '요금', '할증', '취소', '왕복', '과적', '포장', '파손'] },
+];
+export const BLOG_IMAGE_FALLBACK = { '요금 가이드': 'rider', '보내는 방법': 'ride', '차량·화물': 'truck1', '지방·연계배송': 'ktx', '기업 물류': 'brand-truck' };
 
 export { won };

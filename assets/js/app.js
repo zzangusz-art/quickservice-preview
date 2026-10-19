@@ -184,106 +184,43 @@
   }), { threshold: .6 });
   $$('[data-count]').forEach(el => cio.observe(el));
 
-  // ── 히어로: 관제망 캔버스 ─────────────────────────────
-  const cv = $('#heroCanvas');
-  if (cv) {
-    const ctx = cv.getContext('2d');
-    let W = 0, H = 0, DPR = 1, nodes = [], edges = [], adj = [], base = null, routes = [], pings = [], running = false, raf = 0, last = 0;
-    let seed = 7;
-    const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
-    function build() {
-      const r = cv.getBoundingClientRect();
-      W = r.width; H = r.height; DPR = Math.min(2, devicePixelRatio || 1);
-      if (W < 2 || H < 2) { base = null; return; }
-      cv.width = W * DPR; cv.height = H * DPR;
-      seed = 7; nodes = []; edges = []; adj = [];
-      const gap = W < 700 ? 70 : 92, cols = Math.ceil(W / gap) + 2, rows = Math.ceil(H / gap) + 2;
-      const id = (c, r2) => r2 * cols + c;
-      for (let r2 = 0; r2 < rows; r2++) for (let c = 0; c < cols; c++) {
-        nodes.push({ x: (c - .5) * gap + (rnd() - .5) * gap * .55, y: (r2 - .5) * gap + (rnd() - .5) * gap * .55 });
-        adj.push([]);
-      }
-      const link = (a, b) => { edges.push([a, b]); adj[a].push(b); adj[b].push(a); };
-      for (let r2 = 0; r2 < rows; r2++) for (let c = 0; c < cols; c++) {
-        if (c < cols - 1 && rnd() < .78) link(id(c, r2), id(c + 1, r2));
-        if (r2 < rows - 1 && rnd() < .7) link(id(c, r2), id(c, r2 + 1));
-        if (c < cols - 1 && r2 < rows - 1 && rnd() < .16) link(id(c, r2), id(c + 1, r2 + 1));
-      }
-      // 정적 바탕을 한 번만 그린다
-      base = d.createElement('canvas'); base.width = cv.width; base.height = cv.height;
-      const b = base.getContext('2d'); b.scale(DPR, DPR);
-      const g = b.createLinearGradient(0, H * .55, W, H * .7);
-      g.addColorStop(0, 'rgba(20,62,120,0)'); g.addColorStop(.5, 'rgba(20,62,120,.55)'); g.addColorStop(1, 'rgba(20,62,120,.25)');
-      b.strokeStyle = g; b.lineWidth = W < 700 ? 26 : 40; b.lineCap = 'round';
-      b.beginPath(); b.moveTo(-40, H * .72);
-      b.bezierCurveTo(W * .25, H * .58, W * .45, H * .82, W * .65, H * .66); b.bezierCurveTo(W * .8, H * .55, W * .9, H * .62, W + 40, H * .56); b.stroke();
-      b.lineWidth = 1; b.strokeStyle = 'rgba(120,170,230,.13)';
-      b.beginPath(); edges.forEach(([a, c]) => { b.moveTo(nodes[a].x, nodes[a].y); b.lineTo(nodes[c].x, nodes[c].y); }); b.stroke();
-      b.fillStyle = 'rgba(150,195,245,.22)';
-      nodes.forEach(n => { b.beginPath(); b.arc(n.x, n.y, 1.4, 0, 7); b.fill(); });
-      routes = []; pings = [];
-      const n = W < 700 ? 4 : 8;
-      for (let i = 0; i < n; i++) routes.push(newRoute(rnd() * .9));
-      if (reduce) { drawFrame(16, true); }
-    }
-    function newRoute(prog = 0) {
-      let cur = Math.floor(rnd() * nodes.length);
-      // 오른쪽(밝은 영역)에서 주로 시작
-      for (let k = 0; k < 6 && nodes[cur].x < W * .35; k++) cur = Math.floor(rnd() * nodes.length);
-      const path = [cur]; let prev = -1;
-      const len = 5 + Math.floor(rnd() * 8);
-      for (let i = 0; i < len; i++) {
-        const nb = adj[cur].filter(x => x !== prev && !path.includes(x));
-        if (!nb.length) break;
-        prev = cur; cur = nb[Math.floor(rnd() * nb.length)]; path.push(cur);
-      }
-      const pts = path.map(i => nodes[i]);
-      let total = 0; const seg = [];
-      for (let i = 1; i < pts.length; i++) { const l = Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y); seg.push(l); total += l; }
-      return { pts, seg, total, prog, speed: 60 + rnd() * 70, hold: 0, hue: rnd() < .22 ? 'amber' : 'teal' };
-    }
-    function pointAt(r, dist) {
-      let acc = 0;
-      for (let i = 0; i < r.seg.length; i++) {
-        if (acc + r.seg[i] >= dist) { const k = (dist - acc) / r.seg[i]; const a = r.pts[i], b = r.pts[i + 1]; return { x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k, i }; }
-        acc += r.seg[i];
-      }
-      const z = r.pts[r.pts.length - 1]; return { x: z.x, y: z.y, i: r.seg.length - 1 };
-    }
-    function drawFrame(dt, still = false) {
-      if (!base || !base.width || !routes.length) return;
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.clearRect(0, 0, cv.width, cv.height);
-      ctx.drawImage(base, 0, 0);
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-      routes.forEach((r, ri) => {
-        if (!still) {
-          if (r.hold > 0) { r.hold -= dt; if (r.hold <= 0) { routes[ri] = newRoute(); pings.push({ x: routes[ri].pts[0].x, y: routes[ri].pts[0].y, t: 0 }); } return; }
-          r.prog += (r.speed * dt / 1000) / r.total;
-          if (r.prog >= 1) { r.prog = 1; r.hold = 900 + rnd() * 1400; pings.push({ x: r.pts[r.pts.length - 1].x, y: r.pts[r.pts.length - 1].y, t: 0, end: true }); }
-        }
-        const dist = r.prog * r.total, head = pointAt(r, dist);
-        const col = r.hue === 'amber' ? '255,180,0' : '46,196,211';
-        ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-        ctx.strokeStyle = `rgba(${col},.16)`; ctx.lineWidth = 6;
-        ctx.beginPath(); ctx.moveTo(r.pts[0].x, r.pts[0].y); for (let i = 1; i <= head.i; i++) ctx.lineTo(r.pts[i].x, r.pts[i].y); ctx.lineTo(head.x, head.y); ctx.stroke();
-        ctx.strokeStyle = `rgba(${col},.85)`; ctx.lineWidth = 2;
-        ctx.stroke();
-        ctx.fillStyle = 'rgba(255,180,0,.9)'; ctx.beginPath(); ctx.arc(r.pts[0].x, r.pts[0].y, 3, 0, 7); ctx.fill();
-        ctx.fillStyle = `rgba(${col},.25)`; ctx.beginPath(); ctx.arc(head.x, head.y, 9, 0, 7); ctx.fill();
-        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(head.x, head.y, 3.2, 0, 7); ctx.fill();
-      });
-      if (!still) pings = pings.filter(p => (p.t += dt) < 1400);
-      pings.forEach(p => { const k = p.t / 1400; ctx.strokeStyle = p.end ? `rgba(46,196,211,${.6 * (1 - k)})` : `rgba(255,180,0,${.6 * (1 - k)})`; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(p.x, p.y, 4 + k * 26, 0, 7); ctx.stroke(); });
-    }
-    const loop = t => { const dt = Math.min(64, t - (last || t)); last = t; drawFrame(dt); raf = requestAnimationFrame(loop); };
-    const start = () => { if (running || reduce) return; running = true; last = 0; raf = requestAnimationFrame(loop); };
-    const stop = () => { running = false; cancelAnimationFrame(raf); };
-    build();
-    new IntersectionObserver(es => es.forEach(en => en.isIntersecting && !d.hidden ? start() : stop())).observe(cv);
-    d.addEventListener('visibilitychange', () => d.hidden ? stop() : (cv.getBoundingClientRect().bottom > 0 && start()));
-    let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { const was = running; stop(); build(); if (was) start(); }, 200); });
+  // ── 히어로: 빠른 접수 → 요금 문의 모달로 이어 쓰기 ─────────
+  const qb = $('#quickBook');
+  if (qb) qb.addEventListener('submit', e => {
+    e.preventDefault();
+    const from = qb.elements.from, to = qb.elements.to;
+    let bad = null;
+    [from, to].forEach(inp => { const v = inp.value.trim(); inp.setAttribute('aria-invalid', v ? 'false' : 'true'); if (!v && !bad) bad = inp; });
+    if (bad) { bad.focus(); toast('출발지와 도착지 동 이름을 적어 주세요', 'info'); return; }
+    const qf2 = $('#quoteForm');
+    qf2.elements.from.value = from.value.trim();
+    qf2.elements.to.value = to.value.trim();
+    $$('input[name=item]', qf2).forEach(r => { r.checked = r.value === qb.querySelector('[name=item]').value; });
+    const when = (qb.querySelector('input[name=when]:checked') || {}).value;
+    if (when) [...qf2.elements.when.options].forEach(o => { o.selected = o.text === when; });
+    $('#quoteDone').hidden = true; qf2.hidden = false;
+    openLayer('modalQuote', qb.querySelector('button[type=submit]'));
+    setTimeout(() => qf2.elements.weight.focus({ preventScroll: true }), 120);
+    toast('출발·도착을 옮겨 적었습니다. 무게만 고르면 접수 글이 완성됩니다', 'ok', 3200);
+  });
+
+  // ── 사진 썸네일: 로딩 중엔 스켈레톤, 다 받으면 보이기 ─────────
+  function watchImgs(root = d) {
+    $$('.pc-cover img', root).forEach(img => {
+      const done = () => img.closest('.pc-cover').classList.add('is-loaded');
+      if (img.complete) done(); else { img.addEventListener('load', done, { once: true }); img.addEventListener('error', done, { once: true }); }
+    });
   }
+  watchImgs();
+
+  // ── 차량 제원 카드: 일반 카고 / 탑차·윙바디 전환 ───────────
+  d.addEventListener('click', e => {
+    const b = e.target.closest('.vtabs button');
+    if (!b) return;
+    const card = b.closest('[data-vcard]'), v = b.dataset.v;
+    $$('.vtabs button', card).forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    $$('[data-variant]', card).forEach(el => { el.hidden = el.dataset.variant !== v; });
+  });
 
   // ── 스크롤 시퀀스: 접수 5단계 ─────────────────────────
   const seq = $('.seq');
@@ -349,7 +286,7 @@
     let tk = false;
     addEventListener('scroll', () => { if (!tk) { tk = true; requestAnimationFrame(() => { move(); tk = false; }); } }, { passive: true });
     let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(setup, 150); });
-    if (d.fonts && d.fonts.ready) d.fonts.ready.then(setup); setup();
+    if (d.fonts && d.fonts.ready) d.fonts.ready.then(setup); addEventListener('load', setup); setup();
   }
 
   // ── 요금 문의 모달 ───────────────────────────────────
@@ -397,11 +334,10 @@
 
   // ── 블로그 목록: 분류, 더 보기(스켈레톤) ─────────────────
   const grid = $('#postGrid'), more = $('#moreBtn');
-  const CAT_ICON = { '요금 가이드': 'receipt', '보내는 방법': 'route', '차량·화물': 'truck', '지방·연계배송': 'rail', '기업 물류': 'building' };
   const escH = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const kd = s => s.replace(/-/g, '.');
   let allPosts = null, shown = grid ? $$('.post-card', grid).length : 0, curCat = 'all';
-  const card = p => `<article class="post-card reveal in" data-cat="${escH(p.category)}"><a href="${escH(p.slug)}/"><div class="pc-cover" data-cat="${escH(p.category)}"><span>${escH(p.category)}</span><svg class="ico pc-ico" aria-hidden="true"><use href="#i-${CAT_ICON[p.category] || 'box'}"/></svg></div><div class="pc-body"><h3>${escH(p.title)}</h3><p>${escH(p.description)}</p><span class="pc-meta"><time datetime="${p.date}">${kd(p.date)}</time> · ${p.minutes}분</span></div></a></article>`;
+  const card = p => `<article class="post-card reveal in" data-cat="${escH(p.category)}"><a href="${escH(p.slug)}/"><div class="pc-cover${p.img.fit === 'cover' ? ' fit-cover' : ''}"><img src="${escH(p.img.src)}" alt="${escH(p.img.alt)}" width="${p.img.w}" height="${p.img.h}" loading="lazy" decoding="async"><span class="pc-cat">${escH(p.category)}</span></div><div class="pc-body"><h3>${escH(p.title)}</h3><p>${escH(p.description)}</p><span class="pc-meta"><time datetime="${p.date}">${kd(p.date)}</time> · ${p.minutes}분</span></div></a></article>`;
   const skel = n => Array.from({ length: n }, () => '<div class="post-skel" aria-hidden="true"><div class="skel skel-cover"></div><div class="skel-body"><div class="skel skel-line h20 w80"></div><div class="skel skel-line"></div><div class="skel skel-line w60"></div><div class="skel skel-line w40"></div></div></div>').join('');
   async function loadAll() {
     if (allPosts) return allPosts;
@@ -418,6 +354,7 @@
   function renderFiltered() {
     const list = allPosts.filter(p => curCat === 'all' || p.category === curCat);
     grid.innerHTML = list.slice(0, shown).map(card).join('');
+    watchImgs(grid);
     if (more) more.parentElement.hidden = list.length <= shown;
   }
   if (more && grid) more.addEventListener('click', async () => {
@@ -482,7 +419,7 @@
         if (need.lift) why.push('상하차 인력이 없으면 100~500kg을 들어 올리는 리프트(파워게이트) 차량이 맞습니다.');
         if (need.rain && !need.cold) why.push('지붕과 뒷문이 있는 탑차로 비·눈을 막습니다.');
         if (t.id === 't1') why.push('1톤 용달은 40,000원부터입니다.');
-        const art = need.cold ? 'cold' : (t.id === 't1' && body !== '카고') ? 't1top' : t.art;
+        const art = need.cold ? 'cold' : need.lift ? 'lift' : body !== '카고' && t.top ? t.id + '-top' : t.id;
         return { id: art, name: `${t.ton} ${body}`, tag: t.id === 't1' ? '40,000원부터' : '견적 상담', why };
       }
       if (long <= 1600 && kg <= 27000) {
@@ -494,7 +431,7 @@
     }
     function result(r) {
       const art = d.getElementById('veh-' + r.id);
-      return `<div class="rec-res"><span class="rec-tag">${r.tag}</span><h3>${r.name}</h3>${art ? art.innerHTML : ''}<ul>${r.why.map(w => `<li>${escH(w)}</li>`).join('')}</ul>
+      return `<div class="rec-res"><span class="rec-tag">${r.tag}</span><h3>${r.name}</h3>${art ? `<div class="rec-photo">${art.innerHTML}</div>` : ''}<ul>${r.why.map(w => `<li>${escH(w)}</li>`).join('')}</ul>
       <p class="muted" style="margin-top:12px">추천은 공개된 적재 기준으로 계산한 참고값입니다. 실제 차량은 상담할 때 확정합니다.</p>
       <div class="mq-actions"><a class="btn btn-signal" href="tel:${TEL.replace(/-/g, '')}"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg>${TEL} 확정 문의</a><button class="btn btn-line" type="button" data-open="modalQuote">요금 문의 글 만들기</button></div></div>`;
     }

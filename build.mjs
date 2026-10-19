@@ -16,7 +16,7 @@ const OUT = path.resolve(ROOT, opt('--out') || 'dist');
 
 const D = await import('./src/data.mjs');
 const { SITE, SERVICES, FAQ, START_FARES, INTERCITY, TRUCKS, SMALL_VEHICLES, FARE_RULES, MARKET, BUSINESS, PAYMENT, BLOG_CATEGORIES, ASOF, avg } = D;
-const { makeUrl, pageUrl, esc, won } = await import('./src/lib.mjs');
+const { makeUrl, pageUrl, esc, won, webpSize } = await import('./src/lib.mjs');
 const S = await import('./src/schema.mjs');
 const { page } = await import('./src/layout.mjs');
 const { homeBody } = await import('./src/home.mjs');
@@ -30,7 +30,7 @@ fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT, { recursive: true });
 const copyDir = (src, dst) => { fs.mkdirSync(dst, { recursive: true }); for (const e of fs.readdirSync(src, { withFileTypes: true })) { const s = path.join(src, e.name), d = path.join(dst, e.name); e.isDirectory() ? copyDir(s, d) : fs.copyFileSync(s, d); } };
 copyDir(path.join(ROOT, 'assets'), path.join(OUT, 'assets'));
-for (const f of ['favicon.svg', 'favicon.ico']) if (fs.existsSync(path.join(ROOT, f))) fs.copyFileSync(path.join(ROOT, f), path.join(OUT, f));
+for (const f of ['favicon.ico']) if (fs.existsSync(path.join(ROOT, f))) fs.copyFileSync(path.join(ROOT, f), path.join(OUT, f));
 const V = crypto.createHash('md5').update(fs.readFileSync(path.join(ROOT, 'assets/css/style.css'))).update(fs.readFileSync(path.join(ROOT, 'assets/js/app.js'))).digest('hex').slice(0, 8);
 
 const write = (rel, html) => { const f = path.join(OUT, rel); fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, html); };
@@ -56,13 +56,32 @@ const posts = loadPosts(BLOG, { today }).map(p => {
   const faq = p.faq.map(f => ({ ...f }));
   return { ...p, html: r.html, toc: r.toc, faq };
 });
+// 글마다 주제에 맞는 사진: 머리말 image 지정 → 제목·태그 단어 → 설명 단어 → 서비스 → 카테고리 순.
+// 목록에서 바로 앞 두 글과 같은 사진이면 다음 후보로 바꿔 같은 그림이 이어지지 않게 한다.
+{
+  const { BLOG_IMAGES, BLOG_IMAGE_FALLBACK } = D;
+  const byKey = k => BLOG_IMAGES.find(x => x.key === k);
+  const svcKey = { motorcycle: 'rider', 'damas-labo': 'damas-labo', truck: 'truck1', intercity: 'ktx' };
+  const recent = [];
+  for (const p of [...posts].reverse()) { // 오래된 글부터 정해야 새 글이 추가돼도 기존 글 사진이 바뀌지 않는다
+    if (p.image && byKey(p.image)) { p.image = byKey(p.image); recent.push(p.image.key); continue; }
+    const head = `${p.title} ${p.tags.join(' ')}`;
+    const cands = [
+      ...BLOG_IMAGES.filter(im => im.words.some(w => head.includes(w))),
+      ...BLOG_IMAGES.filter(im => im.words.some(w => p.description.includes(w))),
+      byKey(svcKey[p.service]), byKey(BLOG_IMAGE_FALLBACK[p.category]), byKey('rider'), byKey('ride'),
+    ].filter((x, i, a) => x && a.indexOf(x) === i);
+    p.image = cands.find(c => !recent.slice(-2).includes(c.key)) || cands[0];
+    recent.push(p.image.key);
+  }
+}
 const lastPost = posts[0]?.date || ASOF;
 
 // ── 홈 ──
 {
   const out = 'index.html', url = pageUrl(out);
   const homeFaq = FAQ.filter(f => f.pages.includes('home'));
-  emit({ out, pri: '1.0', mod: lastPost > ASOF ? lastPost : ASOF, darkTop: true, bodyClass: 'home',
+  emit({ out, pri: '1.0', mod: lastPost > ASOF ? lastPost : ASOF, bodyClass: 'home',
     title: '퀵서비스다 | 서울·경기·인천 퀵서비스, 오토바이부터 25톤 화물까지 24시간',
     description: '오토바이 퀵 8,000원부터, 다마스 20,000원부터, 1톤 40,000원부터(부가세 별도). KTX·고속버스·항공 연계로 지방도 당일 배송. 24시간 접수 1661-7462, 화물운송주선 허가 제90143호.',
     schema: S.graph(S.organization(), S.website(), S.webpage({ url, title: '퀵서비스다 — 서울·경기·인천 퀵서비스와 전국 화물운송', description: '오토바이 퀵부터 25톤 화물, KTX·항공 연계배송까지 24시간 접수' }), S.faqPage(homeFaq, url)),
@@ -123,7 +142,7 @@ for (const [id, name, render] of [['privacy', '개인정보처리방침', P.priv
     schema: S.graph(S.organization(), S.website(), { ...S.webpage({ url, title: t, description: d, type: 'CollectionPage', modified: lastPost }), mainEntity: { '@type': 'ItemList', itemListElement: posts.slice(0, 30).map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: SITE.url + `blog/${p.slug}/` })) } }, bc([['홈', ''], ['물류 가이드', 'blog/']])),
     body: u => P.blogIndex(u, posts, BLOG_CATEGORIES) });
   // 더 보기용 목록
-  fs.writeFileSync(path.join(OUT, 'blog/posts.json'), JSON.stringify(posts.map(p => ({ slug: p.slug, title: p.title, description: p.description, category: p.category, date: p.date, minutes: p.minutes }))));
+  fs.writeFileSync(path.join(OUT, 'blog/posts.json'), JSON.stringify(posts.map(p => { const [w, h] = webpSize('assets/img/photo/' + p.image.file); return { slug: p.slug, title: p.title, description: p.description, category: p.category, date: p.date, minutes: p.minutes, img: { src: '../assets/img/photo/' + p.image.file, w, h, alt: p.image.alt, fit: p.image.fit } }; })));
 }
 for (const p of posts) {
   const out = `blog/${p.slug}/index.html`, url = pageUrl(out);

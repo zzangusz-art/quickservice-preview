@@ -13,7 +13,7 @@ export function organization() {
     slogan: SITE.slogan,
     description: '서울·인천·경기 퀵서비스와 전국 화물운송 주선 업체. 오토바이 퀵, 다마스·라보, 1톤~25톤 화물차, KTX·고속버스·항공 연계 당일배송을 24시간 접수합니다.',
     url: SITE.url,
-    logo: SITE.url + 'assets/img/logo-512.png',
+    logo: SITE.url + 'assets/img/brand/logo.png',
     image: SITE.url + 'assets/img/og-default.png',
     telephone: '+82-1661-7462',
     faxNumber: '+82-70-5222-2399',

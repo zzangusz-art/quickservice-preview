@@ -3,7 +3,8 @@ import { SITE, NAV, SERVICES, BUSINESS, PAYMENT, START_FARES } from './data.mjs'
 import { esc, won, jsonld } from './lib.mjs';
 import { sprite, ico } from './art.mjs';
 
-export const logoMark = (cls = 'logo-mark') => `<svg class="${cls}" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#0B2A5B"/><circle cx="19" cy="19" r="10.5" fill="none" stroke="#2EC4D3" stroke-width="5"/><path d="M23.5 23.5 31 31" stroke="#2EC4D3" stroke-width="5" stroke-linecap="round"/><path d="M5 14h5M4 19h4M5 24h5" stroke="#5B8BD6" stroke-width="2.2" stroke-linecap="round"/></svg>`;
+export const logoImg = (u, cls = 'logo-img') => `<img class="${cls}" src="${u('assets/img/brand/logo.webp')}" alt="퀵서비스다 QUICKEY SERVICE" width="698" height="296">`;
+export const logoWhite = u => `<img class="ft-logo" src="${u('assets/img/brand/logo-white.webp')}" alt="퀵서비스다 QUICKEY SERVICE" width="335" height="142" loading="lazy">`;
 
 export function head(p, u) {
   const robots = p.noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1';
@@ -17,7 +18,7 @@ export function head(p, u) {
 <meta name="description" content="${esc(p.description)}">
 <link rel="canonical" href="${p.url}">
 <meta name="robots" content="${robots}">
-<meta name="theme-color" content="#08172F">
+<meta name="theme-color" content="#1FA3E0">
 <meta name="format-detection" content="telephone=no">
 <meta property="og:type" content="${p.ogType || 'website'}">
 <meta property="og:site_name" content="${SITE.name}">
@@ -34,9 +35,8 @@ export function head(p, u) {
 <meta name="twitter:image" content="${og}">
 ${p.published ? `<meta property="article:published_time" content="${p.published}">` : ''}
 ${SITE.naverVerification ? `<meta name="naver-site-verification" content="${SITE.naverVerification}">` : ''}
-<link rel="icon" href="${u('favicon.svg')}" type="image/svg+xml">
 <link rel="icon" href="${u('favicon.ico')}" sizes="any">
-<link rel="apple-touch-icon" href="${u('assets/img/apple-touch-icon.png')}">
+<link rel="apple-touch-icon" href="${u('assets/img/brand/apple-touch-icon.png')}">
 <link rel="alternate" type="application/rss+xml" title="${SITE.name} 물류 가이드" href="${SITE.url}blog/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,9 +56,9 @@ export function header(p, u) {
   return `<body class="${p.bodyClass || ''}">
 ${sprite()}
 <a class="skip" href="#main">본문 바로가기</a>
-<header class="hd${p.darkTop ? ' hd-dark' : ''}" id="hd">
+<header class="hd" id="hd">
   <div class="hd-in wrap">
-    <a class="logo" href="${u('')}" aria-label="${SITE.name} 홈">${logoMark()}<span class="logo-txt"><b>${SITE.name}</b><small>${SITE.nameEn}</small></span></a>
+    <a class="logo" href="${u('')}" aria-label="${SITE.name} 홈">${logoImg(u)}</a>
     <nav class="gnb" aria-label="주 메뉴"><ul>${navItems}</ul></nav>
     <div class="hd-cta">
       <a class="btn btn-ghost btn-sm hd-order" href="${SITE.order}" target="_blank" rel="noopener">${ico('online')}온라인 접수</a>
@@ -74,7 +74,7 @@ export function footer(p, u) {
   <div class="wrap">
     <div class="ft-top">
       <div class="ft-brand">
-        <a class="logo logo-light" href="${u('')}">${logoMark()}<span class="logo-txt"><b>${SITE.name}</b><small>${SITE.nameEn}</small></span></a>
+        <a class="logo" href="${u('')}" aria-label="${SITE.name} 홈">${logoWhite(u)}</a>
         <p>${SITE.slogan}. 서울·인천·경기 퀵서비스와 전국 화물운송을 24시간 접수합니다.</p>
         <a class="ft-tel" href="tel:${SITE.tel}">${SITE.phone}</a>
       </div>
@@ -102,7 +102,7 @@ export function layers(p, u) {
 <div class="drawer drawer-right" id="drawerMenu" role="dialog" aria-modal="true" aria-label="전체 메뉴" hidden>
   <div class="drawer-scrim" data-close></div>
   <div class="drawer-panel">
-    <div class="drawer-hd"><a class="logo" href="${u('')}">${logoMark()}<span class="logo-txt"><b>${SITE.name}</b><small>${SITE.nameEn}</small></span></a><button class="icon-btn" type="button" data-close aria-label="메뉴 닫기">${ico('x')}</button></div>
+    <div class="drawer-hd"><a class="logo" href="${u('')}" aria-label="${SITE.name} 홈">${logoImg(u)}</a><button class="icon-btn" type="button" data-close aria-label="메뉴 닫기">${ico('x')}</button></div>
     <nav class="dm-nav" aria-label="모바일 메뉴">${nav}</nav>
     <div class="dm-cta">
       <a class="btn btn-signal btn-block" href="tel:${SITE.tel}">${ico('phone')}${SITE.phone} 전화 접수</a>
@@ -214,7 +214,7 @@ export function subHero(p, u, { eyebrow, h1, lead, crumbs, aside = '' }) {
         <p class="lead">${lead}</p>
         <div class="sub-hero-cta">
           <a class="btn btn-signal" href="tel:${SITE.tel}">${ico('phone')}${SITE.phone}</a>
-          <button class="btn btn-ghost-light" type="button" data-open="modalQuote">${ico('receipt')}요금 문의</button>
+          <button class="btn btn-line" type="button" data-open="modalQuote">${ico('receipt')}요금 문의</button>
         </div>
       </div>
       ${aside}
