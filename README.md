@@ -27,7 +27,12 @@
 ## 수정 → 반영
 1. 요금·문구는 `src/data.mjs`, 화면 구성은 `src/*.mjs`, 디자인은 `assets/css/style.css`
 2. `build.bat` (또는 `node build.mjs`) — 모든 페이지·JSON-LD·sitemap·robots·llms.txt·RSS가 같이 갱신되고, 깨진 링크·JSON-LD 오류를 검사합니다
-3. 배포 연결 후에는 `publish.bat`
+3. `publish.bat` — 빌드·글 검증 → 커밋 → AI가 올린 글 받기(`git pull --rebase`) → 푸시. 2~3분 뒤 반영됩니다.
+
+## 배포 (GitHub Pages 미리보기)
+- 저장소: https://github.com/zzangusz-art/quickservice-preview (공개 — 무료 계정 Pages는 공개 저장소만 가능하므로 프롬프트·검증 규칙도 공개됩니다)
+- 미리보기 주소: https://zzangusz-art.github.io/quickservice-preview/ — 모든 페이지 noindex, robots.txt `Disallow: /` (검색 노출 안 됨)
+- 이 폴더가 곧 git 저장소입니다(소스만 올리고 `dist/`·`node_modules/`는 제외). AI가 GitHub에서 글을 커밋하므로 로컬에서 고치기 전에 `git pull`로 받아 두면 충돌이 없습니다.
 
 ## 블로그(물류 가이드) 하루 3편 자동 발행
 GitHub Actions가 **매일 09:05 · 13:05 · 18:05(KST)** 에 `_topics.json`의 다음 `todo` 주제로 글 1편씩 쓰고, 검증을 통과하면 `content/blog/`에 커밋해 바로 배포합니다.
