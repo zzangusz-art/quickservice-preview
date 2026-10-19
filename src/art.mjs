@@ -199,7 +199,7 @@ export function consoleMap() {
   const roads = [];
   for (let i = 0; i < 9; i++) roads.push(`<path d="M${-20 + i * 70} -10 L${30 + i * 62} 410"/>`);
   for (let j = 0; j < 7; j++) roads.push(`<path d="M-10 ${20 + j * 64} L620 ${-10 + j * 70}"/>`);
-  return `<svg class="cm-svg" viewBox="0 0 600 400" aria-hidden="true">
+  return `<svg class="cm-svg" viewBox="0 0 600 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
 <rect class="cm-bg" width="600" height="400"/>
 <path class="cm-river" d="M-20 250 C 90 210, 160 300, 270 262 S 450 190, 620 230"/>
 <g class="cm-roads">${roads.join('')}</g>

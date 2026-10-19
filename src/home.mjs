@@ -99,7 +99,7 @@ function hero(u) {
 </section>`;
 }
 
-function sequence() {
+function sequence(u) {
   return `<section class="seq" id="process" aria-labelledby="seqTitle">
   <div class="seq-pin">
     <div class="wrap seq-grid">
@@ -108,25 +108,37 @@ function sequence() {
         <h2 id="seqTitle">접수부터 도착까지,<br>다섯 단계입니다</h2>
         <ol class="seq-steps">${PROCESS.map((s, i) => `
           <li class="seq-step${i ? '' : ' on'}" data-step="${i}">
-            <div class="seq-no">${s.no}</div>
-            <div><h3>${s.title} <span>— ${s.head}</span></h3><p>${s.body}</p></div>
+            <h3><button type="button" class="seq-head"${i ? '' : ' aria-current="step"'}><span class="seq-no">${s.no}</span><span class="seq-h"><strong>${s.title}</strong> <span>— ${s.head}</span></span></button></h3>
+            <p>${s.body}</p>
           </li>`).join('')}
         </ol>
-        <div class="seq-bar" aria-hidden="true"><span id="seqBar"></span></div>
+        <div class="seq-ctrl">
+          <div class="seq-bar" aria-hidden="true">${PROCESS.map(() => '<i><b></b></i>').join('')}</div>
+          <button type="button" class="seq-play" id="seqPlay" aria-label="자동 넘김 일시정지"><span class="seq-ico-pause">${ico('pause', 'ico-s')}</span><span class="seq-ico-play">${ico('play', 'ico-s')}</span><span class="seq-play-t">일시정지</span></button>
+        </div>
       </div>
-      <div class="seq-visual" aria-hidden="true">
-        <div class="console">
-          <div class="cs-top"><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-title">배차 관제 화면 · 흐름 예시</span></div>
-          <div class="cs-map">${consoleMap()}
-            <div class="cs-pin cs-pin-a"><b>출발</b>장안동</div>
-            <div class="cs-pin cs-pin-b"><b>도착</b>가산동</div>
+      <div class="seq-visual">
+        <div class="navi" id="navi" data-route="${u('assets/data/route.json')}" role="img" aria-label="장안동에서 역삼동까지 실제 도로 경로를 따라 이동하는 배송 흐름 예시 지도">
+          <div class="navi-map" id="naviMap"></div>
+          <div class="navi-fallback" aria-hidden="true">${consoleMap()}</div>
+          <div class="navi-top" id="naviTop" aria-hidden="true">
+            <span class="nt-arrow"><svg viewBox="0 0 24 24" id="ntIcon" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></svg></span>
+            <div class="nt-main"><strong id="ntDist">—</strong><span id="ntText">경로 안내를 준비하고 있습니다</span></div>
+            <span class="nt-next" id="ntNext"></span>
           </div>
-          <div class="cs-status">${PROCESS.map((s, i) => `<span class="cs-chip${i ? '' : ' on'}" data-chip="${i}">${s.status}</span>`).join('')}</div>
-          <div class="cs-rows">
-            <div><span>차량</span><strong id="csVeh">확인 중</strong></div>
-            <div><span>예상</span><strong id="csEta">—</strong></div>
-            <div><span>결제</span><strong id="csPay">—</strong></div>
+          <div class="navi-card" id="naviCard" aria-hidden="true">
+            <span class="nc-chip" id="ncChip">접수 완료</span>
+            <strong class="nc-title" id="ncTitle">장안동 → 역삼동</strong>
+            <span class="nc-sub" id="ncSub">상자 3개 · 약 40kg · 지금 바로</span>
+            <div class="nc-veh" id="ncVeh"><span data-v="moto">오토바이</span><span data-v="damas">다마스</span><span data-v="labo">라보</span><span data-v="truck">1톤</span></div>
           </div>
+          <div class="navi-bottom" aria-hidden="true">
+            <div><span>도착 예정</span><strong id="nbEta">—</strong></div>
+            <div><span>남은 시간</span><strong id="nbTime">—</strong></div>
+            <div><span>남은 거리</span><strong id="nbDist">—</strong></div>
+          </div>
+          <span class="navi-tag">흐름 예시</span>
+          <span class="navi-attr">© OpenStreetMap · OpenFreeMap</span>
         </div>
       </div>
     </div>
@@ -391,5 +403,5 @@ export function postCard(p, u) {
 export const catIcon = c => ({ '요금 가이드': 'receipt', '보내는 방법': 'route', '차량·화물': 'truck', '지방·연계배송': 'rail', '기업 물류': 'building' }[c] || 'box');
 
 export function homeBody(u, posts) {
-  return [hero(u), sequence(), services(u), fleet(u), reviews(), pricing(u), compare(u), intercityBand(u), business(), faqSec(u), blogSec(u, posts), ctaBand(u)].join('\n') + serviceDrawers(u);
+  return [hero(u), sequence(u), services(u), fleet(u), reviews(), pricing(u), compare(u), intercityBand(u), business(), faqSec(u), blogSec(u, posts), ctaBand(u)].join('\n') + serviceDrawers(u);
 }

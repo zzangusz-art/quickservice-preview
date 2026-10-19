@@ -234,43 +234,228 @@
     $$('[data-variant]', card).forEach(el => { el.hidden = el.dataset.variant !== v; });
   });
 
-  // ── 스크롤 시퀀스: 접수 5단계 ─────────────────────────
-  const seq = $('.seq');
-  if (seq && !reduce && innerHeight >= 520) {
+  // ── 보내는 과정: 자동으로 천천히 넘어가는 실제 지도 내비 ─────────
+  // 단계별 시간(ms): 접수·차량 결정·배차·운송·도착. 운송 단계에서 실제 도로 경로(assets/data/route.json)를 따라 이동한다.
+  const seq = $('.seq'), navi = $('#navi');
+  if (seq && navi) {
     html.classList.add('js-seq');
-    const steps = $$('.seq-step', seq), chips = $$('.cs-chip', seq), bar = $('#seqBar');
-    const route = $('#cmRoute'), veh = $('#cmVehicle');
-    const L = route.getTotalLength();
-    route.style.strokeDasharray = L; route.style.strokeDashoffset = L;
-    const A = route.getPointAtLength(0), START = { x: 60, y: 210 };
-    const vEl = $('#csVeh'), eEl = $('#csEta'), pEl = $('#csPay');
-    let cur = -1;
-    function render() {
-      const r = seq.getBoundingClientRect();
-      const total = seq.offsetHeight - innerHeight;
-      const p = clamp(-r.top / total);
-      const f = p * 5, step = Math.min(4, Math.floor(f)), sub = clamp(f - step);
-      if (step !== cur) {
-        steps.forEach((s, i) => s.classList.toggle('on', i === step));
-        chips.forEach((c, i) => { c.classList.toggle('on', i === step); c.classList.toggle('done', i < step); });
-        vEl.textContent = step === 0 ? '확인 중' : '다마스';
-        pEl.textContent = step === 4 ? '카드 결제 완료' : step >= 1 ? '카드·계좌·월 정산' : '—';
-        cur = step;
-      }
-      const rp = step < 2 ? 0 : step === 2 ? sub * .06 : step === 3 ? .06 + sub * .94 : 1;
-      route.style.strokeDashoffset = L * (1 - rp);
-      let pt;
-      if (step < 2) pt = START;
-      else if (step === 2 && sub < .7) { const k = sub / .7; pt = { x: START.x + (A.x - START.x) * k, y: START.y + (A.y - START.y) * k }; }
-      else pt = route.getPointAtLength(L * rp);
-      veh.setAttribute('transform', `translate(${pt.x} ${pt.y})`);
-      eEl.textContent = step < 2 ? '—' : step === 2 ? `픽업까지 ${Math.max(1, Math.round(15 * (1 - sub)))}분` : step === 3 ? `도착까지 ${Math.max(1, Math.round(45 * (1 - sub)))}분` : '도착 완료';
-      if (bar) bar.style.width = (p * 100).toFixed(1) + '%';
+    const DUR = [4000, 4000, 5000, 20000, 5000], HOLD = 1500, N = DUR.length;
+    const START_AT = DUR.map((_, i) => DUR.slice(0, i).reduce((a, b) => a + b, 0));
+    const TOTAL = DUR.reduce((a, b) => a + b, 0);
+    const LEAD = 1800, ZOOM = 14.6, PITCH = 55;
+    const DRIVE_PAD = () => ({ top: navi.clientHeight * .38, bottom: 30, left: 0, right: 0 }); // 차를 화면 아래쪽에 두어 앞길이 보이게
+    const MAPLIBRE = 'https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.min';
+    const STYLE = 'https://tiles.openfreemap.org/styles/liberty';
+    const steps = $$('.seq-step', seq), segs = $$('.seq-bar b', seq), playBtn = $('#seqPlay');
+    const byId = id => d.getElementById(id);
+    const ntIcon = byId('ntIcon'), ntDist = byId('ntDist'), ntText = byId('ntText'), ntNext = byId('ntNext');
+    const card = byId('naviCard'), ncChip = byId('ncChip'), ncTitle = byId('ncTitle'), ncSub = byId('ncSub'), ncVeh = byId('ncVeh');
+    const nbEta = byId('nbEta'), nbTime = byId('nbTime'), nbDist = byId('nbDist');
+    const ARROW = {
+      straight: '<path d="M12 21V4M6 10l6-6 6 6"/>',
+      right: '<path d="M7 21v-8a4 4 0 0 1 4-4h9M16 5l4 4-4 4"/>',
+      left: '<path d="M17 21v-8a4 4 0 0 0-4-4H4M8 5L4 9l4 4"/>',
+      'slight right': '<path d="M9 21v-7l8-9M11 5h6v6"/>',
+      'slight left': '<path d="M15 21v-7L7 5M13 5H7v6"/>',
+      'sharp right': '<path d="M7 21V9l10 9M17 11v7h-7"/>',
+      'sharp left': '<path d="M17 21V9L7 18M7 11v7h7"/>',
+      uturn: '<path d="M8 21V9a4 4 0 0 1 8 0v5M12 11l4 4 4-4"/>',
+      arrive: '<path d="M6 21V4M6 4h11l-2.5 4L17 12H6"/>',
+    };
+    const fmtD = m => m < 1000 ? `${Math.max(10, Math.round(m / 10) * 10)}m` : `${(m / 1000).toFixed(1)}km`;
+    const clock = min => new Intl.DateTimeFormat('ko-KR', { hour: 'numeric', minute: '2-digit' }).format(new Date(Date.now() + min * 60000));
+    const ease = x => x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+    // 운송 구간: 앞뒤 15%만 가감속하고 나머지는 같은 속도로 달린다(중간에 급히 빨라지지 않게)
+    const cruise = (x, a = .15) => { const v = 1 / (1 - a); return x < a ? .5 * v / a * x * x : x > 1 - a ? 1 - .5 * v / a * (1 - x) * (1 - x) : .5 * v * a + v * (x - a); };
+    const toRad = Math.PI / 180;
+    const bearing = (a, b) => { const y = Math.sin((b[0] - a[0]) * toRad) * Math.cos(b[1] * toRad), x = Math.cos(a[1] * toRad) * Math.sin(b[1] * toRad) - Math.sin(a[1] * toRad) * Math.cos(b[1] * toRad) * Math.cos((b[0] - a[0]) * toRad); return (Math.atan2(y, x) / toRad + 360) % 360; };
+    const turnBy = (from, to) => ((to - from + 540) % 360) - 180;
+
+    let R = null, map = null, mapReady = false, carMk = null, carEl = null;
+    let t = 0, cur = -1, camB = 0, following = false;
+    let playing = !reduce, hovering = false, visible = false, raf = 0, last = 0;
+
+    function posAt(dist) {
+      const c = R.cum, xs = R.coords, n = c.length - 1;
+      if (dist <= 0) return { p: xs[0], i: 0 };
+      if (dist >= c[n]) return { p: xs[n], i: n - 1 };
+      let lo = 0, hi = n;
+      while (hi - lo > 1) { const m = (lo + hi) >> 1; if (c[m] <= dist) lo = m; else hi = m; }
+      const k = (dist - c[lo]) / (c[hi] - c[lo] || 1);
+      return { p: [xs[lo][0] + (xs[hi][0] - xs[lo][0]) * k, xs[lo][1] + (xs[hi][1] - xs[lo][1]) * k], i: lo };
     }
-    let tk = false;
-    addEventListener('scroll', () => { if (!tk) { tk = true; requestAnimationFrame(() => { render(); tk = false; }); } }, { passive: true });
-    addEventListener('resize', render);
-    render();
+    const headAt = dist => bearing(posAt(Math.max(0, dist - 20)).p, posAt(dist + 220).p);
+    const line = cs => ({ type: 'Feature', geometry: { type: 'LineString', coordinates: cs.length > 1 ? cs : [R.coords[0], R.coords[0]] } });
+    // 경로선은 한 번만 넣고, 지나온 구간(회색)·남은 구간(파랑)의 경계만 line-progress 로 바꾼다
+    let lastF = -1;
+    const grad = (f, a, b) => f <= 0 ? b : f >= 1 ? a : ['step', ['line-progress'], a, f, b];
+    function setRoute(dist) {
+      if (!mapReady) return;
+      const f = Math.round(Math.max(0, Math.min(1, dist / R.cum[R.cum.length - 1])) * 4000) / 4000;
+      if (f === lastF) return; lastF = f;
+      map.setPaintProperty('route-casing', 'line-gradient', grad(f, '#7D8FA3', '#0A5BA8'));
+      map.setPaintProperty('route-line', 'line-gradient', grad(f, '#B4C3D2', '#1FA3E0'));
+    }
+    function setCar(p, deg, show = true) {
+      if (!carMk) return;
+      carEl.style.visibility = show ? 'visible' : 'hidden';
+      carMk.setLngLat(p).setRotation(deg);
+    }
+    function overview(dur) {
+      if (!mapReady) return;
+      following = false;
+      const xs = R.coords.map(c => c[0]), ys = R.coords.map(c => c[1]);
+      map.setPadding({ top: 0, right: 0, bottom: 0, left: 0 });
+      const H = navi.clientHeight, small = navi.clientWidth < 480;
+      const bottom = Math.min(H * .62, H - card.offsetTop + 14);  // 단계 카드 위쪽에만 경로가 오도록
+      map.fitBounds([[Math.min(...xs), Math.min(...ys)], [Math.max(...xs), Math.max(...ys)]], { padding: { top: 86, bottom, left: small ? 34 : 50, right: small ? 34 : 50 }, bearing: 0, pitch: 0, duration: reduce ? 0 : dur });
+    }
+
+    const CARDS = () => [
+      { chip: '접수 완료', title: `${R ? R.from.name : '장안동'} → ${R ? R.to.name : '역삼동'}`, sub: '상자 3개 · 약 40kg · 지금 바로', veh: false },
+      { chip: '차량 확정', title: '다마스로 배차합니다', sub: '오토바이 기준(25kg)을 넘어 350kg 미만 다마스로', veh: true },
+      { chip: '배차 완료', title: '가까운 기사를 배정했습니다', sub: '픽업까지 8분', veh: false },
+      null,
+      { chip: '배송 완료', title: '받는 분께 전달했습니다', sub: '카드 결제 완료 · 세금계산서 발행 가능', veh: false, done: true },
+    ];
+    function enterStep(s) {
+      cur = s;
+      steps.forEach((el, i) => { el.classList.toggle('on', i === s); const b = $('.seq-head', el); if (i === s) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); });
+      navi.classList.toggle('driving', s === 3);
+      const c = CARDS()[s];
+      if (c) {
+        ncChip.textContent = c.chip; ncChip.classList.toggle('done', !!c.done);
+        ncTitle.textContent = c.title; ncSub.textContent = c.sub;
+        ncVeh.classList.toggle('show', c.veh);
+        card.classList.remove('swap'); void card.offsetWidth; card.classList.add('swap');
+      }
+      if (!R) return;
+      if (s === 3) {
+        following = false;
+        if (mapReady) map.easeTo({ center: R.coords[0], zoom: ZOOM, pitch: PITCH, bearing: headAt(0), padding: DRIVE_PAD(), duration: reduce ? 0 : LEAD - 100 });
+        camB = headAt(0);
+        setTimeout(() => { if (cur === 3) following = true; }, reduce ? 0 : LEAD);
+      } else overview(s === 0 ? 900 : 1400);
+    }
+
+    function frame(s, ts, sub) {
+      if (!R) return;
+      const total = R.cum[R.cum.length - 1];
+      if (s === 1) ncVeh.querySelectorAll('span').forEach(x => x.classList.toggle('on', x.dataset.v === 'damas' && sub > .35));
+      if (s < 3) {
+        nbDist.textContent = fmtD(total); nbTime.textContent = `약 ${Math.round(R.duration / 60)}분`; nbEta.textContent = s === 2 ? clock(8 + R.duration / 60) : '—';
+        setRoute(0);
+        if (s === 2) {
+          const k = ease(Math.min(1, sub / .8)), back = 650 * (1 - k);  // 경로 시작점 쪽에서 기사가 다가오는 모습(예시)
+          const { p } = posAt(back);
+          setCar(p, (headAt(back) + 180) % 360);
+          ncSub.textContent = k < 1 ? `픽업까지 ${Math.max(1, Math.ceil(8 * (1 - k)))}분` : '기사가 출발지에 도착했습니다';
+        } else setCar(R.coords[0], 0, false);
+        return;
+      }
+      if (s === 3) {
+        const prog = cruise(Math.max(0, Math.min(1, (ts - LEAD) / (DUR[3] - LEAD - 500))));
+        const dist = prog * total;
+        const { p } = posAt(dist), head = headAt(dist);
+        setRoute(dist);
+        setCar(p, head);
+        const nx = R.steps.findIndex(st => st.at > dist + 8);
+        const st = R.steps[nx] || R.steps[R.steps.length - 1];
+        const icon = ARROW[st.icon] || ARROW.straight;
+        if (ntIcon.dataset.k !== st.icon) { ntIcon.innerHTML = icon; ntIcon.dataset.k = st.icon; }
+        ntDist.textContent = fmtD(Math.max(0, st.at - dist));
+        ntText.textContent = st.text;
+        const nn = R.steps[nx + 1];
+        ntNext.textContent = nn ? `다음 ${nn.text}` : '';
+        const remain = total - dist, mins = Math.max(0, Math.ceil(R.duration / 60 * remain / total));
+        nbDist.textContent = remain < 5 ? '0m' : fmtD(remain); nbTime.textContent = mins ? `${mins}분` : '도착'; nbEta.textContent = clock(mins);
+        if (following && mapReady) { camB += turnBy(camB, head) * .06; map.jumpTo({ center: p, bearing: camB, zoom: ZOOM, pitch: PITCH, padding: DRIVE_PAD() }); }
+        return;
+      }
+      setRoute(0); setCar(R.coords[R.coords.length - 1], headAt(total));  // 도착 후에는 다녀온 경로 전체를 파랑으로
+      nbDist.textContent = '0m'; nbTime.textContent = '도착'; nbEta.textContent = '배송 완료';
+    }
+
+    function render() {
+      const tt = Math.min(t, TOTAL - 1);
+      let s = 0; while (s < N - 1 && tt >= START_AT[s + 1]) s++;
+      const ts = tt - START_AT[s], sub = Math.min(1, ts / DUR[s]);
+      if (s !== cur) enterStep(s);
+      segs.forEach((b, i) => { b.style.width = (i < s ? 100 : i === s ? sub * 100 : 0) + '%'; });
+      frame(s, ts, sub);
+    }
+    function tick(now) {
+      const dt = last ? Math.min(100, now - last) : 0; last = now;
+      t += dt; if (t >= TOTAL + HOLD) { t = 0; cur = -1; }
+      render(); raf = requestAnimationFrame(tick);
+    }
+    function sync() {
+      cancelAnimationFrame(raf); last = 0;
+      if (playing && visible && !hovering && !d.hidden) raf = requestAnimationFrame(tick);
+    }
+    function setPlaying(v) {
+      playing = v;
+      playBtn.classList.toggle('paused', !v);
+      $('.seq-play-t', playBtn).textContent = v ? '일시정지' : '자동 재생';
+      playBtn.setAttribute('aria-label', v ? '자동 넘김 일시정지' : '자동 넘김 다시 시작');
+      sync();
+    }
+    playBtn.addEventListener('click', () => setPlaying(!playing));
+    steps.forEach((el, i) => $('.seq-head', el).addEventListener('click', () => {
+      t = START_AT[i] + (i === 3 ? LEAD + (DUR[3] - LEAD) * .3 : DUR[i] * .55);
+      cur = -1; render();
+      if (i === 3 && mapReady) { following = true; }
+    }));
+    const list = $('.seq-steps', seq);
+    if (matchMedia('(hover: hover)').matches) {
+      list.addEventListener('mouseenter', () => { hovering = true; sync(); });
+      list.addEventListener('mouseleave', () => { hovering = false; sync(); });
+    }
+    seq.addEventListener('focusin', e => { if (e.target.closest('.seq-head')) { hovering = true; sync(); } });
+    seq.addEventListener('focusout', () => { hovering = false; sync(); });
+    d.addEventListener('visibilitychange', sync);
+    new IntersectionObserver(es => es.forEach(en => { visible = en.isIntersecting; sync(); }), { threshold: .3 }).observe(navi);
+    if (!playing) setPlaying(false);
+
+    // 경로 데이터 → 지도(화면 근처에 왔을 때만 불러온다)
+    fetch(navi.dataset.route).then(r => r.json()).then(data => { R = data; cur = -1; render(); }).catch(() => {});
+    function initMap() {
+      if (!window.maplibregl || !R) return;
+      try {
+        map = new maplibregl.Map({
+          container: 'naviMap', style: STYLE, interactive: false, attributionControl: false, fadeDuration: 0,
+          center: R.coords[0], zoom: 12, localIdeographFontFamily: "'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif",
+        });
+      } catch (e) { return; }
+      map.on('load', () => {
+        for (const l of map.getStyle().layers) {
+          if (l.type === 'symbol' && l.layout && l.layout['text-field']) map.setLayoutProperty(l.id, 'text-field', ['coalesce', ['get', 'name:ko'], ['get', 'name']]);
+        }
+        const lay = { 'line-join': 'round', 'line-cap': 'round' };
+        const w = (a, b) => ['interpolate', ['linear'], ['zoom'], 11, a, 16, b];
+        map.addSource('route', { type: 'geojson', data: line(R.coords), lineMetrics: true });
+        map.addLayer({ id: 'route-casing', type: 'line', source: 'route', layout: lay, paint: { 'line-gradient': grad(0, '#7D8FA3', '#0A5BA8'), 'line-width': w(7, 16) } });
+        map.addLayer({ id: 'route-line', type: 'line', source: 'route', layout: lay, paint: { 'line-gradient': grad(0, '#B4C3D2', '#1FA3E0'), 'line-width': w(4, 10) } });
+        const pin = (cls, label) => { const e = d.createElement('div'); e.className = 'nv-pin ' + cls; e.innerHTML = `<b>${label}</b><i></i>`; return e; };
+        new maplibregl.Marker({ element: pin('from', `출발 ${R.from.name}`), anchor: 'bottom' }).setLngLat(R.coords[0]).addTo(map);
+        new maplibregl.Marker({ element: pin('to', `도착 ${R.to.name}`), anchor: 'bottom' }).setLngLat(R.coords[R.coords.length - 1]).addTo(map);
+        carEl = d.createElement('div'); carEl.className = 'nv-car';
+        carEl.innerHTML = '<svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="#1FA3E0" stroke="#fff" stroke-width="3"/><path d="M15 6.5l6.5 14-6.5-3.6-6.5 3.6z" fill="#fff"/></svg>';
+        carMk = new maplibregl.Marker({ element: carEl, rotationAlignment: 'map', pitchAlignment: 'map' }).setLngLat(R.coords[0]).addTo(map);
+        mapReady = true; navi.classList.add('ready');
+        cur = -1; render();
+        if (cur === 3) following = true;
+      });
+    }
+    let mapAsked = false;
+    new IntersectionObserver((es, ob) => {
+      if (!es.some(en => en.isIntersecting) || mapAsked) return;
+      mapAsked = true; ob.disconnect();
+      const css = d.createElement('link'); css.rel = 'stylesheet'; css.href = MAPLIBRE + '.css'; d.head.appendChild(css);
+      const js = d.createElement('script'); js.src = MAPLIBRE + '.js'; js.async = true;
+      js.onload = () => { const wait = () => R ? initMap() : setTimeout(wait, 100); wait(); };
+      d.head.appendChild(js);
+    }, { rootMargin: '600px 0px' }).observe(navi);
   }
 
   // ── 차량 가로 시퀀스 ─────────────────────────────────
