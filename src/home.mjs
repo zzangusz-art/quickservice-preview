@@ -8,14 +8,31 @@ const svcIcon = { motorcycle: 'moto', 'damas-labo': 'van', truck: 'truck', inter
 
 function hero(u) {
   const [hw, hh] = webpSize('assets/img/photo/hero-ride.webp');
-  return `<section class="hero" id="top">
-  <div class="wrap hero-in">
-    <div class="hero-copy">
-      <img class="hero-logo" src="${u('assets/img/brand/logo.webp')}" alt="퀵서비스다 QUICKEY SERVICE — 최고보다 최선을 다하는 기업" width="698" height="296" fetchpriority="high">
-      <p class="eyebrow"><span class="live-dot" aria-hidden="true"></span>지금도 접수 중 · 24시간 365일</p>
-      <h1 class="hero-h1"><span class="sr-only">퀵서비스다 — 서울·경기·인천 퀵서비스와 전국 화물운송. </span><span class="h1-line">지금 접수하면,</span><span class="h1-line h1-accent"><span class="speed" aria-hidden="true"></span>바로 출발합니다.</span></h1>
-      <p class="hero-lead">출발지와 도착지만 알려 주세요. 가장 가까운 기사를 바로 배차하고, 오토바이는 <strong>보통 5~20분 안에</strong> 물건을 받으러 갑니다. 지방은 KTX·고속버스·항공으로 그날 도착합니다.</p>
-      <form class="qbook" id="quickBook" novalidate aria-label="빠른 접수">
+  return `<section class="hero" id="top" aria-labelledby="heroTitle">
+  <div class="wrap">
+    <div class="bento" id="bento">
+      <div class="bt bt-copy" style="--i:0">
+        <img class="hero-logo" src="${u('assets/img/brand/logo.webp')}" alt="퀵서비스다 QUICKEY SERVICE — 최고보다 최선을 다하는 기업" width="698" height="296" fetchpriority="high">
+        <p class="eyebrow">서울·인천·경기 퀵서비스 · 전국 화물운송</p>
+        <h1 class="hero-h1" id="heroTitle"><span class="sr-only">퀵서비스다 — 서울·경기·인천 퀵서비스와 전국 화물운송. </span><span class="h1-line">지금 접수하면,</span><span class="h1-line h1-accent"><span class="speed" aria-hidden="true"></span>바로 출발합니다.</span></h1>
+        <p class="hero-lead">출발지와 도착지만 알려 주세요. 가장 가까운 기사를 바로 배차하고, 오토바이는 <strong>보통 5~20분 안에</strong> 물건을 받으러 갑니다.</p>
+      </div>
+
+      <div class="bt bt-photo" style="--i:1">
+        <picture>
+          <source media="(max-width: 640px)" srcset="${u('assets/img/photo/hero-ride-m.webp')}">
+          <img src="${u('assets/img/photo/hero-ride.webp')}" alt="도로를 빠르게 달리는 오토바이" width="${hw}" height="${hh}" fetchpriority="high" decoding="async">
+        </picture>
+        <div class="hv-lines" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <ol class="bt-steps" aria-label="접수에서 출발까지(예시)">
+          <li style="--s:0"><span class="hv-ico">${ico('check')}</span><div><strong>접수 완료</strong><small>전화·카카오톡·온라인</small></div></li>
+          <li style="--s:1"><span class="hv-ico">${ico('route')}</span><div><strong>가까운 기사 배차</strong><small>GPS 관제로 출발지 근처</small></div></li>
+          <li style="--s:2"><span class="hv-ico">${ico('clock')}</span><div><strong>픽업 출발</strong><small>오토바이 보통 5~20분</small></div></li>
+        </ol>
+        <span class="hv-tag">접수 흐름 예시</span>
+      </div>
+
+      <form class="bt bt-book qbook" id="quickBook" novalidate aria-label="빠른 접수" style="--i:2">
         <div class="qb-top">
           <span class="qb-title">${ico('route')}빠른 접수</span>
           <div class="qb-when" role="radiogroup" aria-label="보낼 시간">
@@ -36,33 +53,48 @@ function hero(u) {
           </select>
           <button class="btn btn-sky" type="submit">접수하기${ico('arrow')}</button>
         </div>
-        <p class="qb-note"><span>${ico('check', 'ico-s')}가까운 기사 바로 배차</span><span>${ico('check', 'ico-s')}확정 요금 먼저 안내</span><span>${ico('check', 'ico-s')}${SITE.vat}</span></p>
+        <p class="qb-note"><span>${ico('check', 'ico-s')}가까운 기사 바로 배차</span><span>${ico('check', 'ico-s')}확정 요금 먼저 안내</span></p>
       </form>
-      <div class="hero-cta">
-        <a class="btn btn-signal btn-lg" href="tel:${SITE.tel}" data-track="tel">${ico('phone')}<span>${SITE.phone}</span></a>
-        <a class="btn btn-line btn-lg" href="${SITE.kakaoChat}" target="_blank" rel="noopener">${ico('chat')}카카오톡 접수</a>
-        <a class="btn btn-text" href="${SITE.order}" target="_blank" rel="noopener">${ico('online')}온라인 접수</a>
+
+      <div class="bt bt-pickup" style="--i:3">
+        <span class="bt-k">${ico('clock', 'ico-s')}오토바이 픽업</span>
+        <strong class="bt-big">5~20<small>분</small></strong>
+        <span class="bt-s">배차 후 물건을 받으러 가는 시간(보통). 근거리 도착은 30~50분.</span>
       </div>
-    </div>
-    <div class="hero-visual">
-      <div class="hv-frame">
-        <picture>
-          <source media="(max-width: 640px)" srcset="${u('assets/img/photo/hero-ride-m.webp')}">
-          <img src="${u('assets/img/photo/hero-ride.webp')}" alt="도로를 빠르게 달리는 오토바이" width="${hw}" height="${hh}" fetchpriority="high" decoding="async">
-        </picture>
-        <div class="hv-lines" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-        <span class="hv-tag">접수 흐름 예시</span>
+
+      <div class="bt bt-live" style="--i:4">
+        <span class="bt-k"><span class="live-dot" aria-hidden="true"></span>지금도 접수 중</span>
+        <strong class="bt-big">24<small>시간</small></strong>
+        <span class="bt-s">365일, 새벽과 주말에도 접수합니다. 평일 18시·주말 16시 이후 할증.</span>
       </div>
-      <div class="hv-card hv-1"><span class="hv-ico">${ico('check')}</span><div><strong>접수 완료</strong><small>전화·카카오톡·온라인 24시간</small></div></div>
-      <div class="hv-card hv-2"><span class="hv-ico">${ico('route')}</span><div><strong>가까운 기사 배차</strong><small>GPS 관제로 출발지 근처 차량</small></div></div>
-      <div class="hv-card hv-3"><span class="hv-ico">${ico('clock')}</span><div><strong>픽업까지 <b>5~20분</b></strong><small>오토바이 기준, 보통</small></div></div>
+
+      <div class="bt bt-call" style="--i:5">
+        <span class="bt-k">${ico('phone', 'ico-s')}전화 한 통이면 접수 끝</span>
+        <a class="bt-tel" href="tel:${SITE.tel}" data-track="tel">${SITE.phone}</a>
+        <span class="bt-alt"><a href="${SITE.kakaoChat}" target="_blank" rel="noopener">${ico('chat', 'ico-s')}카카오톡</a><a href="${SITE.order}" target="_blank" rel="noopener">${ico('online', 'ico-s')}온라인 접수</a></span>
+      </div>
+
+      <a class="bt bt-fare" href="${u('pricing/')}" style="--i:6">
+        <span class="bt-k">${ico('receipt', 'ico-s')}오토바이 퀵 시작 요금</span>
+        <strong class="bt-big"><span data-count="8000">8,000</span><small>원~</small></strong>
+        <span class="bt-s">다마스 20,000원~ · 1톤 40,000원~<br>${SITE.vat}</span>
+        <span class="bt-go" aria-hidden="true">${ico('arrow')}</span>
+      </a>
+
+      <a class="bt bt-media bt-fleet" href="#fleet" style="--i:7">
+        <div class="bt-pic photo-plate">${photo(u, 'truck-scooter.webp', '화물 탑차와 오토바이', { lazy: false })}</div>
+        <span class="bt-k">보유 차종</span>
+        <strong class="bt-mid">오토바이부터 <span data-count="25">25</span>톤까지</strong>
+        <span class="bt-go" aria-hidden="true">${ico('arrow')}</span>
+      </a>
+
+      <a class="bt bt-media bt-city" href="${u('services/intercity/')}" style="--i:8">
+        <div class="bt-pic photo-plate">${photo(u, 'ktx.webp', 'KTX 고속열차', { lazy: false })}</div>
+        <span class="bt-k">지방 당일 배송</span>
+        <strong class="bt-mid">최대 4시간, 오늘 도착</strong>
+        <span class="bt-go" aria-hidden="true">${ico('arrow')}</span>
+      </a>
     </div>
-  </div>
-  <div class="hero-stats wrap" role="list">
-    <div role="listitem"><strong>24<small>시간</small></strong><span>365일 접수·배차</span></div>
-    <div role="listitem"><strong><span data-count="20">20</span><small>분 이내</small></strong><span>오토바이 픽업(보통 5~20분)</span></div>
-    <div role="listitem"><strong>최대 4<small>시간</small></strong><span>항공 연계 지방 당일 배송</span></div>
-    <div role="listitem"><strong><span data-count="25">25</span><small>톤</small></strong><span>오토바이부터 전 차종</span></div>
   </div>
 </section>`;
 }

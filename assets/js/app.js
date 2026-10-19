@@ -204,6 +204,18 @@
     toast('출발·도착을 옮겨 적었습니다. 무게만 고르면 접수 글이 완성됩니다', 'ok', 3200);
   });
 
+  // ── 히어로 벤토: 타일 위에서 마우스를 따라오는 스포트라이트 ─────
+  const bento = $('#bento');
+  if (bento && !reduce && matchMedia('(hover: hover)').matches) {
+    bento.addEventListener('pointermove', e => {
+      const t = e.target.closest('.bt');
+      if (!t) return;
+      const r = t.getBoundingClientRect();
+      t.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      t.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    }, { passive: true });
+  }
+
   // ── 사진 썸네일: 로딩 중엔 스켈레톤, 다 받으면 보이기 ─────────
   function watchImgs(root = d) {
     $$('.pc-cover img', root).forEach(img => {
