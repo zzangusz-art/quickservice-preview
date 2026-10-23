@@ -31,7 +31,7 @@ export const SITE = {
   mailOrder: '통신판매업 신고 제A17-211007-0264호',
   hours: '24시간 · 365일 접수',
   area: '서울·인천·경기 전 지역, 지방은 KTX·고속버스·항공 연계와 화물차로 전국(일부 도서 지역 제외)',
-  kakaoChat: 'http://pf.kakao.com/_xkHCqb/chat',
+  kakaoChat: 'https://pf.kakao.com/_xkHCqb/chat',
   kakaoHome: 'https://pf.kakao.com/_xkHCqb',
   order: 'https://1661-7462.com/main/order_register_m.html?price=on',
   daangn: 'https://www.daangn.com/kr/local-profile/1661-7462-5iys719cqyib/',

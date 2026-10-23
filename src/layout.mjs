@@ -16,7 +16,7 @@ export function head(p, u) {
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${esc(p.title)}</title>
 <meta name="description" content="${esc(p.description)}">
-<link rel="canonical" href="${p.url}">
+${p.noCanonical ? '' : `<link rel="canonical" href="${p.url}">`}
 <meta name="robots" content="${robots}">
 <meta name="theme-color" content="#1FA3E0">
 <meta name="format-detection" content="telephone=no">
@@ -40,7 +40,9 @@ ${SITE.naverVerification ? `<meta name="naver-site-verification" content="${SITE
 <link rel="alternate" type="application/rss+xml" title="${SITE.name} 물류 가이드" href="${SITE.url}blog/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;800&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;800&display=swap"></noscript>
 <link rel="stylesheet" href="${u('assets/css/style.css')}?v=${p.v}">
 ${jsonld(p.schema)}
 </head>`;
@@ -62,7 +64,7 @@ ${sprite()}
     <nav class="gnb" aria-label="주 메뉴"><ul>${navItems}</ul></nav>
     <div class="hd-cta">
       <a class="btn btn-ghost btn-sm hd-order" href="${SITE.order}" target="_blank" rel="noopener">${ico('online')}온라인 접수</a>
-      <a class="btn btn-signal btn-sm hd-tel" href="tel:${SITE.tel}" data-track="tel">${ico('phone')}<span>${SITE.phone}</span></a>
+      <a class="btn btn-signal btn-sm hd-tel" href="tel:${SITE.tel}" data-track="tel" aria-label="전화 ${SITE.phone}">${ico('phone')}<span>${SITE.phone}</span></a>
       <button class="hd-menu" type="button" aria-label="메뉴 열기" aria-controls="drawerMenu" data-open="drawerMenu">${ico('menu')}</button>
     </div>
   </div>

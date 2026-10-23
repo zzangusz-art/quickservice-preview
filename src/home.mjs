@@ -277,7 +277,7 @@ function pricing(u) {
         <h3 class="h-sub">요금을 줄이는 네 가지 방법</h3>
         <ol class="tips">${SAVE_TIPS.map((t, i) => `<li class="reveal" style="--d:${i * 70}ms"><span class="tip-no">${i + 1}</span><div><strong>${t.t}</strong><p>${t.d}</p></div></li>`).join('')}</ol>
         <div class="via" aria-label="경유와 각각 편도 비교">
-          <div class="via-tabs" role="tablist">
+          <div class="via-tabs" role="tablist" aria-label="두 곳 보내는 방식">
             <button role="tab" type="button" aria-selected="true" aria-controls="via1" id="viaT1">경유</button>
             <button role="tab" type="button" aria-selected="false" aria-controls="via2" id="viaT2" tabindex="-1">각각 편도</button>
           </div>
@@ -334,8 +334,8 @@ function intercityBand(u) {
       <p class="eyebrow">지방 당일 배송</p>
       <h2 id="icTitle">부산·광주·제주도<br>오늘 안에 받습니다</h2>
       <p class="sec-lead">작은 짐 하나를 지방으로 보내려고 화물차를 통째로 부를 필요는 없습니다. 기사가 문 앞에서 받아 KTX·고속버스·항공에 싣고, 도착지 협약 업체가 받는 분 주소까지 전합니다.</p>
-      <div class="ic-tabs" role="tablist" aria-label="연계 수단">${INTERCITY.map((m, i) => `<button role="tab" type="button" data-mode="${m.id}" aria-selected="${i ? 'false' : 'true'}"${i ? ' tabindex="-1"' : ''}>${ico(m.id === 'ktx' ? 'rail' : m.id === 'bus' ? 'bus' : 'plane')}${m.short}</button>`).join('')}</div>
-      ${INTERCITY.map((m, i) => `<div class="ic-panel" data-panel="${m.id}"${i ? ' hidden' : ''}>
+      <div class="ic-tabs" role="tablist" aria-label="연계 수단">${INTERCITY.map((m, i) => `<button role="tab" type="button" id="ict-${m.id}" aria-controls="icp-${m.id}" data-mode="${m.id}" aria-selected="${i ? 'false' : 'true'}"${i ? ' tabindex="-1"' : ''}>${ico(m.id === 'ktx' ? 'rail' : m.id === 'bus' ? 'bus' : 'plane')}${m.short}</button>`).join('')}</div>
+      ${INTERCITY.map((m, i) => `<div class="ic-panel" role="tabpanel" id="icp-${m.id}" aria-labelledby="ict-${m.id}" data-panel="${m.id}"${i ? ' hidden' : ''}>
         <div class="ic-photo photo-plate">${photo(u, m.photo, m.short)}</div>
         <dl class="ic-dl"><div><dt>도착</dt><dd>최대 ${m.hours}시간 이내</dd></div><div><dt>시작 요금</dt><dd>${won(m.from)}~</dd></div><div><dt>구간</dt><dd>${m.routes}</dd></div></dl>
         <p class="muted">접수 때 확인: ${m.check}</p>

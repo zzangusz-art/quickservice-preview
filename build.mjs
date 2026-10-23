@@ -130,7 +130,10 @@ for (const it of info) {
 for (const [id, name, render] of [['privacy', '개인정보처리방침', P.privacyBody], ['terms', '이용약관(이륜차 퀵서비스)', P.termsBody]]) {
   const out = `${id}/index.html`, url = pageUrl(out);
   const raw = fs.readFileSync(path.join(ROOT, `content/legal/${id}.txt`), 'utf8');
-  emit({ out, pri: '0.2', title: `${name} | 퀵서비스다`, description: `퀵서비스다 ${name}입니다.`, schema: S.graph(S.website(), S.webpage({ url, title: name, description: `퀵서비스다 ${name}` })), body: u => render(u, raw) });
+  const desc = id === 'privacy'
+    ? '퀵서비스다가 퀵서비스·화물운송 접수와 배송 과정에서 처리하는 개인정보의 항목, 처리 목적, 보유 기간, 파기 절차와 이용자의 권리를 안내합니다.'
+    : '퀵서비스다 이륜차(오토바이) 퀵서비스 이용약관입니다. 운송 접수와 요금, 화물 사고 때의 손해배상 기준 등 이용자와 회사의 권리·의무를 정합니다.';
+  emit({ out, pri: '0.2', title: `${name} | 퀵서비스다`, description: desc, schema: S.graph(S.website(), S.webpage({ url, title: name, description: desc })), body: u => render(u, raw) });
 }
 
 // ── 블로그 ──
@@ -160,7 +163,7 @@ for (const p of posts) {
 // ── 404 (어느 경로에서나 열리므로 절대 주소) ──
 {
   const abs = to => /^(https?:|tel:|mailto:|#)/.test(to) ? to : SITE.url + to.replace(/^\//, '');
-  const html = page({ title: '페이지를 찾을 수 없습니다 | 퀵서비스다', description: '요청한 페이지가 없습니다.', url: SITE.url + '404.html', schema: S.graph(S.website()), v: V, noindex: true }, abs, P.notFound(abs));
+  const html = page({ title: '페이지를 찾을 수 없습니다 | 퀵서비스다', description: '요청한 페이지를 찾을 수 없습니다. 주소를 다시 확인하거나 홈, 요금 안내, 자주 묻는 질문에서 필요한 정보를 찾아보세요.', url: SITE.url + '404.html', noCanonical: true, schema: S.graph(S.website()), v: V, noindex: true }, abs, P.notFound(abs));
   write('404.html', html);
 }
 

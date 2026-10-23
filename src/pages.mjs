@@ -20,7 +20,7 @@ function otherServices(u, cur) {
   <div class="svc-grid svc-grid-3">${SERVICES.filter(s => s.id !== cur).map(s => `<a class="svc svc-link" href="${u(s.slug)}"><div class="svc-ico">${ico({ motorcycle: 'moto', 'damas-labo': 'van', truck: 'truck', intercity: 'rail' }[s.id])}</div><h3>${s.name}</h3><p>${s.card}</p><p class="svc-price"><span>시작 요금</span><strong>${won(s.from)}~</strong></p></a>`).join('')}</div></div></section>`;
 }
 const faqBlock = (id, title = '자주 묻는 질문') => `<section class="sec" id="faq"><div class="wrap faq-grid"><div class="sec-hd sec-hd-left"><p class="eyebrow">FAQ</p><h2>${title}</h2><p class="sec-lead">24시간 ${SITE.phone}로 물어보셔도 됩니다.</p></div><div>${faqList(faqFor(id), { id: 'faq-' + id })}</div></div></section>`;
-const plate = (u, file, alt, cls = 'spec-photo') => `<div class="${cls} photo-plate">${photo(u, file, alt)}</div>`;
+const plate = (u, file, alt, cls = 'spec-photo', priority = false) => `<div class="${cls} photo-plate">${photo(u, file, alt, { priority })}</div>`;
 const specCard = (art, rows) => `<aside class="spec-card">${art}<dl>${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl></aside>`;
 const fareRuleList = () => `<ul class="ticks">${FARE_RULES.surchargeWhen.map(s => `<li><strong>${s.k}</strong><span>${s.v}</span></li>`).join('')}</ul>`;
 
@@ -29,7 +29,7 @@ export function motorcycle(u, posts) {
   const s = SERVICES.find(x => x.id === 'motorcycle');
   return [
     subHero({}, u, { eyebrow: '오토바이 퀵서비스', h1: '오토바이 퀵, 서류부터 25kg 소형 물품까지', lead: s.lead, crumbs: crumbsSvc(s),
-      aside: specCard(plate(u, 'rider.webp', '배송 상자를 싣고 달리는 오토바이'), [['시작 요금', '8,000원~'], ['최대 무게', '25kg'], ['크기', '세 변 합 150cm 이내'], ['픽업', '보통 5~20분']]) }),
+      aside: specCard(plate(u, 'rider.webp', '배송 상자를 싣고 달리는 오토바이', 'spec-photo', true), [['시작 요금', '8,000원~'], ['최대 무게', '25kg'], ['크기', '세 변 합 150cm 이내'], ['픽업', '보통 5~20분']]) }),
     `<section class="sec"><div class="wrap prose-grid">
       <div class="prose">
         <h2 id="size">오토바이로 보낼 수 있는 물건은 어디까지인가요?</h2>
@@ -72,7 +72,7 @@ export function damasLabo(u, posts) {
   const [, d, l] = SMALL_VEHICLES;
   return [
     subHero({}, u, { eyebrow: '다마스·라보 퀵', h1: '오토바이에 안 실리는 짐은 다마스·라보로', lead: s.lead, crumbs: crumbsSvc(s),
-      aside: specCard(`<div class="spec-photo-pair"><div class="photo-plate">${photo(u, 'opt-damas.webp', '다마스')}</div><div class="photo-plate">${photo(u, 'opt-labo.webp', '라보')}</div></div>`, [['다마스', '350kg 미만 · 20,000원~'], ['라보', '450kg 미만'], ['접수', '24시간'], ['취소(도착 후)', '5,000원']]) }),
+      aside: specCard(`<div class="spec-photo-pair"><div class="photo-plate">${photo(u, 'opt-damas.webp', '다마스', { priority: true })}</div><div class="photo-plate">${photo(u, 'opt-labo.webp', '라보', { priority: true })}</div></div>`, [['다마스', '350kg 미만 · 20,000원~'], ['라보', '450kg 미만'], ['접수', '24시간'], ['취소(도착 후)', '5,000원']]) }),
     `<section class="sec"><div class="wrap prose-grid">
       <div class="prose">
         <h2 id="diff">다마스와 라보, 무엇이 다른가요?</h2>
@@ -110,7 +110,7 @@ export function truck(u, posts) {
   const s = SERVICES.find(x => x.id === 'truck');
   return [
     subHero({}, u, { eyebrow: '화물운송 1톤~25톤', h1: '1톤 용달부터 25톤, 특수 화물까지 한 번에 배차', lead: s.lead, crumbs: crumbsSvc(s),
-      aside: specCard(plate(u, 'small-truck.webp', '퀵서비스다 로고가 들어간 화물 탑차'), [['1톤 용달', '40,000원~'], ['차종', '1톤~25톤, 츄레라'], ['적재함', '카고·윙바디·탑차·냉동'], ['지역', '전국·제주']]) }),
+      aside: specCard(plate(u, 'small-truck.webp', '퀵서비스다 로고가 들어간 화물 탑차', 'spec-photo', true), [['1톤 용달', '40,000원~'], ['차종', '1톤~25톤, 츄레라'], ['적재함', '카고·윙바디·탑차·냉동'], ['지역', '전국·제주']]) }),
     `<section class="sec"><div class="wrap prose-grid">
       <div class="prose">
         <h2 id="kinds">어떤 화물을 운송하나요?</h2>
@@ -139,13 +139,13 @@ export function intercity(u, posts) {
   const s = SERVICES.find(x => x.id === 'intercity');
   return [
     subHero({}, u, { eyebrow: '전국 당일 연계배송', h1: 'KTX·고속버스·항공 연계로 지방도 오늘 받습니다', lead: s.lead, crumbs: crumbsSvc(s),
-      aside: specCard(plate(u, 'ktx.webp', 'KTX 고속열차'), INTERCITY.map(m => [m.short, `최대 ${m.hours}시간 · ${won(m.from)}~`])) }),
+      aside: specCard(plate(u, 'ktx.webp', 'KTX 고속열차', 'spec-photo', true), INTERCITY.map(m => [m.short, `최대 ${m.hours}시간 · ${won(m.from)}~`])) }),
     `<section class="sec"><div class="wrap ic-grid">
       <div class="ic-copy">
         <h2>세 가지 방법 중 고르세요</h2>
         <p class="sec-lead"><strong>가장 급하면 항공(최대 4시간), 가장 경제적이면 KTX·고속버스(25,000원부터)</strong>입니다. KTX가 서지 않는 도시는 고속버스로 갑니다.</p>
-        <div class="ic-tabs" role="tablist" aria-label="연계 수단">${INTERCITY.map((m, i) => `<button role="tab" type="button" data-mode="${m.id}" aria-selected="${i ? 'false' : 'true'}"${i ? ' tabindex="-1"' : ''}>${ico(m.id === 'ktx' ? 'rail' : m.id === 'bus' ? 'bus' : 'plane')}${m.short}</button>`).join('')}</div>
-        ${INTERCITY.map((m, i) => `<div class="ic-panel" data-panel="${m.id}"${i ? ' hidden' : ''}><div class="ic-photo photo-plate">${photo(u, m.photo, m.short)}</div><p>${m.desc}</p>
+        <div class="ic-tabs" role="tablist" aria-label="연계 수단">${INTERCITY.map((m, i) => `<button role="tab" type="button" id="ict-${m.id}" aria-controls="icp-${m.id}" data-mode="${m.id}" aria-selected="${i ? 'false' : 'true'}"${i ? ' tabindex="-1"' : ''}>${ico(m.id === 'ktx' ? 'rail' : m.id === 'bus' ? 'bus' : 'plane')}${m.short}</button>`).join('')}</div>
+        ${INTERCITY.map((m, i) => `<div class="ic-panel" role="tabpanel" id="icp-${m.id}" aria-labelledby="ict-${m.id}" data-panel="${m.id}"${i ? ' hidden' : ''}><div class="ic-photo photo-plate">${photo(u, m.photo, m.short)}</div><p>${m.desc}</p>
           <dl class="ic-dl"><div><dt>도착</dt><dd>최대 ${m.hours}시간 이내 문전 배송</dd></div><div><dt>시작 요금</dt><dd>${won(m.from)}~ (차등 있음)</dd></div><div><dt>구간</dt><dd>${m.routes}</dd></div><div><dt>접수 때 확인</dt><dd>${m.check}</dd></div></dl></div>`).join('')}
       </div>
       <div class="ic-map" data-mode="ktx">${koreaMap(INTERCITY)}</div>
@@ -228,7 +228,7 @@ export function vehicles(u, posts) {
   const names = { moto: '오토바이', damas: '다마스', labo: '라보' };
   return [
     subHero({}, u, { eyebrow: '차량 제원', h1: '차종별 적재함 크기와 고르는 법', lead: '오토바이부터 25톤 트럭까지 적재 가능한 크기를 한 곳에 정리했습니다. 물건 크기와 무게를 넣으면 맞는 차를 추천해 드립니다.', crumbs,
-      aside: specCard(plate(u, 'opt-wing.webp', '옆면이 열린 윙바디 트럭'), [['소형', '오토바이·다마스·라보'], ['화물차', '1톤~25톤'], ['특수', '츄레라 16m·27톤'], ['적재 한도', '높이 4.3m · 폭 2.4m']]) }),
+      aside: specCard(plate(u, 'opt-wing.webp', '옆면이 열린 윙바디 트럭', 'spec-photo', true), [['소형', '오토바이·다마스·라보'], ['화물차', '1톤~25톤'], ['특수', '츄레라 16m·27톤'], ['적재 한도', '높이 4.3m · 폭 2.4m']]) }),
     `<section class="sec" id="recommend"><div class="wrap rec">
       <div class="rec-copy"><p class="eyebrow">차량 추천</p><h2>내 물건엔 어떤 차가 맞을까요?</h2><p class="sec-lead">가장 긴 변, 세 변의 합, 전체 무게를 넣어 보세요. 기존 홈페이지에 공개된 적재 기준으로 계산합니다. 최종 차량은 상담할 때 확정합니다.</p></div>
       <form class="rec-form" id="recForm" novalidate>
@@ -365,7 +365,7 @@ export function faqPageBody(u) {
   const crumbs = [{ name: '홈', href: '' }, { name: '자주 묻는 질문', href: 'faq/' }];
   return [
     subHero({}, u, { eyebrow: 'FAQ', h1: '자주 묻는 질문', lead: `요금, 접수, 차량, 지방 배송, 결제까지 ${FAQ.length}가지 질문을 모았습니다. 분류를 눌러 필요한 것만 볼 수 있습니다.`, crumbs }),
-    `<section class="sec"><div class="wrap wrap-narrow">${faqList(FAQ, { id: 'faqAll', withCats: true, cats: FAQ_CATS })}</div></section>`,
+    `<section class="sec" aria-labelledby="faqListH"><div class="wrap wrap-narrow"><h2 class="sr-only" id="faqListH">질문 목록</h2>${faqList(FAQ, { id: 'faqAll', withCats: true, cats: FAQ_CATS })}</div></section>`,
     ctaBand(u, '여기 없는 질문은 전화로 바로 답해 드립니다.'),
   ].join('\n');
 }
@@ -410,7 +410,8 @@ export function blogIndex(u, posts, cats) {
   return [
     `<section class="sub-hero sub-hero-plain"><div class="wrap"><nav class="crumbs" aria-label="현재 위치"><ol>${crumbs.map((c, i) => i < crumbs.length - 1 ? `<li><a href="${u(c.href)}">${c.name}</a></li>` : `<li aria-current="page">${c.name}</li>`).join('')}</ol></nav>
     <p class="eyebrow">물류 가이드</p><h1>보내기 전에 알아 두면 좋은 것</h1><p class="lead">퀵 요금, 차량 고르는 법, 지방 당일 배송, 기업 물류까지. 접수 현장에서 자주 받는 질문을 글로 정리합니다. 매일 새 글이 올라옵니다.</p></div></section>`,
-    `<section class="sec"><div class="wrap">
+    `<section class="sec" aria-labelledby="postListH"><div class="wrap">
+      <h2 class="sr-only" id="postListH">글 목록</h2>
       <div class="chips" role="toolbar" aria-label="글 분류"><button type="button" class="chip on" data-blog-cat="all" aria-pressed="true">전체 <span>${posts.length}</span></button>${cats.map(c => { const n = posts.filter(p => p.category === c).length; return n ? `<button type="button" class="chip" data-blog-cat="${esc(c)}" aria-pressed="false">${esc(c)} <span>${n}</span></button>` : ''; }).join('')}</div>
       <div class="post-grid" id="postGrid" data-total="${posts.length}">${first.map(p => postCard(p, u).replace('<article class="post-card reveal">', `<article class="post-card reveal" data-cat="${esc(p.category)}">`)).join('')}</div>
       ${posts.length > first.length ? `<div class="more-wrap"><button class="btn btn-line" type="button" id="moreBtn" data-src="${u('blog/posts.json')}">글 더 보기${ico('down')}</button></div>` : ''}
@@ -430,7 +431,7 @@ export function blogPost(u, p, posts) {
     <p class="post-cat">${ico(catIcon(p.category), 'ico-s')}${esc(p.category)}</p>
     <h1>${esc(p.title)}</h1>
     <p class="post-desc">${esc(p.description)}</p>
-    <figure class="post-figure photo-plate${p.image.fit === 'cover' ? ' fit-cover' : ''}">${photo(u, p.image.file, p.image.alt, { lazy: false })}</figure>
+    <figure class="post-figure photo-plate${p.image.fit === 'cover' ? ' fit-cover' : ''}">${photo(u, p.image.file, p.image.alt, { priority: true })}</figure>
     <div class="post-meta"><span>${esc(p.author || '퀵서비스다 운영팀')}</span><time datetime="${p.date}">${kdate(p.date)}</time><span>${p.minutes}분 읽기</span><button class="btn btn-text btn-sm" type="button" data-share>${ico('share', 'ico-s')}공유</button></div>
   </div></header>
   <div class="wrap post-grid-wrap">

@@ -7,7 +7,7 @@
   const $$ = (s, r = d) => [...r.querySelectorAll(s)];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
-  const KAKAO = 'http://pf.kakao.com/_xkHCqb/chat';
+  const KAKAO = 'https://pf.kakao.com/_xkHCqb/chat';
   const TEL = '1661-7462';
 
   // ── 토스트 ──────────────────────────────────────
@@ -39,6 +39,7 @@
   function openLayer(id, opener) {
     const el = d.getElementById(id);
     if (!el || stack.includes(el)) return;
+    clearTimeout(el._hideT);  // 닫히는 중에 다시 열면 숨김 예약을 취소
     el._opener = opener || d.activeElement;
     el.hidden = false;
     stack.push(el);
@@ -54,7 +55,7 @@
     el.classList.remove('open');
     stack.splice(stack.indexOf(el), 1);
     $$(`[aria-controls="${el.id}"]`).forEach(b => b.setAttribute('aria-expanded', 'false'));
-    setTimeout(() => { el.hidden = true; if (!stack.length) d.body.classList.remove('locked'); }, reduce ? 0 : 380);
+    el._hideT = setTimeout(() => { if (!stack.includes(el)) el.hidden = true; if (!stack.length) d.body.classList.remove('locked'); }, reduce ? 0 : 380);
     if (el._opener && el._opener.focus) el._opener.focus({ preventScroll: true });
   }
   d.addEventListener('click', e => {
@@ -151,9 +152,15 @@
   // ── 헤더 · 드롭다운 · 맨 위로 ─────────────────────────
   const hd = $('#hd'), totop = $('.totop');
   let lastY = 0;
+  const small = matchMedia('(max-width: 1023px)');
   function onScrollHeader() {
     const y = scrollY;
     hd && hd.classList.toggle('scrolled', y > 8);
+    // 모바일: 내려 읽을 때는 헤더를 숨겨 화면을 넓게, 조금이라도 올리면 다시 보이기(하단 바에 전화·문의가 있음)
+    if (hd && small.matches && !d.body.classList.contains('locked')) {
+      if (y > 240 && y > lastY + 6) hd.classList.add('hd-hide');
+      else if (y < lastY - 6 || y <= 240) hd.classList.remove('hd-hide');
+    } else if (hd) hd.classList.remove('hd-hide');
     totop && totop.classList.toggle('show', y > 900);
     lastY = y;
   }
@@ -243,6 +250,7 @@
     const START_AT = DUR.map((_, i) => DUR.slice(0, i).reduce((a, b) => a + b, 0));
     const TOTAL = DUR.reduce((a, b) => a + b, 0);
     const LEAD = 1800, ZOOM = 14.6, PITCH = 55;
+    const TRIP_MIN = 35;  // 화면 예상 시간: 경로 데이터(OSRM)는 막힘 없는 승용차 기준이라 짧다. 사이트 안내(근거리 30~50분)에 맞춘 예시값
     const DRIVE_PAD = () => ({ top: navi.clientHeight * .38, bottom: 30, left: 0, right: 0 }); // 차를 화면 아래쪽에 두어 앞길이 보이게
     const MAPLIBRE = 'https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.min';
     const STYLE = 'https://tiles.openfreemap.org/styles/liberty';
@@ -343,7 +351,7 @@
       const total = R.cum[R.cum.length - 1];
       if (s === 1) ncVeh.querySelectorAll('span').forEach(x => x.classList.toggle('on', x.dataset.v === 'damas' && sub > .35));
       if (s < 3) {
-        nbDist.textContent = fmtD(total); nbTime.textContent = `약 ${Math.round(R.duration / 60)}분`; nbEta.textContent = s === 2 ? clock(8 + R.duration / 60) : '—';
+        nbDist.textContent = fmtD(total); nbTime.textContent = `약 ${TRIP_MIN}분`; nbEta.textContent = s === 2 ? clock(8 + TRIP_MIN) : '—';
         setRoute(0);
         if (s === 2) {
           const k = ease(Math.min(1, sub / .8)), back = 650 * (1 - k);  // 경로 시작점 쪽에서 기사가 다가오는 모습(예시)
@@ -367,7 +375,7 @@
         ntText.textContent = st.text;
         const nn = R.steps[nx + 1];
         ntNext.textContent = nn ? `다음 ${nn.text}` : '';
-        const remain = total - dist, mins = Math.max(0, Math.ceil(R.duration / 60 * remain / total));
+        const remain = total - dist, mins = Math.max(0, Math.ceil(TRIP_MIN * remain / total));
         nbDist.textContent = remain < 5 ? '0m' : fmtD(remain); nbTime.textContent = mins ? `${mins}분` : '도착'; nbEta.textContent = clock(mins);
         if (following && mapReady) { camB += turnBy(camB, head) * .06; map.jumpTo({ center: p, bearing: camB, zoom: ZOOM, pitch: PITCH, padding: DRIVE_PAD() }); }
         return;
@@ -424,6 +432,7 @@
       try {
         map = new maplibregl.Map({
           container: 'naviMap', style: STYLE, interactive: false, attributionControl: false, fadeDuration: 0,
+          pixelRatio: Math.min(window.devicePixelRatio || 1, 2),  // 3배 화면 휴대폰에서 GPU 부담 줄이기
           center: R.coords[0], zoom: 12, localIdeographFontFamily: "'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif",
         });
       } catch (e) { return; }
@@ -447,7 +456,10 @@
         if (cur === 3) following = true;
       });
     }
-    let mapAsked = false;
+    // 데이터 절약 모드나 2G 연결이면 실제 지도(약 0.6MB)를 받지 않고 그림 지도로 둔다
+    const conn = navigator.connection || {};
+    const lite = !!conn.saveData || /2g/.test(conn.effectiveType || '');
+    let mapAsked = lite;
     new IntersectionObserver((es, ob) => {
       if (!es.some(en => en.isIntersecting) || mapAsked) return;
       mapAsked = true; ob.disconnect();
@@ -455,7 +467,7 @@
       const js = d.createElement('script'); js.src = MAPLIBRE + '.js'; js.async = true;
       js.onload = () => { const wait = () => R ? initMap() : setTimeout(wait, 100); wait(); };
       d.head.appendChild(js);
-    }, { rootMargin: '600px 0px' }).observe(navi);
+    }, { rootMargin: innerWidth < 768 ? '250px 0px' : '600px 0px' }).observe(navi);
   }
 
   // ── 차량 가로 시퀀스 ─────────────────────────────────
