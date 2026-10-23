@@ -87,8 +87,10 @@ table { border-collapse: collapse; width: 100%; }
 
 .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: .88rem; font-weight: 700; letter-spacing: .02em; color: var(--sky-600); margin-bottom: 14px; }
 .eyebrow-light { color: #CDEEFF; }
-.live-dot { width: 8px; height: 8px; border-radius: 50%; background: #22C08B; box-shadow: 0 0 0 0 rgba(34, 192, 139, .6); animation: pulse 2s infinite; }
-@keyframes pulse { 70% { box-shadow: 0 0 0 10px rgba(34, 192, 139, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 192, 139, 0); } }
+/* 퍼지는 원은 box-shadow 대신 transform·opacity로(휴대폰에서 계속 다시 그리지 않도록) */
+.live-dot { position: relative; width: 8px; height: 8px; border-radius: 50%; background: #22C08B; }
+.live-dot::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: rgba(34, 192, 139, .55); animation: pulse 2s ease-out infinite; }
+@keyframes pulse { from { transform: scale(1); opacity: 1; } 70%, to { transform: scale(3.4); opacity: 0; } }
 
 /* ── 헤더 ── */
 .hd { position: fixed; inset: 0 0 auto; z-index: 60; height: var(--hd-h); background: rgba(255, 255, 255, .92); backdrop-filter: saturate(1.4) blur(14px); -webkit-backdrop-filter: saturate(1.4) blur(14px); border-bottom: 1px solid transparent; transition: background .3s, border-color .3s, box-shadow .3s; }
@@ -592,8 +594,10 @@ html:not(.js) .acc-panel[hidden] { display: block; }
 .km-city.on circle { stroke: var(--sky-600); fill: var(--sky-600); }
 .km-city.on text { fill: var(--ink-900); }
 .km-hub circle { fill: var(--signal); }
-.km-hub .km-pulse { fill: rgba(255, 180, 0, .3); transform-box: fill-box; transform-origin: center; animation: hub 2s infinite; }
-@keyframes hub { 0% { transform: scale(.6); opacity: 1; } 100% { transform: scale(1.8); opacity: 0; } }
+/* SVG 요소의 transform 애니메이션은 매 프레임 페이지 전체 레이아웃을 다시 계산하게 만든다 → 투명도만 바꾸고, 지도가 화면에 있을 때만 움직인다 */
+.km-hub .km-pulse { fill: rgba(255, 180, 0, .35); animation: hub 2s ease-in-out infinite; animation-play-state: paused; }
+.ic-map.live .km-pulse { animation-play-state: running; }
+@keyframes hub { 0%, 100% { opacity: .2; } 50% { opacity: 1; } }
 .km-hub text { font-size: 16px; font-weight: 900; fill: var(--ink-900); font-family: var(--font); }
 @media (max-width: 900px) { .ic-grid { grid-template-columns: minmax(0, 1fr); gap: 30px; } .ic-map { max-width: 340px; } }
 
@@ -727,6 +731,8 @@ a, button, label, summary, select { -webkit-tap-highlight-color: rgba(15, 138, 2
 }
 .hd { transition-property: background, border-color, box-shadow, transform; transition-duration: .25s; }
 @media (max-width: 1023px) { .hd.hd-hide { transform: translateY(-100%); box-shadow: none; } }
+/* 휴대폰: 화면에서 먼 구역은 가까워질 때까지 배치·그리기를 건너뛴다(긴 홈 화면의 첫 계산 부담 줄이기). 실제 지도 구역(.seq)은 크기가 필요해 제외 */
+@media (max-width: 1023px) { main > section:nth-child(n+3):not(.seq) { content-visibility: auto; contain-intrinsic-block-size: auto 900px; } }
 @media (max-width: 420px) {
   .qb-row { grid-template-columns: minmax(0, 1fr); }
   .qb-row input { grid-column: 1 / -1; }

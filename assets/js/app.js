@@ -147,6 +147,8 @@
     i = e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : (i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
     e.preventDefault(); tabs[i].focus(); selectTab(tabs[i]);
   });
+  // 지도 허브 깜박임은 화면에 보일 때만
+  $$('.ic-map').forEach(m => new IntersectionObserver(es => es.forEach(en => m.classList.toggle('live', en.isIntersecting))).observe(m));
   $$('.ic-map').forEach(map => $$('.km-city', map).forEach(c => c.classList.toggle('on', c.dataset.modes.split(' ').includes(map.dataset.mode))));
 
   // ── 헤더 · 드롭다운 · 맨 위로 ─────────────────────────
