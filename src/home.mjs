@@ -12,7 +12,7 @@ function hero(u) {
   <div class="wrap">
     <div class="bento" id="bento">
       <div class="bt bt-copy" style="--i:0">
-        <img class="hero-logo" src="${u('assets/img/brand/logo.webp')}" alt="퀵서비스다 QUICKEY SERVICE — 최고보다 최선을 다하는 기업" width="698" height="296" fetchpriority="high">
+        <img class="hero-logo" src="${u('assets/img/brand/logo.webp')}" alt="퀵서비스다 QUICKEY SERVICE — 최고보다 최선을 다하는 기업" width="698" height="296">
         <p class="eyebrow">서울·인천·경기 퀵서비스 · 전국 화물운송</p>
         <h1 class="hero-h1" id="heroTitle"><span class="sr-only">퀵서비스다 — 서울·경기·인천 퀵서비스와 전국 화물운송. </span><span class="h1-line">지금 접수하면,</span><span class="h1-line h1-accent"><span class="speed" aria-hidden="true"></span>바로 출발합니다.</span></h1>
         <p class="hero-lead">출발지와 도착지만 알려 주세요. 가장 가까운 기사를 바로 배차하고, 오토바이는 <strong>보통 5~20분 안에</strong> 물건을 받으러 갑니다.</p>

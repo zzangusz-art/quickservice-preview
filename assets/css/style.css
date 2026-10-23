@@ -128,6 +128,8 @@ table { border-collapse: collapse; width: 100%; }
 a.bt:hover, .bt-book:focus-within, .bt-call:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--sky-300); }
 .js .bt { opacity: 0; transform: translateY(20px) scale(.98); animation: bt-in .7s var(--ease) forwards; animation-delay: calc(var(--i, 0) * 70ms); }
 @keyframes bt-in { to { opacity: 1; transform: none; } }
+/* 휴대폰: 첫 화면의 제목·사진 타일은 바로 보이게(느린 기기에서 첫 표시가 늦어지지 않도록) */
+@media (max-width: 1023px) { .js .bento > .bt:nth-child(-n+2) { opacity: 1; transform: none; animation: none; } }
 .bt-k { display: inline-flex; align-items: center; gap: 6px; font-size: .84rem; font-weight: 700; color: var(--sky-700); }
 .bt-big { margin-top: 10px; font-size: clamp(2rem, 3.1vw, 2.75rem); font-weight: 900; letter-spacing: -0.04em; line-height: 1.05; font-variant-numeric: tabular-nums; color: var(--sky-800); }
 .bt-big small { font-size: .45em; font-weight: 800; margin-left: 3px; letter-spacing: 0; }
