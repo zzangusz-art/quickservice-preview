@@ -40,6 +40,8 @@ export const SITE = {
   daangn: 'https://www.daangn.com/kr/local-profile/1661-7462-5iys719cqyib/',
   bank: { name: 'IBK기업은행', no: '001-833-8688', holder: '장지훈(퀵서비스다)' },
   naverVerification: '896f7494f75b2e9a7fec60262969539edd2ddc9a', // 네이버 서치어드바이저 https://퀵서비스다.kr 소유확인 HTML 태그(2026-10-28 사용자 전달)
+  // 다음 웹마스터도구 PIN 인증: 다음이 알려 주는 robots.txt 한 줄(#DaumWebMasterTool:…)을 그대로 넣으면 운영 robots.txt 끝에 붙는다
+  daumVerification: '',
   googleVerification: 'N-fUuh97TwXc4EmBC0I1PXDmgQHrRuBz84ivYhlMsMA', // Search Console URL 접두어 속성 https://xn--2j1bs9sn9b30bc55a.kr/ (구글 계정 zzangusz@gmail.com)
   // 방문 분석 ID — 형식이 맞는 것만 쓰고, 운영 빌드 + 대표 주소 접속에서만 켠다(src/analytics.mjs)
   analytics: {

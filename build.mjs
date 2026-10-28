@@ -186,7 +186,7 @@ write('robots.txt', PREVIEW
   ? 'User-agent: *\nDisallow: /\n'
   : ['# 검색엔진과 AI 검색·답변 엔진의 수집을 모두 허용합니다', 'User-agent: *', 'Allow: /', '',
     ...['Googlebot', 'Bingbot', 'Yeti', 'Daumoa', 'GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-SearchBot', 'Claude-User', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Applebot', 'Applebot-Extended', 'CCBot'].flatMap(b => [`User-agent: ${b}`, 'Allow: /', '']),
-    `Sitemap: ${SITE.url}sitemap.xml`, ''].join('\n'));
+    `Sitemap: ${SITE.url}sitemap.xml`, ...(SITE.daumVerification ? ['', SITE.daumVerification] : []), ''].join('\n'));
 
 const fareLines = START_FARES.map(f => `- ${f.label}: ${won(f.from)}부터 — ${f.note}`).join('\n');
 const llms = `# ${SITE.name} (${SITE.nameEn})
