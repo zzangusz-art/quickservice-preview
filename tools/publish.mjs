@@ -30,6 +30,14 @@ if (HOOK) {
   try { again = !!JSON.parse(fs.readFileSync(0, 'utf8') || '{}').stop_hook_active; } catch { /* 입력 없음 */ }
 }
 
+// 여러 글을 한꺼번에 쓰는 중처럼 중간 상태를 올리면 안 될 때: 상위 폴더에 deploy.hold 파일을 두면 배포를 쉰다(지우면 다시 동작)
+const HOLD = path.join(ROOT, '..', 'deploy.hold');
+if (fs.existsSync(HOLD)) {
+  note('배포 보류 중(deploy.hold 있음) — 작업이 끝나면 deploy.hold를 지우고 다시 실행하세요.');
+  reply({ systemMessage: '자동 배포 보류 중: 5. 퀵서비스다/deploy.hold 를 지우면 다시 배포합니다' });
+  process.exit(0);
+}
+
 try { out('git', ['rev-parse', '--is-inside-work-tree']); } catch {
   note('이 폴더는 아직 git 저장소가 아닙니다. README의 「배포」 절차로 저장소를 먼저 연결하세요.');
   reply({ systemMessage: '자동 배포 건너뜀: quickservice-site가 git 저장소가 아닙니다' });
