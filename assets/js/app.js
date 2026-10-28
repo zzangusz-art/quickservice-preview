@@ -9,6 +9,7 @@
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const KAKAO = 'https://pf.kakao.com/_xkHCqb/chat';
   const TEL = '1661-7462';
+  const trackEv = (name, p) => { if (window.qsTrack) window.qsTrack(name, p); }; // 방문 분석(맨 아래 「방문 분석 이벤트」)
 
   // ── 토스트 ──────────────────────────────────────
   const toastBox = $('#toasts');
@@ -209,6 +210,7 @@
     if (when) [...qf2.elements.when.options].forEach(o => { o.selected = o.text === when; });
     $('#quoteDone').hidden = true; qf2.hidden = false;
     openLayer('modalQuote', qb.querySelector('button[type=submit]'));
+    trackEv('quick_book', { item: qb.querySelector('[name=item]').value, when: when || '' });
     setTimeout(() => qf2.elements.weight.focus({ preventScroll: true }), 120);
     toast('출발·도착을 옮겨 적었습니다. 무게만 고르면 접수 글이 완성됩니다', 'ok', 3200);
   });
@@ -523,10 +525,12 @@
       qp.textContent = quoteText;
       qf.hidden = true; qd.hidden = false;
       $('[data-copy-quote]', qd).focus();
+      trackEv('quote_submit', { item: f.get('item'), weight: f.get('weight'), when: f.get('when'), round: f.get('round') ? 'yes' : 'no' });
     });
     d.addEventListener('click', async e => {
       if (e.target.closest('[data-copy-quote]')) {
         const ok = await copy(quoteText);
+        trackEv('quote_kakao', { copied: ok ? 'yes' : 'no' });
         toast(ok ? '문의 내용을 복사했습니다. 카카오톡 채팅창에 붙여 넣어 주세요' : '복사하지 못했습니다. 내용을 길게 눌러 복사해 주세요', ok ? 'ok' : 'info', 3600);
         window.open(KAKAO, '_blank', 'noopener');
       }
@@ -598,7 +602,9 @@
       if (bad) { bad.focus(); toast('가장 긴 변과 무게를 숫자로 넣어 주세요', 'info'); return; }
       ro.setAttribute('aria-busy', 'true');
       ro.innerHTML = '<div class="rec-skel" aria-hidden="true"><div class="skel skel-veh"></div><div class="skel skel-line h20 w40"></div><div class="skel skel-line w80"></div><div class="skel skel-line w60"></div></div>';
-      setTimeout(() => { ro.innerHTML = result(pick(long, sum, kg, need)); ro.removeAttribute('aria-busy'); }, reduce ? 0 : 650);
+      const picked = pick(long, sum, kg, need);
+      trackEv('vehicle_recommend', { vehicle: picked.name, kg, long });
+      setTimeout(() => { ro.innerHTML = result(picked); ro.removeAttribute('aria-busy'); }, reduce ? 0 : 650);
     });
     function pick(long, sum, kg, need) {
       const why = [];
@@ -671,6 +677,61 @@
       const a = map.get(en.target.id); a && a.classList.add('on');
     }), { rootMargin: '-20% 0px -70% 0px' });
     map.forEach((_, id) => { const t = d.getElementById(id); t && tio.observe(t); });
+  }
+
+  // ── 방문 분석 이벤트: 운영 빌드에서 GA4·GTM·네이버 애널리틱스가 켜졌을 때만 보낸다(없으면 아무것도 안 함) ──
+  //  GA4 「주요 이벤트」로 표시할 것: contact_call(전화), contact_kakao(카카오톡), quote_submit(요금 문의 글 완성), order_online(온라인 접수).
+  //  GTM은 같은 이름의 dataLayer 이벤트로 받는다. 네이버 애널리틱스는 문의 행동을 전환(4: 신청)으로 기록한다.
+  const QA = window.QS_ANALYTICS;
+  if (QA) {
+    const where = el => { const w = el.closest('.mbar, .hd, .bento, .drawer, .modal, .ft, section[id], section[class]'); return w ? (w.id || w.classList[0]) : ''; };
+    const LEADS = new Set(['contact_call', 'contact_kakao', 'quote_submit', 'order_online']);
+    window.qsTrack = (name, p = {}) => {
+      const params = { page_path: location.pathname, ...p };
+      (window.dataLayer = window.dataLayer || []).push({ event: name, ...params });
+      if (QA.ga4 && window.gtag) gtag('event', name, params);
+      if (QA.naver && LEADS.has(name) && window.wcs && window.wcs_do) { try { wcs_do({ cnv: wcs.cnv('4', '1') }); } catch (_) { /* 네이버 전환 스크립트 없음 */ } }
+    };
+    d.addEventListener('click', e => {
+      const a = e.target.closest('a[href]');
+      if (a) {
+        const href = a.getAttribute('href');
+        if (href.startsWith('tel:')) trackEv('contact_call', { placement: where(a) });
+        else if (/pf\.kakao\.com/.test(a.href)) trackEv('contact_kakao', { placement: where(a) });
+        else if (/1661-7462\.com/.test(a.href)) trackEv('order_online', { placement: where(a) });
+        else if (/map\.(kakao|naver)\.com/.test(a.href)) trackEv('map_open', { map: /kakao/.test(a.href) ? 'kakao' : 'naver' });
+        else if (/daangn\.com/.test(a.href)) trackEv('review_site', { site: 'daangn' });
+      }
+      const t = e.target.closest('[data-open],[data-info],[data-share],[data-copy],.acc-btn,[data-faq-cat],[data-blog-cat],.seq-head,#seqPlay,.vtabs button,[role=tab]');
+      if (!t) return;
+      const label = t.textContent.trim().replace(/\s+/g, ' ').slice(0, 60);
+      if (t.matches('[data-open]')) {
+        const id = t.dataset.open;
+        if (id === 'modalQuote') trackEv('quote_start', { placement: where(t) });
+        else if (id.startsWith('drawerSvc-')) trackEv('service_detail', { service: id.slice(10) });
+        else if (id === 'drawerBiz') trackEv('business_info');
+        else if (id === 'drawerMenu') trackEv('menu_open');
+      } else if (t.matches('[data-info]')) trackEv('review_write_info');
+      else if (t.matches('[data-share]')) trackEv('share', { method: navigator.share ? 'native' : 'copy' });
+      else if (t.matches('[data-copy]')) trackEv('copy_info', { item: t.dataset.copyMsg || label });
+      else if (t.matches('.acc-btn')) { if (t.getAttribute('aria-expanded') === 'true') trackEv('faq_open', { question: ((t.querySelector('.acc-t') || t).textContent || '').trim().slice(0, 80) }); } // 클릭으로 열린 뒤 상태
+      else if (t.matches('[data-faq-cat]')) trackEv('list_filter', { list: 'faq', category: label });
+      else if (t.matches('[data-blog-cat]')) trackEv('list_filter', { list: 'blog', category: label });
+      else if (t.matches('.seq-head')) trackEv('process_step', { step: label.split('—')[0].trim() });
+      else if (t.id === 'seqPlay') trackEv('process_autoplay', { playing: t.classList.contains('paused') ? 'no' : 'yes' });
+      else if (t.matches('.vtabs button')) trackEv('vehicle_spec_view', { body: label });
+      else if (t.matches('[role=tab]')) trackEv('tab_select', { tab: label });
+    });
+    // 물류 가이드 글: 읽은 깊이(25·50·75·100%)
+    const pb = $('.post-body');
+    if (pb) {
+      const marks = [25, 50, 75, 100], sent = new Set();
+      addEventListener('scroll', () => {
+        const r = pb.getBoundingClientRect();
+        const pct = clamp(-r.top / Math.max(1, r.height - innerHeight)) * 100;
+        for (const m of marks) if (pct >= m - 1 && !sent.has(m)) { sent.add(m); trackEv('read_progress', { percent: m, post: location.pathname.split('/').filter(Boolean).pop() || '' }); }
+      }, { passive: true });
+    }
   }
 
   // 전화 버튼: 데스크톱(전화 불가 환경)에서는 번호 복사 안내

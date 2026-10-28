@@ -6,6 +6,9 @@
 export const ASOF = '2026-10-19';          // 요금·비교 자료 확인일
 export const ASOF_LABEL = '2026년 10월';
 
+// 환경 변수(Railway Variables 등)는 형식이 맞을 때만 기본값을 덮어쓴다(빈 값·오타로 분석이 꺼지지 않게)
+const envId = (k, re, def) => (re.test(process.env[k] || '') ? process.env[k] : def);
+
 export const SITE = {
   name: '퀵서비스다',
   nameEn: 'QUICKEY SERVICE',
@@ -37,6 +40,15 @@ export const SITE = {
   daangn: 'https://www.daangn.com/kr/local-profile/1661-7462-5iys719cqyib/',
   bank: { name: 'IBK기업은행', no: '001-833-8688', holder: '장지훈(퀵서비스다)' },
   naverVerification: '9390a8a1b6a7ce67cd10eab279c8efd4bb828425', // 기존 .com 기준 값. .kr 연결 후 서치어드바이저에서 새 값 발급
+  googleVerification: '', // Search Console URL 접두어 속성 → HTML 태그의 content 값
+  // 방문 분석 ID — 형식이 맞는 것만 쓰고, 운영 빌드 + 대표 주소 접속에서만 켠다(src/analytics.mjs)
+  analytics: {
+    ga4: envId('GA4_ID', /^G-[A-Z0-9]{4,}$/, ''),
+    gtm: envId('GTM_ID', /^GTM-[A-Z0-9]{4,}$/, ''),
+    naver: envId('NAVER_WA', /^[a-z0-9]{6,}$/i, ''),
+    clarity: envId('CLARITY_ID', /^[a-z0-9]{6,}$/i, ''),
+  },
+  indexNowKey: 'a36baa55f569e6ec024f7902edafcfcf', // IndexNow(네이버·빙 즉시 수집 알림) 키 — /<키>.txt 로 공개
   // 미래애드원(광고 대행) 로그·상담 스크립트 — 기존 홈페이지에 있던 것. 운영 배포에서만 넣는다.
   agencyScript: '//log1.toup.net/mirae_log_chat_common.js?adkey=rk1im',
   vat: '부가세 10% 별도',

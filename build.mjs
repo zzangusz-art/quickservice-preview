@@ -19,6 +19,8 @@ const { SITE, SERVICES, FAQ, START_FARES, INTERCITY, TRUCKS, SMALL_VEHICLES, FAR
 const { makeUrl, pageUrl, esc, won, webpSize } = await import('./src/lib.mjs');
 const S = await import('./src/schema.mjs');
 const { page } = await import('./src/layout.mjs');
+const { setTracking, trackingTools } = await import('./src/analytics.mjs');
+setTracking(!PREVIEW); // 미리보기(GitHub Pages)에는 분석 태그를 넣지 않는다
 const { homeBody } = await import('./src/home.mjs');
 const P = await import('./src/pages.mjs');
 const { loadPosts, renderMarkdown } = await import('./tools/blog/lib.mjs');
@@ -218,6 +220,7 @@ ${SMALL_VEHICLES.map(v => `- ${v.name}: ${v.max}, ${v.size}. ${v.use}`).join('\n
 ${TRUCKS.map(t => `- ${t.ton}: 폭 ${t.w}, 길이 ${t.len[0] === t.len[1] ? t.len[0] : t.len.join('~')}, 지상고 ${t.deck}${t.cbm ? `, ${t.cbm}CBM` : ''}, 탑차 높이 ${t.top.join('~')}`).join('\n')}
 `;
 write('llms-full.txt', full);
+if (!PREVIEW && SITE.indexNowKey) write(`${SITE.indexNowKey}.txt`, SITE.indexNowKey);
 if (!PREVIEW && /xn--/.test(SITE.url) && opt('--cname') !== 'no') write('CNAME', new URL(SITE.url).hostname + '\n');
 
 // ── 검증: 내부 링크·자원, JSON-LD ──

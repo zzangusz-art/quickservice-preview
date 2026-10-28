@@ -27,7 +27,8 @@
 ## 수정 → 반영
 1. 요금·문구는 `src/data.mjs`, 화면 구성은 `src/*.mjs`, 디자인은 `assets/css/style.css`
 2. `build.bat` (또는 `node build.mjs`) — 모든 페이지·JSON-LD·sitemap·robots·llms.txt·RSS가 같이 갱신되고, 깨진 링크·JSON-LD 오류를 검사합니다
-3. `publish.bat` — 빌드·글 검증 → 커밋 → AI가 올린 글 받기(`git pull --rebase`) → 푸시. 2~3분 뒤 반영됩니다.
+3. 배포: 상위 폴더의 `deploy.bat`(더블클릭) — 빌드·글 검증 → 커밋 → AI가 올린 글 받기(`git pull --rebase`) → 푸시. GitHub Pages(미리보기)와 Railway(운영)가 2~3분 뒤 반영합니다. 바뀐 게 없으면 아무것도 안 합니다.
+   - Claude Code가 `5. 퀵서비스다` 폴더에서 작업을 마칠 때마다 자동 실행됩니다(`.claude/settings.json` Stop 훅, 기록 `deploy.log`). 빌드·검증이 실패하면 커밋하지 않고 원인을 Claude에게 돌려줍니다.
 
 ## 배포 (GitHub Pages 미리보기)
 - 저장소: https://github.com/zzangusz-art/quickservice-preview (공개 — 무료 계정 Pages는 공개 저장소만 가능하므로 프롬프트·검증 규칙도 공개됩니다)
@@ -52,6 +53,18 @@ GitHub Actions가 **매일 09:23 · 13:23 · 18:23(KST)** (GitHub 예약 실행�
 - 검사만: `node tools/blog-ai/generate.mjs --check`
 - 사람이 쓴 글: `content/blog/<slug>.md` 로 저장(머리말 `title` `description` `slug` `date` `category` `tags`, 선택 `time` `service`) → 빌드
 - 미래 날짜(`date`)로 저장한 글은 그날이 되어야 빌드에 들어갑니다(예약 발행).
+
+## 운영 서버 (Railway)
+- Railway 프로젝트 `pleasant-commitment` → 서비스 `quickservice-preview`가 이 저장소와 연결돼 있어, `main`에 푸시하면 자동 배포됩니다.
+- `railway.json`: 빌드 단계에서 `build.mjs`·글 검증(실패하면 이전 판 유지), 실행은 `node tools/serve.mjs --production --url https://xn--2j1bs9sn9b30bc55a.kr/`.
+- `tools/serve.mjs`: 외부 패키지 없는 정적 서버. 시작할 때·매시 정각 재빌드, brotli/gzip, 404, `www.` → 대표 주소 301, Railway 기본 주소(*.up.railway.app)는 noindex 헤더로 중복 색인 방지. 운영 빌드마다 새/바뀐 주소를 IndexNow(네이버·빙)로 알립니다(`tools/indexnow.mjs`, 키 파일 `/<SITE.indexNowKey>.txt`).
+- 도메인: 퀵서비스다.kr은 Cloudflare 네임서버. Railway 서비스 Settings → Networking → Custom Domain에 `xn--2j1bs9sn9b30bc55a.kr`(+ `www.`)를 추가하고, Railway가 알려 주는 CNAME 값을 Cloudflare DNS에 넣습니다(가비아 시절 A 레코드는 삭제). Cloudflare SSL/TLS는 Full.
+
+## 방문 분석 · 검색 등록
+- `src/data.mjs` → `SITE.analytics`: `ga4`(G-…), `gtm`(GTM-…), `naver`(네이버 애널리틱스 wa 값), `clarity`(선택). Railway Variables `GA4_ID`·`GTM_ID`·`NAVER_WA`·`CLARITY_ID`로도 덮어쓸 수 있습니다(형식이 맞을 때만).
+- 태그는 운영 빌드 + 대표 주소(퀵서비스다.kr) 접속에서만 불러옵니다. 다른 주소에서 시험하려면 `?qs_track=1`.
+- 이벤트(`assets/js/app.js` 「방문 분석 이벤트」): `contact_call`·`contact_kakao`·`order_online`·`quote_submit`(→ GA4 주요 이벤트로 표시 권장, 네이버 전환 4), `quote_start`·`quick_book`·`quote_kakao`·`vehicle_recommend`·`service_detail`·`faq_open`·`process_step`·`read_progress`(25·50·75·100%) 등. GTM은 같은 이름의 dataLayer 이벤트로 받습니다.
+- 검색 등록 인증값: `SITE.googleVerification`(서치 콘솔 HTML 태그), `SITE.naverVerification`(서치어드바이저 HTML 태그).
 
 ## 운영 도메인 전환
 - 기본 운영 주소는 `src/data.mjs`의 `SITE.url`(퀵서비스다.kr = `https://xn--2j1bs9sn9b30bc55a.kr/`). 다른 주소면 이 값이나 `SITE_URL` 환경변수만 바꾸면 canonical·sitemap·JSON-LD·OG가 모두 따라갑니다.

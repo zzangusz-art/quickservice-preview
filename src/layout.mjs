@@ -2,6 +2,7 @@
 import { SITE, NAV, SERVICES, BUSINESS, PAYMENT, START_FARES } from './data.mjs';
 import { esc, won, jsonld } from './lib.mjs';
 import { sprite, ico } from './art.mjs';
+import { analyticsHead, analyticsBodyTop } from './analytics.mjs';
 
 export const logoImg = (u, cls = 'logo-img') => `<img class="${cls}" src="${u('assets/img/brand/logo.webp')}" alt="퀵서비스다 QUICKEY SERVICE" width="698" height="296">`;
 export const logoWhite = u => `<img class="ft-logo" src="${u('assets/img/brand/logo-white.webp')}" alt="퀵서비스다 QUICKEY SERVICE" width="335" height="142" loading="lazy">`;
@@ -35,6 +36,7 @@ ${p.noCanonical ? '' : `<link rel="canonical" href="${p.url}">`}
 <meta name="twitter:image" content="${og}">
 ${p.published ? `<meta property="article:published_time" content="${p.published}">` : ''}
 ${SITE.naverVerification ? `<meta name="naver-site-verification" content="${SITE.naverVerification}">` : ''}
+${SITE.googleVerification ? `<meta name="google-site-verification" content="${SITE.googleVerification}">` : ''}
 <link rel="icon" href="${u('favicon.ico')}" sizes="any">
 <link rel="apple-touch-icon" href="${u('assets/img/brand/apple-touch-icon.png')}">
 <link rel="alternate" type="application/rss+xml" title="${SITE.name} 물류 가이드" href="${SITE.url}blog/feed.xml">
@@ -45,7 +47,7 @@ ${SITE.naverVerification ? `<meta name="naver-site-verification" content="${SITE
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400..900&display=swap"></noscript>
 <link rel="stylesheet" href="${u('assets/css/style.css')}?v=${p.v}">
 ${jsonld(p.schema)}
-</head>`;
+${analyticsHead()}</head>`;
 }
 
 export function header(p, u) {
@@ -56,6 +58,7 @@ export function header(p, u) {
 <div class="nav-sub" role="menu">${n.children.map(c => `<a role="menuitem" href="${u(c.href)}"><strong>${c.label}</strong><span>${c.sub}</span></a>`).join('')}</div></li>`;
   }).join('');
   return `<body class="${p.bodyClass || ''}">
+${analyticsBodyTop()}
 ${sprite()}
 <a class="skip" href="#main">본문 바로가기</a>
 <header class="hd" id="hd">
