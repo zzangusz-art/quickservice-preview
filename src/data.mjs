@@ -40,11 +40,11 @@ export const SITE = {
   daangn: 'https://www.daangn.com/kr/local-profile/1661-7462-5iys719cqyib/',
   bank: { name: 'IBK기업은행', no: '001-833-8688', holder: '장지훈(퀵서비스다)' },
   naverVerification: '9390a8a1b6a7ce67cd10eab279c8efd4bb828425', // 기존 .com 기준 값. .kr 연결 후 서치어드바이저에서 새 값 발급
-  googleVerification: '', // Search Console URL 접두어 속성 → HTML 태그의 content 값
+  googleVerification: 'N-fUuh97TwXc4EmBC0I1PXDmgQHrRuBz84ivYhlMsMA', // Search Console URL 접두어 속성 https://xn--2j1bs9sn9b30bc55a.kr/ (구글 계정 zzangusz@gmail.com)
   // 방문 분석 ID — 형식이 맞는 것만 쓰고, 운영 빌드 + 대표 주소 접속에서만 켠다(src/analytics.mjs)
   analytics: {
-    ga4: envId('GA4_ID', /^G-[A-Z0-9]{4,}$/, ''),
-    gtm: envId('GTM_ID', /^GTM-[A-Z0-9]{4,}$/, ''),
+    ga4: envId('GA4_ID', /^G-[A-Z0-9]{4,}$/, 'G-5GKY3M0EL3'), // GA4 계정 「퀵서비스다」 a413723012 → 속성 p561103150 → 웹 스트림 16218515933
+    gtm: envId('GTM_ID', /^GTM-[A-Z0-9]{4,}$/, 'GTM-WNJ79F43'), // GTM 계정 「퀵서비스다」 6400560612 → 컨테이너 283977274(빈 초기 버전 게시, GA4 태그는 넣지 않음: 사이트 gtag와 중복)
     naver: envId('NAVER_WA', /^[a-z0-9]{6,}$/i, ''),
     clarity: envId('CLARITY_ID', /^[a-z0-9]{6,}$/i, ''),
   },
