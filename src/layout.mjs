@@ -85,7 +85,7 @@ export function footer(p, u) {
       </div>
       <nav class="ft-nav" aria-label="하단 메뉴">
         <div><h2>서비스</h2>${SERVICES.map(s => `<a href="${u(s.slug)}">${s.name}</a>`).join('')}</div>
-        <div><h2>안내</h2><a href="${u('pricing/')}">요금 안내</a><a href="${u('vehicles/')}">차량 제원</a><a href="${u('business/')}">기업 월 정산</a><a href="${u('faq/')}">자주 묻는 질문</a></div>
+        <div><h2>안내</h2><a href="${u('area/')}">서비스 지역</a><a href="${u('pricing/')}">요금 안내</a><a href="${u('vehicles/')}">차량 제원</a><a href="${u('business/')}">기업 월 정산</a><a href="${u('faq/')}">자주 묻는 질문</a></div>
         <div><h2>퀵서비스다</h2><a href="${u('about/')}">회사 소개</a><a href="${u('blog/')}">물류 가이드</a><a href="${SITE.order}" target="_blank" rel="noopener">온라인 접수</a><a href="${SITE.kakaoChat}" target="_blank" rel="noopener">카카오톡 상담</a></div>
       </nav>
     </div>

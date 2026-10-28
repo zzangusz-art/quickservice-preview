@@ -152,7 +152,7 @@ function services(u) {
     <div class="sec-hd">
       <p class="eyebrow">서비스</p>
       <h2 id="svcTitle">무엇을, 어디까지 보내시나요?</h2>
-      <p class="sec-lead">물건 크기와 거리로 방법이 갈립니다. 시내 소형 물품은 오토바이, 큰 짐은 다마스·라보, 화물은 1톤부터 25톤, 지방 당일은 KTX·고속버스·항공 연계입니다.</p>
+      <p class="sec-lead">물건 크기와 거리로 방법이 갈립니다. 시내 소형 물품은 오토바이, 큰 짐은 다마스·라보, 화물은 1톤부터 25톤, 지방 당일은 KTX·고속버스·항공 연계입니다. <a class="link-arrow" href="${u('area/')}">지역별 퀵서비스 보기${ico('arrow', 'ico-s')}</a></p>
     </div>
     <div class="svc-grid">${SERVICES.map((s, i) => `
       <article class="svc reveal" style="--d:${i * 70}ms">

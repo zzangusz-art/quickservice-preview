@@ -4,6 +4,7 @@
 //   node tools/blog-ai/generate.mjs --count 3    3편 연속 작성
 //   node tools/blog-ai/generate.mjs --topic id   특정 주제
 //   node tools/blog-ai/generate.mjs --check      API 호출 없이 기존 글 전체를 같은 검증기로 검사
+//   node tools/blog-ai/generate.mjs --facts      글에 쓸 수 있는 사실 목록 출력(사람이 직접 쓸 때)
 // 남은 주제(todo)가 6개 아래로 떨어지면 기존 글과 겹치지 않는 새 주제를 AI에게 받아 대기열에 보충한다.
 // 검증에 실패한 글은 발행하지 않고 content/drafts/ 에 남긴다(사람이 고쳐서 content/blog/ 로 옮기면 발행).
 import fs from 'node:fs';
@@ -97,7 +98,7 @@ function validate(md, { allowed, slugs }) {
   return { ok: errs.length === 0, errs, meta, len };
 }
 
-const LINKS = ['pricing/', 'pricing/#compare', 'vehicles/', 'vehicles/#recommend', 'business/', 'faq/', 'about/', ...SERVICES.map(s => s.slug)];
+const LINKS = ['area/', 'pricing/', 'pricing/#compare', 'vehicles/', 'vehicles/#recommend', 'business/', 'faq/', 'about/', ...SERVICES.map(s => s.slug)];
 const SYSTEM = sheet => `당신은 퀵서비스·화물운송 주선 업체 "퀵서비스다" 홈페이지의 "물류 가이드" 담당 에디터입니다. 물건을 보내려는 사람이 검색창이나 AI 비서에게 묻는 질문에, 업체가 직접 확인한 사실로 답하는 글을 씁니다. 독자는 사무실 총무·구매 담당자, 소상공인, 이사·중고거래를 하는 개인입니다.
 
 # 반드시 지킬 것
@@ -202,6 +203,8 @@ async function main() {
   const allowed = allowedNumbers(sheet);
   const posts = loadPosts(BLOG);
 
+  if (flag('--facts')) { console.log(sheet); return; } // 사람이 글을 쓸 때 참고할 사실 목록
+
   if (flag('--check')) {
     let bad = 0;
     for (const f of fs.readdirSync(BLOG).filter(f => f.endsWith('.md') && !f.startsWith('_'))) {
@@ -212,6 +215,15 @@ async function main() {
     process.exit(bad ? 1 : 0);
   }
 
+  // 사람이 미리 써 둔 예약 글(공개 시각이 아직 안 된 글)이 있으면 그 일정대로 하루 3편이 나가므로 AI 글은 쓰지 않는다
+  {
+    const nowKST = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Seoul' }).format(new Date()) + ' ' + new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date());
+    const queued = posts.filter(p => `${p.date} ${p.time || '00:00'}` > nowKST);
+    if (queued.length && !flag('--force')) {
+      console.log(`예약 글 ${queued.length}편이 남아 있어 AI 글 작성을 건너뜁니다(마지막 예약: ${queued.map(p => p.date + ' ' + (p.time || '')).sort().pop()}). 강제로 쓰려면 --force`);
+      return;
+    }
+  }
   const topics = JSON.parse(fs.readFileSync(TOPICS, 'utf8'));
   const { default: Anthropic } = await import('@anthropic-ai/sdk');
   const client = new Anthropic(); // ANTHROPIC_API_KEY 등 환경 자격 증명 사용

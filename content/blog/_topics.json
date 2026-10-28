@@ -10,7 +10,8 @@
       "퀵 할증 시간"
     ],
     "service": "",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "quick-surcharge-guide"
   },
   {
     "id": "quick-cancel-fee",
@@ -101,7 +102,8 @@
       "라보 요금"
     ],
     "service": "damas-labo",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "damas-quick-fare"
   },
   {
     "id": "truck-1ton-fare",
@@ -114,20 +116,26 @@
       "1톤 트럭 요금"
     ],
     "service": "truck",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "truck-1ton-quick"
   },
   {
     "id": "how-to-order-quick",
-    "title": "퀵서비스 처음 부를 때 접수하는 순서",
-    "angle": "전화·카카오톡·온라인 접수, 알려 줄 정보 5가지, 배차~도착 흐름. 퀵서비스다 5단계 과정 기준.",
+    "title": "퀵서비스 처음 부를 때: 전화·카카오톡·온라인 접수 순서",
+    "angle": "알려 줄 정보(출발·도착 동, 물건, 무게, 시간), 확정 요금 먼저 안내, 접수 경로 3가지 차이, 결제 방법.",
     "category": "보내는 방법",
     "keywords": [
+      "퀵 접수 방법",
       "퀵 부르는 법",
-      "퀵 접수",
-      "퀵서비스 이용 방법"
+      "퀵서비스 접수",
+      "카카오톡 퀵 접수"
     ],
-    "service": "",
-    "status": "todo"
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "how-to-order-quick",
+    "date": "2026-11-06",
+    "time": "13:00",
+    "source": "keyword-plan-2026-10"
   },
   {
     "id": "quick-packing-tips",
@@ -179,7 +187,8 @@
       "입찰 서류 퀵"
     ],
     "service": "motorcycle",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "document-quick"
   },
   {
     "id": "same-day-urgent-quick",
@@ -192,7 +201,8 @@
       "빠른 퀵"
     ],
     "service": "motorcycle",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "urgent-express-quick"
   },
   {
     "id": "kakao-quick-order",
@@ -205,7 +215,8 @@
       "퀵 문의"
     ],
     "service": "",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "how-to-order-quick"
   },
   {
     "id": "online-order-quick",
@@ -218,7 +229,8 @@
       "퀵 주문"
     ],
     "service": "",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "how-to-order-quick"
   },
   {
     "id": "receiver-absent",
@@ -231,7 +243,8 @@
       "퀵 반송"
     ],
     "service": "",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "seoul-northeast-quick"
   },
   {
     "id": "vehicle-choose-guide",
@@ -244,7 +257,8 @@
       "용달 차량"
     ],
     "service": "",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "motorcycle-quick-service"
   },
   {
     "id": "truck-ton-cargo-size",
@@ -258,7 +272,8 @@
       "11톤 트럭 크기"
     ],
     "service": "truck",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "truck-ton-choose"
   },
   {
     "id": "wing-body-vs-top",
@@ -350,7 +365,8 @@
       "장축 트럭"
     ],
     "service": "damas-labo",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "labo-quick-when"
   },
   {
     "id": "ktx-intercity-how",
@@ -363,7 +379,8 @@
       "KTX 택배"
     ],
     "service": "intercity",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "nationwide-quick-same-day"
   },
   {
     "id": "bus-intercity",
@@ -376,7 +393,8 @@
       "터미널 퀵"
     ],
     "service": "intercity",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "nationwide-quick-same-day"
   },
   {
     "id": "air-intercity-jeju",
@@ -389,7 +407,8 @@
       "제주 당일배송"
     ],
     "service": "intercity",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "jeju-same-day-quick"
   },
   {
     "id": "daegu-same-day",
@@ -402,7 +421,8 @@
       "서울 대구 퀵"
     ],
     "service": "intercity",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "daegu-same-day-quick"
   },
   {
     "id": "gwangju-mokpo-same-day",
@@ -415,7 +435,8 @@
       "전라도 당일배송"
     ],
     "service": "intercity",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "gwangju-jeolla-same-day-quick"
   },
   {
     "id": "daejeon-same-day",
@@ -428,7 +449,8 @@
       "서울 대전 퀵"
     ],
     "service": "intercity",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "daejeon-same-day-quick"
   },
   {
     "id": "local-cargo-mixed",
@@ -467,7 +489,8 @@
       "항공 연계배송"
     ],
     "service": "intercity",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "ulsan-pohang-same-day-quick"
   },
   {
     "id": "business-quick-contract",
@@ -480,7 +503,8 @@
       "퀵 거래처"
     ],
     "service": "",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "business-quick-partner"
   },
   {
     "id": "office-manager-quick",
@@ -493,7 +517,8 @@
       "회사 퀵 접수"
     ],
     "service": "",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "business-quick-partner"
   },
   {
     "id": "ecommerce-return-pickup",
@@ -519,7 +544,8 @@
       "긴급 부품 배송"
     ],
     "service": "",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "ansan-siheung-quick"
   },
   {
     "id": "event-goods-delivery",
@@ -545,7 +571,8 @@
       "답십리 퀵"
     ],
     "service": "motorcycle",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "dongdaemun-jangan-quick"
   },
   {
     "id": "gangnam-office-quick",
@@ -558,7 +585,8 @@
       "강남 서류 퀵"
     ],
     "service": "motorcycle",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "gangnam-seocho-quick"
   },
   {
     "id": "yeouido-guro-quick",
@@ -571,7 +599,8 @@
       "가산디지털단지 퀵"
     ],
     "service": "motorcycle",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "yeouido-yeongdeungpo-quick"
   },
   {
     "id": "incheon-quick",
@@ -584,20 +613,26 @@
       "인천 용달"
     ],
     "service": "",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "incheon-quick-service"
   },
   {
     "id": "pangyo-bundang-quick",
-    "title": "판교·분당으로 장비·샘플 보낼 때 차량 고르기",
-    "angle": "경기 지역 배차, 오토바이·다마스 선택 기준, 고가 장비는 다마스, 가액 고지.",
+    "title": "판교·분당 퀵서비스, 장비와 샘플을 안전하게 보내는 법",
+    "angle": "IT 기업이 모인 곳이라는 일반적 성격만. 노트북·서버 장비 같은 고가품은 가액 기재·다마스, 샘플은 포장, 확정 요금.",
     "category": "보내는 방법",
     "keywords": [
       "판교 퀵",
       "분당 퀵",
-      "성남 퀵"
+      "성남 퀵",
+      "판교 퀵서비스"
     ],
-    "service": "damas-labo",
-    "status": "todo"
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "pangyo-bundang-quick",
+    "date": "2026-11-03",
+    "time": "09:00",
+    "source": "keyword-plan-2026-10"
   },
   {
     "id": "suwon-hwaseong-quick",
@@ -610,7 +645,8 @@
       "경기 화물"
     ],
     "service": "truck",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "suwon-quick"
   },
   {
     "id": "goyang-paju-quick",
@@ -623,7 +659,8 @@
       "일산 퀵"
     ],
     "service": "damas-labo",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "ilsan-goyang-quick"
   },
   {
     "id": "gimpo-airport-quick",
@@ -636,20 +673,26 @@
       "항공 택배"
     ],
     "service": "intercity",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "magok-gangseo-quick"
   },
   {
     "id": "quick-vs-parcel",
-    "title": "택배와 퀵서비스, 언제 무엇을 써야 할까",
-    "angle": "당일·문전 직접 전달, 택배가 거절한 물품은 다마스, 지방은 연계. 택배 요금 수치 금지.",
+    "title": "택배와 퀵서비스, 오늘 받아야 하면 무엇을 써야 할까",
+    "angle": "도착 시점·전달 방식·요금 구조 비교 표, 택배가 거절한 물건은 다마스, 언제 퀵이 맞는지.",
     "category": "보내는 방법",
     "keywords": [
-      "택배 퀵 차이",
-      "당일 배송",
-      "퀵 택배 비교"
+      "퀵 택배 차이",
+      "퀵서비스 택배 비교",
+      "당일 배송 퀵",
+      "택배 대신 퀵"
     ],
-    "service": "",
-    "status": "todo"
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "quick-vs-parcel",
+    "date": "2026-11-10",
+    "time": "13:00",
+    "source": "keyword-plan-2026-10"
   },
   {
     "id": "quick-payment-methods",
@@ -675,7 +718,8 @@
       "기상 할증"
     ],
     "service": "",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "quick-surcharge-guide"
   },
   {
     "id": "waiting-surcharge",
@@ -688,7 +732,8 @@
       "퀵 대기시간"
     ],
     "service": "",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "quick-surcharge-guide"
   },
   {
     "id": "next-day-unloading",
@@ -714,6 +759,853 @@
       "24시간 퀵"
     ],
     "service": "",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "quick-24-hour-night"
+  },
+  {
+    "id": "seoul-quick-service",
+    "title": "서울퀵 부를 때 알아 둘 것: 요금 정하는 방식과 도착 시간",
+    "angle": "서울 안에서 보낼 때 요금이 출발·도착 동, 물건 크기·무게, 시간대로 정해지는 방식. 오토바이 시작 요금, 픽업 5~20분과 근거리·단거리 소요 시간, 할증 조건, 접수 때 확정 요금을 먼저 안내받는 흐름. 특정 구간 금액은 쓰지 않는다.",
+    "category": "요금 가이드",
+    "keywords": [
+      "서울퀵",
+      "서울 퀵서비스",
+      "서울 퀵 요금",
+      "서울 오토바이 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "seoul-quick-service",
+    "date": "2026-10-28",
+    "time": "14:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "motorcycle-quick-service",
+    "title": "오토바이 퀵서비스, 어떤 물건을 가장 빠르게 보낼 수 있나",
+    "angle": "오토바이로 보내기 좋은 물건과 안 되는 물건(소·중·대 기준, 25kg, 세 변 합), 소요 시간, 비 오는 날 포장, 과적 요금, 고가 물건 기준. 크기 기준만 다룬 기존 글과 겹치지 않게 \"언제 오토바이를 고르나\"에 초점.",
+    "category": "차량·화물",
+    "keywords": [
+      "오토바이 퀵",
+      "오토바이 퀵서비스",
+      "오토바이 퀵 요금",
+      "바이크 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "motorcycle-quick-service",
+    "date": "2026-10-28",
+    "time": "18:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "damas-quick-fare",
+    "title": "다마스 퀵 요금과 실을 수 있는 짐, 부르기 전에 확인할 것",
+    "angle": "다마스 요금 구조(시작 요금, 오토바이 기본요금 + 추가분), 350kg 미만·상자 약 20개, 지붕 있는 밴이라 비·눈에 강함, 취소 요금, 공개 요금 비교(조회 시점 포함). 다마스·라보 차이 글과 겹치지 않게 요금과 접수에 초점.",
+    "category": "요금 가이드",
+    "keywords": [
+      "다마스 퀵",
+      "다마스 퀵 요금",
+      "다마스 퀵서비스",
+      "다마스 용달"
+    ],
+    "service": "damas-labo",
+    "status": "scheduled",
+    "slug": "damas-quick-fare",
+    "date": "2026-10-29",
+    "time": "09:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "nationwide-quick-same-day",
+    "title": "전국 퀵서비스, 서울·경기에서 지방까지 오늘 받는 세 가지 방법",
+    "angle": "KTX·고속버스·항공 연계를 시간·시작 요금·구간으로 비교한 표, 화물차 지방 운송(혼적·현지 차량 수배), 연계배송 접수 때 확인할 것. 부산 글은 링크로 연결.",
+    "category": "지방·연계배송",
+    "keywords": [
+      "전국 퀵서비스",
+      "지방 퀵",
+      "전국 당일배송",
+      "지역 퀵"
+    ],
+    "service": "intercity",
+    "status": "scheduled",
+    "slug": "nationwide-quick-same-day",
+    "date": "2026-10-29",
+    "time": "13:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "gyeonggi-quick-service",
+    "title": "경기도 퀵서비스, 서울과 경기 사이를 오갈 때 요금과 차량 고르기",
+    "angle": "경기 전 지역 운행, 거리에 따라 근거리·단거리·장거리 소요 시간이 달라지는 점, 큰 짐은 다마스·라보·1톤, 공장·창고 화물은 화물차, 급하지 않으면 오늘 중 여유 배차로 아끼는 법.",
+    "category": "보내는 방법",
+    "keywords": [
+      "경기 퀵서비스",
+      "경기도 퀵",
+      "경기 퀵 요금",
+      "서울 경기 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "gyeonggi-quick-service",
+    "date": "2026-10-29",
+    "time": "18:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "incheon-quick-service",
+    "title": "인천 퀵서비스, 인천에서 서울·경기로 보낼 때 알아 둘 것",
+    "angle": "인천 전 지역 접수, 인천↔서울·경기 구간은 장거리로 계산되는 경우가 많다는 점(소요 시간 기준), 공단·항만 쪽 화물은 차량 선택, 공항 관련은 별도 글로 연결.",
+    "category": "보내는 방법",
+    "keywords": [
+      "인천 퀵서비스",
+      "인천 퀵",
+      "인천 서울 퀵",
+      "인천 퀵 요금"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "incheon-quick-service",
+    "date": "2026-10-30",
+    "time": "09:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "sudogwon-quick-service",
+    "title": "수도권 퀵서비스, 서울·인천·경기 어디서든 한 번에 접수하는 법",
+    "angle": "한 번호로 24시간 접수, 거리·차량·시간대로 정해지는 요금, 근거리·단거리·장거리 시간 기준, 두 곳 보낼 때 경유와 편도 비교(기존 글 링크), 자주 보내는 회사는 월 정산.",
+    "category": "보내는 방법",
+    "keywords": [
+      "수도권 퀵서비스",
+      "수도권 퀵",
+      "서울 인천 경기 퀵",
+      "수도권 당일배송"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "sudogwon-quick-service",
+    "date": "2026-10-30",
+    "time": "13:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "gangnam-seocho-quick",
+    "title": "강남·서초 퀵서비스, 사무실 서류·샘플 빠르게 보내는 접수 요령",
+    "angle": "사무실이 모인 업무지구에서 서류·계약서·샘플을 보낼 때: 받는 분 이름·연락처·층수, 건물 출입 절차로 대기가 길어지면 대기 할증, 평일 18시 이후 할증, 급송 접수. 지역 사실은 단정하지 않는다.",
+    "category": "보내는 방법",
+    "keywords": [
+      "강남 퀵",
+      "서초 퀵",
+      "강남 퀵서비스",
+      "역삼 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "gangnam-seocho-quick",
+    "date": "2026-10-30",
+    "time": "18:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "labo-quick-when",
+    "title": "라보 퀵은 언제 부를까: 긴 자재·화환·많은 짐을 옮길 때",
+    "angle": "450kg 미만, 적재함이 열린 소형 트럭, 요금(오토바이 기본요금 + 추가분), 비에 약한 점, 다마스·1톤과의 경계. 다마스·라보 차이 글과 겹치지 않게 라보가 맞는 물건 중심.",
+    "category": "차량·화물",
+    "keywords": [
+      "라보 퀵",
+      "라보 퀵 요금",
+      "라보 용달",
+      "소형 트럭 퀵"
+    ],
+    "service": "damas-labo",
+    "status": "scheduled",
+    "slug": "labo-quick-when",
+    "date": "2026-10-31",
+    "time": "09:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "urgent-express-quick",
+    "title": "급한 물건 1시간 안에 보내야 할 때, 급송 퀵 접수 요령",
+    "angle": "급송 접수 방식, 근거리 소요 시간, 접수 때 정보를 정확히 줄수록 빨라지는 이유, 오토바이에 안 실리면 다마스, 마감이 있는 서류는 여유 있게.",
+    "category": "보내는 방법",
+    "keywords": [
+      "급송 퀵",
+      "긴급 퀵",
+      "당일 퀵",
+      "빠른 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "urgent-express-quick",
+    "date": "2026-10-31",
+    "time": "13:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "songpa-jamsil-quick",
+    "title": "송파·잠실 퀵서비스, 사무실과 매장 물건 보낼 때 차량 고르기",
+    "angle": "업무시설·상가·주거가 섞인 지역에서 서류, 매장 물품, 개인 물건을 보낼 때 차량 고르기와 받는 분 정보. 아파트 단지 출입처럼 일반적인 상황만, 단정 금지.",
+    "category": "보내는 방법",
+    "keywords": [
+      "송파 퀵",
+      "잠실 퀵",
+      "문정 퀵",
+      "송파구 퀵서비스"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "songpa-jamsil-quick",
+    "date": "2026-10-31",
+    "time": "18:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "quick-24-hour-night",
+    "title": "24시간 퀵서비스, 심야·새벽에 부를 때 달라지는 것",
+    "angle": "24시간·365일 접수, 평일 18시·주말 16시 이후 할증, 새벽 배차, 받는 분이 깨어 있는지 확인, 다음 날 하차 선택지.",
+    "category": "보내는 방법",
+    "keywords": [
+      "24시 퀵",
+      "야간 퀵",
+      "새벽 퀵",
+      "심야 퀵서비스"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "quick-24-hour-night",
+    "date": "2026-11-01",
+    "time": "09:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "yeouido-yeongdeungpo-quick",
+    "title": "여의도·영등포 퀵서비스, 서류와 장비를 보낼 때 확인할 것",
+    "angle": "업무지구 건물 출입·대기, 계약서·서류 봉투 포장, 고가 장비는 가액 기재와 다마스, 할증 시간대. 지역 사실 단정 금지.",
+    "category": "보내는 방법",
+    "keywords": [
+      "여의도 퀵",
+      "영등포 퀵",
+      "여의도 퀵서비스",
+      "영등포구 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "yeouido-yeongdeungpo-quick",
+    "date": "2026-11-01",
+    "time": "13:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "truck-1ton-quick",
+    "title": "1톤 용달 퀵, 다마스로 안 될 때 부르는 기준과 요금",
+    "angle": "1톤 시작 요금, 적재함 폭·길이, 카고·탑차, 2.5톤 이상은 상담, 다마스·라보와 비교 표.",
+    "category": "차량·화물",
+    "keywords": [
+      "1톤 용달",
+      "용달 퀵",
+      "1톤 퀵",
+      "1톤 화물"
+    ],
+    "service": "truck",
+    "status": "scheduled",
+    "slug": "truck-1ton-quick",
+    "date": "2026-11-01",
+    "time": "18:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "guro-gasan-quick",
+    "title": "구로·가산디지털단지 퀵서비스, 부품·장비·시제품 보내는 법",
+    "angle": "지식산업센터·IT·전자 업체가 모인 곳이라는 일반적 성격만 언급. 부품·시제품은 오토바이 크기 기준 확인, 장비는 다마스, 하역 위치·엘리베이터 확인, 대기 할증.",
+    "category": "보내는 방법",
+    "keywords": [
+      "가산디지털단지 퀵",
+      "구로 퀵",
+      "가산 퀵",
+      "금천구 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "guro-gasan-quick",
+    "date": "2026-11-02",
+    "time": "09:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "songdo-quick",
+    "title": "송도 퀵서비스, 서울·경기로 서류·샘플 보낼 때 요령",
+    "angle": "인천 송도↔서울은 장거리 소요 시간 기준, 서류·샘플 포장, 온도 관리가 필요한 화물은 냉동탑차, 확정 요금 먼저 안내.",
+    "category": "보내는 방법",
+    "keywords": [
+      "송도 퀵",
+      "송도 퀵서비스",
+      "연수구 퀵",
+      "인천 송도 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "songdo-quick",
+    "date": "2026-11-02",
+    "time": "13:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "suwon-quick",
+    "title": "수원 퀵서비스, 서울·경기 다른 도시로 보낼 때 요금과 시간",
+    "angle": "수원↔서울 장거리 구간 시간 기준, 관공서·회사 서류, 공장 부품은 다마스·1톤, 화성 쪽은 다른 글 링크.",
+    "category": "보내는 방법",
+    "keywords": [
+      "수원 퀵",
+      "수원 퀵서비스",
+      "수원 서울 퀵",
+      "수원 화물"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "suwon-quick",
+    "date": "2026-11-02",
+    "time": "18:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "document-quick",
+    "title": "서류 퀵서비스, 계약서·인감·입찰 서류를 안전하게 보내는 법",
+    "angle": "봉투 포장, 받는 분 직접 전달 확인, 가액 기재와 손해배상 기준, 마감 시각 여유, 급송 선택.",
+    "category": "보내는 방법",
+    "keywords": [
+      "서류 퀵",
+      "서류 퀵서비스",
+      "계약서 퀵",
+      "입찰 서류 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "document-quick",
+    "date": "2026-11-03",
+    "time": "13:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "mapo-sangam-quick",
+    "title": "마포·상암 퀵서비스, 촬영 장비와 원고·인쇄물 보낼 때",
+    "angle": "방송·출판 업체가 있는 지역이라는 일반적 성격만. 촬영 장비는 가액 기재·다마스, 인쇄물 상자는 무게 확인(과적), 시간 지정.",
+    "category": "보내는 방법",
+    "keywords": [
+      "마포 퀵",
+      "상암 퀵",
+      "마포구 퀵서비스",
+      "홍대 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "mapo-sangam-quick",
+    "date": "2026-11-03",
+    "time": "18:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "ilsan-goyang-quick",
+    "title": "일산·고양 퀵서비스, 큰 짐은 다마스·라보·1톤 중 무엇으로",
+    "angle": "고양↔서울 장거리 시간 기준, 상자·가구·가전 같은 큰 짐 차량 고르기 표, 확정 요금.",
+    "category": "보내는 방법",
+    "keywords": [
+      "일산 퀵",
+      "고양 퀵",
+      "일산 퀵서비스",
+      "고양시 용달"
+    ],
+    "service": "damas-labo",
+    "status": "scheduled",
+    "slug": "ilsan-goyang-quick",
+    "date": "2026-11-04",
+    "time": "09:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "jongno-junggu-quick",
+    "title": "종로·을지로 퀵서비스, 인쇄물과 상가 물건 보낼 때 확인할 것",
+    "angle": "인쇄·출판·도심 상가가 많은 지역이라는 일반적 성격만. 인쇄물 상자는 무게가 많이 나가니 오토바이 기준(25kg) 확인 후 다마스, 상하차 위치 확인.",
+    "category": "보내는 방법",
+    "keywords": [
+      "을지로 퀵",
+      "종로 퀵",
+      "중구 퀵",
+      "충무로 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "jongno-junggu-quick",
+    "date": "2026-11-04",
+    "time": "13:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "flower-cake-quick",
+    "title": "꽃다발·케이크·화환을 퀵으로 보낼 때 차량 고르기",
+    "angle": "꽃다발·케이크는 오토바이로 가능(크기·흔들림), 화환은 라보나 다마스, 받는 시각 지정, 받는 분 부재 대비.",
+    "category": "보내는 방법",
+    "keywords": [
+      "꽃배달 퀵",
+      "케이크 퀵",
+      "화환 퀵",
+      "선물 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "flower-cake-quick",
+    "date": "2026-11-04",
+    "time": "18:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "yongin-quick",
+    "title": "용인 퀵서비스, 넓은 지역일수록 출발·도착 동을 정확히",
+    "angle": "같은 시 안에서도 거리 차이가 커서 동 이름이 요금을 정한다는 점, 서울·성남·수원으로 보낼 때 시간 기준, 물류·공장 화물은 화물차.",
+    "category": "보내는 방법",
+    "keywords": [
+      "용인 퀵",
+      "용인 퀵서비스",
+      "수지 퀵",
+      "기흥 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "yongin-quick",
+    "date": "2026-11-05",
+    "time": "09:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "daejeon-same-day-quick",
+    "title": "대전 퀵, 서울·경기에서 대전까지 오늘 받는 방법",
+    "angle": "KTX·고속버스 연계 시간·시작 요금, 화물차와 비교, 접수 때 알려 줄 것.",
+    "category": "지방·연계배송",
+    "keywords": [
+      "대전 퀵",
+      "서울 대전 당일배송",
+      "대전 퀵서비스",
+      "대전 KTX 퀵"
+    ],
+    "service": "intercity",
+    "status": "scheduled",
+    "slug": "daejeon-same-day-quick",
+    "date": "2026-11-05",
+    "time": "13:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "dongdaemun-jangan-quick",
+    "title": "동대문·장안동 퀵서비스, 원단·의류 상자 보낼 때 차량 고르기",
+    "angle": "퀵서비스다 사무실이 장안동(천호대로)에 있다는 사실, 의류 도매·상가가 있는 지역이라는 일반적 성격만. 원단·의류 상자는 무게 확인 후 다마스, 24시간 접수.",
+    "category": "보내는 방법",
+    "keywords": [
+      "동대문 퀵",
+      "장안동 퀵",
+      "동대문구 퀵서비스",
+      "답십리 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "dongdaemun-jangan-quick",
+    "date": "2026-11-05",
+    "time": "18:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "bucheon-quick",
+    "title": "부천 퀵서비스, 서울·인천 사이에서 보낼 때 요금 정하는 법",
+    "angle": "부천↔서울·인천 거리 기준 요금, 공장·상가 물품 차량 고르기, 확정 요금.",
+    "category": "보내는 방법",
+    "keywords": [
+      "부천 퀵",
+      "부천 퀵서비스",
+      "부천 용달",
+      "부천 서울 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "bucheon-quick",
+    "date": "2026-11-06",
+    "time": "09:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "seongsu-quick",
+    "title": "성수·성동 퀵서비스, 행사·쇼룸 물품을 시간 맞춰 보내는 법",
+    "angle": "쇼룸·팝업이 많은 지역이라는 일반적 성격만. 행사 물품 수량에 맞는 차량, 시간 지정, 설치 시작 전 도착 여유, 큰 집기는 1톤.",
+    "category": "보내는 방법",
+    "keywords": [
+      "성수 퀵",
+      "성동구 퀵",
+      "성수동 퀵서비스",
+      "팝업 물품 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "seongsu-quick",
+    "date": "2026-11-06",
+    "time": "18:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "anyang-gunpo-quick",
+    "title": "안양·군포·의왕 퀵서비스, 서울 남부와 오갈 때 알아 둘 것",
+    "angle": "서울 남부↔안양권 거리 기준, 회사 서류와 공장 부품 차량 고르기, 할증 시간대.",
+    "category": "보내는 방법",
+    "keywords": [
+      "안양 퀵",
+      "군포 퀵",
+      "의왕 퀵",
+      "안양 퀵서비스"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "anyang-gunpo-quick",
+    "date": "2026-11-07",
+    "time": "09:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "daegu-same-day-quick",
+    "title": "대구 퀵, 서울에서 대구로 당일 배송하는 방법과 요금",
+    "angle": "KTX·고속버스 연계 시간·시작 요금 비교, 큰 짐은 화물차 혼적, 접수 때 확인할 것.",
+    "category": "지방·연계배송",
+    "keywords": [
+      "대구 퀵",
+      "서울 대구 당일배송",
+      "대구 퀵서비스",
+      "대구 고속버스 퀵"
+    ],
+    "service": "intercity",
+    "status": "scheduled",
+    "slug": "daegu-same-day-quick",
+    "date": "2026-11-07",
+    "time": "13:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "magok-gangseo-quick",
+    "title": "마곡·강서 퀵서비스, 연구 장비·서류와 김포공항 연계까지",
+    "angle": "연구시설·업무지구가 있는 지역이라는 일반적 성격만. 장비는 가액·다마스, 지방으로 급하면 항공 연계(김포 출발이라고 단정하지 말고 \"항공 연계\" 사실만).",
+    "category": "보내는 방법",
+    "keywords": [
+      "마곡 퀵",
+      "강서구 퀵",
+      "마곡 퀵서비스",
+      "김포공항 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "magok-gangseo-quick",
+    "date": "2026-11-07",
+    "time": "18:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "ansan-siheung-quick",
+    "title": "안산·시흥 퀵서비스, 공단 부품을 생산 라인에 급히 보낼 때",
+    "angle": "공단이 있는 지역이라는 일반적 성격만. 부품 무게에 따라 오토바이·다마스·1톤, 리프트 차량, 급송.",
+    "category": "차량·화물",
+    "keywords": [
+      "안산 퀵",
+      "시흥 퀵",
+      "안산 화물",
+      "반월공단 퀵"
+    ],
+    "service": "truck",
+    "status": "scheduled",
+    "slug": "ansan-siheung-quick",
+    "date": "2026-11-08",
+    "time": "09:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "quick-surcharge-guide",
+    "title": "퀵 할증 기준: 야간·주말·비 오는 날 요금이 오르는 경우",
+    "angle": "할증 네 가지(평일 18시 이후, 주말 16시 이후, 기상 악화, 대기 20분 이상), 할증을 피하는 접수 요령, 표.",
+    "category": "요금 가이드",
+    "keywords": [
+      "퀵 할증",
+      "퀵 야간 할증",
+      "퀵 주말 요금",
+      "퀵 대기 요금"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "quick-surcharge-guide",
+    "date": "2026-11-08",
+    "time": "13:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "namdong-industrial-quick",
+    "title": "인천 남동공단 퀵서비스, 부품·자재 보낼 때 차량 고르기",
+    "angle": "공단이 있는 지역이라는 일반적 성격만. 부품·자재 무게로 차량 고르는 표, 리프트·윙바디, 서울·경기 납품 시 확정 요금.",
+    "category": "차량·화물",
+    "keywords": [
+      "남동공단 퀵",
+      "인천 화물 퀵",
+      "남동구 퀵",
+      "인천 용달"
+    ],
+    "service": "truck",
+    "status": "scheduled",
+    "slug": "namdong-industrial-quick",
+    "date": "2026-11-08",
+    "time": "18:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "yongsan-quick",
+    "title": "용산 퀵서비스, 전자 부품과 장비를 보낼 때 확인할 것",
+    "angle": "전자상가가 있는 지역이라는 일반적 성격만. 부품은 오토바이, 모니터·장비는 다마스, 가액 기재, 포장.",
+    "category": "보내는 방법",
+    "keywords": [
+      "용산 퀵",
+      "용산 퀵서비스",
+      "용산구 퀵",
+      "전자상가 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "yongsan-quick",
+    "date": "2026-11-09",
+    "time": "09:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "hwaseong-pyeongtaek-quick",
+    "title": "화성·평택 퀵서비스, 공장·물류 화물을 당일 보내는 방법",
+    "angle": "서울에서 먼 경기 남부 장거리 시간 기준, 공장·물류 화물은 1톤 이상 화물차, 혼적으로 비용 줄이기, 다음 날 하차.",
+    "category": "차량·화물",
+    "keywords": [
+      "화성 퀵",
+      "평택 퀵",
+      "화성 화물",
+      "평택 용달"
+    ],
+    "service": "truck",
+    "status": "scheduled",
+    "slug": "hwaseong-pyeongtaek-quick",
+    "date": "2026-11-09",
+    "time": "13:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "gwangju-jeolla-same-day-quick",
+    "title": "광주 퀵, 서울·경기에서 광주·전라권으로 오늘 보내는 법",
+    "angle": "KTX·고속버스 연계 구간에 광주·목포·익산(전주)이 있다는 사실, 시간·시작 요금, 화물차 비교. 경기 광주와 헷갈리지 않게 첫 문단에서 \"광주광역시\"로 밝힌다.",
+    "category": "지방·연계배송",
+    "keywords": [
+      "광주 퀵",
+      "서울 광주 당일배송",
+      "광주 퀵서비스",
+      "목포 퀵"
+    ],
+    "service": "intercity",
+    "status": "scheduled",
+    "slug": "gwangju-jeolla-same-day-quick",
+    "date": "2026-11-09",
+    "time": "18:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "gimpo-paju-quick",
+    "title": "김포·파주 퀵서비스, 상자 많은 짐과 출판물 보낼 때",
+    "angle": "물류창고·출판 관련 업체가 있는 지역이라는 일반적 성격만. 상자 수에 맞는 차량(다마스 상자 약 20개 기준), 1톤, 장거리 시간.",
+    "category": "보내는 방법",
+    "keywords": [
+      "김포 퀵",
+      "파주 퀵",
+      "김포 용달",
+      "파주 퀵서비스"
+    ],
+    "service": "damas-labo",
+    "status": "scheduled",
+    "slug": "gimpo-paju-quick",
+    "date": "2026-11-10",
+    "time": "09:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "seoul-northeast-quick",
+    "title": "노원·도봉·강북 퀵서비스, 개인 물건과 중고거래 보낼 때",
+    "angle": "주거지가 많은 지역이라는 일반적 성격만. 중고거래·개인 물건을 보낼 때 받는 분 연락, 부재 시 처리, 무게에 맞는 차량.",
+    "category": "보내는 방법",
+    "keywords": [
+      "노원 퀵",
+      "도봉 퀵",
+      "강북 퀵",
+      "중고거래 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "seoul-northeast-quick",
+    "date": "2026-11-10",
+    "time": "18:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "uijeongbu-namyangju-quick",
+    "title": "의정부·남양주·구리 퀵서비스, 경기 북부와 서울을 오갈 때",
+    "angle": "경기 북부↔서울 거리 기준, 장거리 소요 시간, 큰 짐 차량 고르기, 여유 배차.",
+    "category": "보내는 방법",
+    "keywords": [
+      "의정부 퀵",
+      "남양주 퀵",
+      "구리 퀵",
+      "경기 북부 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "uijeongbu-namyangju-quick",
+    "date": "2026-11-11",
+    "time": "09:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "jeju-same-day-quick",
+    "title": "제주 퀵, 서울·경기에서 제주로 오늘 물건 보내는 방법",
+    "angle": "항공 연계 최대 4시간·시작 요금, 접수 때 확인할 것, 큰 짐은 별도 상담.",
+    "category": "지방·연계배송",
+    "keywords": [
+      "제주 퀵",
+      "제주 당일배송",
+      "제주 항공 퀵",
+      "제주도 퀵서비스"
+    ],
+    "service": "intercity",
+    "status": "scheduled",
+    "slug": "jeju-same-day-quick",
+    "date": "2026-11-11",
+    "time": "13:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "gwanak-dongjak-quick",
+    "title": "관악·동작 퀵서비스, 서류·개인 물건 보낼 때 요금 정하는 법",
+    "angle": "주거와 대학가가 있는 지역이라는 일반적 성격만. 서류·개인 물건, 오토바이 기준, 할증 시간대, 확정 요금.",
+    "category": "보내는 방법",
+    "keywords": [
+      "관악 퀵",
+      "동작 퀵",
+      "사당 퀵",
+      "신림 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "gwanak-dongjak-quick",
+    "date": "2026-11-11",
+    "time": "18:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "incheon-airport-quick",
+    "title": "인천공항 퀵서비스, 출국 전 서류·물건을 공항으로 보낼 때",
+    "angle": "서울·경기에서 공항까지 장거리 시간 기준, 받는 분과 만날 위치·시간을 접수 때 정확히, 출국 시각보다 여유, 연락 가능 번호. 공항 내부 위치는 단정하지 않는다.",
+    "category": "보내는 방법",
+    "keywords": [
+      "인천공항 퀵",
+      "공항 퀵",
+      "인천공항 서류 퀵",
+      "공항 물건 전달"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "incheon-airport-quick",
+    "date": "2026-11-12",
+    "time": "09:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "hanam-gwangju-quick",
+    "title": "하남·경기 광주 퀵서비스, 창고 물건과 큰 짐 보낼 때",
+    "angle": "창고·물류 시설이 있는 지역이라는 일반적 성격만. 광주광역시와 헷갈리지 않게 \"경기도 광주시\"로 표기. 큰 짐 차량, 장거리 시간.",
+    "category": "보내는 방법",
+    "keywords": [
+      "하남 퀵",
+      "경기 광주 퀵",
+      "하남 용달",
+      "하남 퀵서비스"
+    ],
+    "service": "damas-labo",
+    "status": "scheduled",
+    "slug": "hanam-gwangju-quick",
+    "date": "2026-11-12",
+    "time": "13:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "gwangjin-gangdong-quick",
+    "title": "광진·강동 퀵서비스, 매장 물건과 서류 보낼 때 확인할 것",
+    "angle": "상권과 주거가 섞인 지역이라는 일반적 성격만. 매장 물품·서류, 무게에 맞는 차량, 할증 시간대, 장안동 사무실과 가까운 동쪽 지역이라는 점은 사실(주소)만.",
+    "category": "보내는 방법",
+    "keywords": [
+      "광진 퀵",
+      "강동 퀵",
+      "건대 퀵",
+      "천호 퀵"
+    ],
+    "service": "motorcycle",
+    "status": "scheduled",
+    "slug": "gwangjin-gangdong-quick",
+    "date": "2026-11-12",
+    "time": "18:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "ulsan-pohang-same-day-quick",
+    "title": "울산·포항 퀵, 급하게 보낼 때 항공 연계가 맞는 경우",
+    "angle": "항공 연계 구간에 울산·포항이 있다는 사실, 시간·시작 요금, KTX·버스와 비교, 화물차.",
+    "category": "지방·연계배송",
+    "keywords": [
+      "울산 퀵",
+      "포항 퀵",
+      "울산 당일배송",
+      "포항 항공 퀵"
+    ],
+    "service": "intercity",
+    "status": "scheduled",
+    "slug": "ulsan-pohang-same-day-quick",
+    "date": "2026-11-13",
+    "time": "09:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "business-quick-partner",
+    "title": "법인 퀵 거래처 정할 때 확인할 것: 월 정산·세금계산서·접수",
+    "angle": "월 정산 조건, 세금계산서, 총무 담당자가 확인할 접수·요금 공개·배상 기준. 기존 월 정산 글과 겹치지 않게 \"거래처 고르는 기준\"에 초점.",
+    "category": "기업 물류",
+    "keywords": [
+      "법인 퀵",
+      "기업 퀵",
+      "회사 퀵 거래처",
+      "퀵 월정산"
+    ],
+    "service": "",
+    "status": "scheduled",
+    "slug": "business-quick-partner",
+    "date": "2026-11-13",
+    "time": "13:00",
+    "source": "keyword-plan-2026-10"
+  },
+  {
+    "id": "truck-ton-choose",
+    "title": "화물차 부를 때 톤수 고르는 법: 1톤부터 25톤까지",
+    "angle": "톤수별 적재함 크기 표, 적재 한도, 카고·탑차·윙바디, 큰 화물은 상담.",
+    "category": "차량·화물",
+    "keywords": [
+      "화물차 톤수",
+      "화물 용달",
+      "화물차 퀵",
+      "트럭 크기"
+    ],
+    "service": "truck",
+    "status": "scheduled",
+    "slug": "truck-ton-choose",
+    "date": "2026-11-13",
+    "time": "18:00",
+    "source": "keyword-plan-2026-10"
   }
 ]

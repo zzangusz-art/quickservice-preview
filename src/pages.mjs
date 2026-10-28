@@ -1,4 +1,5 @@
 // 하위 페이지 본문
+import { AREAS, AREA_CITIES, AREA_FAQ } from './data.mjs';
 import { SITE, SERVICES, START_FARES, FARE_RULES, SAVE_TIPS, MARKET, CHECKLIST, FAQ, FAQ_CATS, SMALL_VEHICLES, TRUCKS, TRUCK_LIMITS, BODY_TYPES, CARGO_TYPES, INTERCITY, INTERCITY_NOTE, MOTO_TIME, MOTO_SIZE, BUSINESS, PAYMENT, COMPANY_INTRO, ASOF, ASOF_LABEL, avg } from './data.mjs';
 import { esc, won, kdate, photo } from './lib.mjs';
 import { ico, koreaMap } from './art.mjs';
@@ -454,4 +455,50 @@ ${ctaBand(u)}`;
 export function notFound(u) {
   return `<section class="sub-hero sub-hero-plain nf"><div class="wrap"><p class="eyebrow">404</p><h1>찾는 페이지가 없습니다</h1><p class="lead">주소가 바뀌었거나 삭제된 페이지입니다. 급한 배송이라면 바로 전화 주세요.</p>
   <p class="sub-hero-cta"><a class="btn btn-signal" href="tel:${SITE.tel}">${ico('phone')}${SITE.phone}</a><a class="btn btn-line" href="${u('')}">홈으로</a></p></div></section>`;
+}
+
+// ── 서비스 지역(지역별 퀵서비스) ──────────────────────
+export function areaPage(u, posts) {
+  const pub = new Map(posts.map(p => [p.slug, p]));
+  const crumbs = [{ name: '홈', href: '' }, { name: '서비스 지역', href: 'area/' }];
+  const chip = (name, slug, hub) => {
+    const p = pub.get(slug) || pub.get(hub);
+    return p ? `<li><a class="area-chip" href="${u('blog/' + p.slug + '/')}" title="${esc(p.title)}">${name}</a></li>` : `<li><span class="area-chip">${name}</span></li>`;
+  };
+  const guides = (slugs, hub) => {
+    const list = [...new Set([hub, ...slugs])].map(s => pub.get(s)).filter(Boolean);
+    return list.length ? `<ul class="area-guides">${list.map(p => `<li><a href="${u('blog/' + p.slug + '/')}">${esc(p.title)}</a></li>`).join('')}</ul>` : '';
+  };
+  const sections = AREAS.map(a => `
+  <section class="sec${a.id === 'incheon' ? ' sec-soft' : ''}" id="${a.id}" aria-labelledby="ar-${a.id}">
+    <div class="wrap">
+      <div class="sec-hd sec-hd-left"><p class="eyebrow">${a.name} · ${a.unitLabel}</p><h2 id="ar-${a.id}">${a.short} 퀵서비스</h2><p class="sec-lead">${a.lead}</p></div>
+      <ul class="area-units" aria-label="${a.short} ${a.unitLabel}">${a.units.map(([n, s]) => chip(n, s, a.hub)).join('')}</ul>
+      ${guides(a.units.map(x => x[1]).filter(Boolean), a.hub)}
+    </div>
+  </section>`).join('');
+  const cities = `
+  <section class="sec" id="nationwide" aria-labelledby="ar-nation">
+    <div class="wrap">
+      <div class="sec-hd sec-hd-left"><p class="eyebrow">전국 당일 배송</p><h2 id="ar-nation">전국 지역 퀵 — 지방은 연계배송으로 오늘 받습니다</h2><p class="sec-lead">${INTERCITY.map(m => `${m.short} 연계는 최대 ${m.hours}시간 이내 문전 배송, ${won(m.from)}부터`).join(', ')}입니다(${ASOF_LABEL} 기준, ${SITE.vat}). 큰 짐은 1톤부터 25톤 화물차와 혼적으로 보냅니다.</p></div>
+      <ul class="area-units">${AREA_CITIES.list.map(([n, s]) => chip(n, s, AREA_CITIES.hub)).join('')}</ul>
+      ${guides(AREA_CITIES.list.map(x => x[1]).filter(Boolean), AREA_CITIES.hub)}
+      <p class="area-more"><a class="link-arrow" href="${u('services/intercity/')}">연계배송 자세히${ico('arrow', 'ico-s')}</a></p>
+    </div>
+  </section>`;
+  const times = `
+  <section class="sec sec-soft" id="time" aria-labelledby="ar-time">
+    <div class="wrap wrap-narrow">
+      <div class="sec-hd sec-hd-left"><p class="eyebrow">지역 사이 시간과 요금</p><h2 id="ar-time">거리에 따라 걸리는 시간</h2><p class="sec-lead">${FARE_RULES.basis}</p></div>
+      <div class="tbl-scroll"><table class="tbl"><thead><tr><th scope="col">구분</th><th scope="col">오토바이 기준</th></tr></thead><tbody>${MOTO_TIME.map(t => `<tr><th scope="row">${t.k}</th><td>${t.v}</td></tr>`).join('')}</tbody></table></div>
+      <p class="muted" style="margin-top:12px">${FARE_RULES.surchargeWhen.map(s => s.k).join(', ')}에는 할증이 붙을 수 있습니다. 출발·도착 동을 알려 주시면 확정 요금을 먼저 안내합니다.</p>
+    </div>
+  </section>`;
+  return [
+    subHero({}, u, { eyebrow: '서비스 지역', h1: '서울·인천·경기 지역별 퀵서비스', lead: `서울 25개 구, 인천 9개 구·2개 군, 경기 31개 시·군 어디서든 오토바이·다마스·라보·화물차를 24시간 접수합니다. 지방은 KTX·고속버스·항공 연계로 오늘 받습니다.`, crumbs,
+      aside: `<aside class="spec-card"><div class="spec-big"><span>대표전화 · 24시간</span><strong>${SITE.phone}</strong></div><dl>${[['서울', '25개 구'], ['인천', '9개 구·2개 군'], ['경기', '31개 시·군'], ['지방', 'KTX·고속버스·항공 연계']].map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl></aside>` }),
+    sections, cities, times,
+    `<section class="sec" id="faq" aria-labelledby="ar-faq"><div class="wrap faq-grid"><div class="sec-hd sec-hd-left"><p class="eyebrow">FAQ</p><h2 id="ar-faq">지역 퀵, 자주 묻는 질문</h2></div><div>${faqList(AREA_FAQ.map(f => ({ ...f, cat: 'x' })), { id: 'faq-area' })}</div></div></section>`,
+    ctaBand(u, '어느 동에서 어느 동으로 보내시나요? 동 이름만 알려 주시면 요금이 나옵니다.'),
+  ].join('\n');
 }

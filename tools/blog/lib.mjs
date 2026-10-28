@@ -17,7 +17,7 @@ export function parseFrontmatter(src) {
 }
 
 // 사이트 안 링크로 허용하는 경로(사이트 루트 기준)
-const INTERNAL = /^(services\/[a-z-]+\/|pricing\/|vehicles\/|business\/|faq\/|about\/|blog\/([a-z0-9-]+\/)?)(#[a-z0-9-]+)?$|^#[a-z0-9-]+$|^tel:/i;
+const INTERNAL = /^(services\/[a-z-]+\/|area\/|pricing\/|vehicles\/|business\/|faq\/|about\/|blog\/([a-z0-9-]+\/)?)(#[a-z0-9-]+)?$|^#[a-z0-9-]+$|^tel:/i;
 export const isInternal = href => INTERNAL.test(href) || href === '';
 
 // 인라인: **굵게**, [링크](주소). link(href) 로 상대 경로를 만든다
@@ -86,8 +86,9 @@ export function splitFaq(body) {
   return { body: body.replace(m[0], '\n'), faq };
 }
 
-// 글 목록(최신순). 미래 날짜 글은 빌드에 넣지 않는다(예약 발행)
-export function loadPosts(dir, { today } = {}) {
+// 글 목록(최신순). 공개 시각(date + time, 한국 시간)이 지나지 않은 글은 빌드에 넣지 않는다(예약 발행)
+//   now: "YYYY-MM-DD HH:MM"(시각까지 비교), today: "YYYY-MM-DD"(날짜만 비교)
+export function loadPosts(dir, { today, now } = {}) {
   if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir).filter(f => f.endsWith('.md') && !f.startsWith('_')).map(f => {
     const { meta, body } = parseFrontmatter(fs.readFileSync(path.join(dir, f), 'utf8'));
@@ -95,6 +96,6 @@ export function loadPosts(dir, { today } = {}) {
     const { body: main, faq } = splitFaq(body);
     const chars = body.replace(/\s+/g, '').length;
     return { ...meta, file: f, main, faq, minutes: Math.max(2, Math.ceil(chars / 500)), chars };
-  }).filter(p => !today || p.date <= today)
+  }).filter(p => now ? `${p.date} ${p.time || "00:00"}` <= now : !today || p.date <= today)
     .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (b.time || '').localeCompare(a.time || '') || a.slug.localeCompare(b.slug)));
 }

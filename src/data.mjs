@@ -379,7 +379,7 @@ export const SERVICES = [
   },
   {
     id: 'intercity', slug: 'services/intercity/', icon: 'rail', photo: 'ktx.webp', photoAlt: 'KTX 고속열차', name: 'KTX·고속버스·항공 연계',
-    title: 'KTX·고속버스·항공 연계배송 — 수도권↔지방 당일 문전 배송 25,000원부터',
+    title: '전국 퀵·지방 당일배송 — KTX·고속버스·항공 연계 25,000원부터',
     desc: '서울·경기에서 부산·대구·광주·제주까지 당일에 받습니다. KTX 최대 5시간·25,000원부터, 고속버스 최대 7시간·25,000원부터, 항공 최대 4시간·40,000원부터.',
     lead: '작은 짐을 지방으로 당일에 보내야 할 때는 화물차보다 KTX·고속버스·항공에 실어 보내는 편이 빠르고 저렴합니다. 문 앞에서 받아 문 앞까지 전합니다.',
     card: '수도권↔지방 당일 문전 배송.',
@@ -430,3 +430,32 @@ export const BLOG_IMAGES = [
 export const BLOG_IMAGE_FALLBACK = { '요금 가이드': 'rider', '보내는 방법': 'ride', '차량·화물': 'truck1', '지방·연계배송': 'ktx', '기업 물류': 'brand-truck' };
 
 export { won };
+
+// ── 서비스 지역(area/ 허브 페이지) ──────────────────────────
+// 행정구역은 2026-10 기준. 인천은 2026-07-01 개편(중구·동구 → 제물포구·영종구, 서구 → 서해구·검단구)으로 2군 9구.
+// 각 구·시·군의 둘째 값은 그 지역을 다룬 물류 가이드 글 slug(공개된 글만 링크, 없으면 지역 대표 글로 연결).
+export const AREAS = [
+  {
+    id: 'seoul', name: '서울특별시', short: '서울', unitLabel: '25개 구', hub: 'seoul-quick-service',
+    lead: '서울 25개 구 어디서든 24시간 접수합니다. 오토바이는 보통 5~20분 안에 물건을 받으러 가고, 근거리는 30~50분, 단거리는 1시간~1시간 30분 안에 도착합니다. 요금은 구 이름이 아니라 출발·도착 동 사이의 거리와 물건, 차량, 시간대로 정합니다.',
+    units: [['종로구', 'jongno-junggu-quick'], ['중구', 'jongno-junggu-quick'], ['용산구', 'yongsan-quick'], ['성동구', 'seongsu-quick'], ['광진구', 'gwangjin-gangdong-quick'], ['동대문구', 'dongdaemun-jangan-quick'], ['중랑구'], ['성북구'], ['강북구', 'seoul-northeast-quick'], ['도봉구', 'seoul-northeast-quick'], ['노원구', 'seoul-northeast-quick'], ['은평구'], ['서대문구'], ['마포구', 'mapo-sangam-quick'], ['양천구'], ['강서구', 'magok-gangseo-quick'], ['구로구', 'guro-gasan-quick'], ['금천구', 'guro-gasan-quick'], ['영등포구', 'yeouido-yeongdeungpo-quick'], ['동작구', 'gwanak-dongjak-quick'], ['관악구', 'gwanak-dongjak-quick'], ['서초구', 'gangnam-seocho-quick'], ['강남구', 'gangnam-seocho-quick'], ['송파구', 'songpa-jamsil-quick'], ['강동구', 'gwangjin-gangdong-quick']],
+  },
+  {
+    id: 'incheon', name: '인천광역시', short: '인천', unitLabel: '9개 구·2개 군', hub: 'incheon-quick-service',
+    lead: '인천 전 지역에서 서울·경기로, 서울·경기에서 인천으로 보내는 물건을 24시간 접수합니다. 인천과 서울 사이는 장거리로 계산되는 경우가 많고, 오토바이 장거리는 2시간~2시간 30분이 기준입니다. 섬 지역은 갈 수 있는지 접수할 때 확인합니다.',
+    units: [['제물포구'], ['영종구', 'incheon-airport-quick'], ['미추홀구'], ['연수구', 'songdo-quick'], ['남동구', 'namdong-industrial-quick'], ['부평구'], ['계양구'], ['서해구'], ['검단구'], ['강화군'], ['옹진군']],
+  },
+  {
+    id: 'gyeonggi', name: '경기도', short: '경기', unitLabel: '31개 시·군', hub: 'gyeonggi-quick-service',
+    lead: '경기 31개 시·군 전 지역을 오토바이, 다마스·라보, 1톤부터 25톤 화물차로 연결합니다. 같은 경기도 안에서도 거리 차이가 커서 출발·도착 동을 알려 주시면 확정 요금을 먼저 안내합니다. 공장·창고 화물은 화물차, 급하지 않으면 오늘 중 여유 배차로 요금을 아낄 수 있습니다.',
+    units: [['수원시', 'suwon-quick'], ['성남시', 'pangyo-bundang-quick'], ['의정부시', 'uijeongbu-namyangju-quick'], ['안양시', 'anyang-gunpo-quick'], ['부천시', 'bucheon-quick'], ['광명시'], ['평택시', 'hwaseong-pyeongtaek-quick'], ['동두천시'], ['안산시', 'ansan-siheung-quick'], ['고양시', 'ilsan-goyang-quick'], ['과천시'], ['구리시', 'uijeongbu-namyangju-quick'], ['남양주시', 'uijeongbu-namyangju-quick'], ['오산시'], ['시흥시', 'ansan-siheung-quick'], ['군포시', 'anyang-gunpo-quick'], ['의왕시', 'anyang-gunpo-quick'], ['하남시', 'hanam-gwangju-quick'], ['용인시', 'yongin-quick'], ['파주시', 'gimpo-paju-quick'], ['이천시'], ['안성시'], ['김포시', 'gimpo-paju-quick'], ['화성시', 'hwaseong-pyeongtaek-quick'], ['광주시', 'hanam-gwangju-quick'], ['양주시'], ['포천시'], ['여주시'], ['연천군'], ['가평군'], ['양평군']],
+  },
+];
+// 지방 당일 배송(연계배송) 도시 → 글
+export const AREA_CITIES = { hub: 'nationwide-quick-same-day', list: [['부산', 'seoul-to-busan-same-day'], ['대전', 'daejeon-same-day-quick'], ['대구', 'daegu-same-day-quick'], ['광주', 'gwangju-jeolla-same-day-quick'], ['목포', 'gwangju-jeolla-same-day-quick'], ['익산(전주)', 'gwangju-jeolla-same-day-quick'], ['울산', 'ulsan-pohang-same-day-quick'], ['포항', 'ulsan-pohang-same-day-quick'], ['여수(순천)'], ['제주', 'jeju-same-day-quick']] };
+export const AREA_FAQ = [
+  { q: '서울·인천·경기 어디서든 퀵을 부를 수 있나요?', a: '네. 서울 25개 구, 인천 9개 구·2개 군, 경기 31개 시·군 전 지역에서 24시간·365일 접수합니다. 일부 도서 지역은 갈 수 있는지 접수할 때 확인합니다.' },
+  { q: '지역마다 퀵 요금이 다른가요?', a: '요금은 지역 이름이 아니라 출발지와 도착지 사이의 거리, 물건 크기·무게, 차량, 시간대로 정합니다. 출발·도착 동 이름을 알려 주시면 확정 요금을 먼저 안내합니다.' },
+  { q: '서울에서 경기·인천으로 보내면 얼마나 걸리나요?', a: '오토바이 기준 근거리 30~50분, 단거리 1시간~1시간 30분, 장거리 2시간~2시간 30분입니다. 정확한 시간은 출발·도착 동과 시간대를 듣고 안내합니다.' },
+  { q: '지방이나 제주로도 오늘 보낼 수 있나요?', a: 'KTX·고속버스·항공 연계로 당일 문전 배송합니다. KTX 최대 5시간·25,000원부터, 고속버스 최대 7시간·25,000원부터, 항공 최대 4시간·40,000원부터이며 부가세 별도입니다. 제주는 항공 연계로 보냅니다.' },
+];

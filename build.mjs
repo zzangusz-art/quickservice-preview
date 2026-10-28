@@ -26,6 +26,7 @@ const P = await import('./src/pages.mjs');
 const { loadPosts, renderMarkdown } = await import('./tools/blog/lib.mjs');
 
 const today = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Seoul' }).format(new Date());
+const nowKST = today + ' ' + new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date()); // 예약 글 공개 기준
 
 // ── 준비 ──
 fs.rmSync(OUT, { recursive: true, force: true });
@@ -52,7 +53,7 @@ const bc = items => S.breadcrumb(items.map(([name, rel]) => ({ name, url: SITE.u
 
 // ── 블로그 글 ──
 const BLOG = path.join(ROOT, 'content/blog');
-const posts = loadPosts(BLOG, { today }).map(p => {
+const posts = loadPosts(BLOG, { now: process.env.BUILD_NOW || nowKST }).map(p => {
   const link = h => h.startsWith('#') || h.startsWith('tel:') ? h : '../../' + h; // blog/<slug>/index.html 기준
   const r = renderMarkdown(p.main, link);
   const faq = p.faq.map(f => ({ ...f }));
@@ -84,7 +85,7 @@ const lastPost = posts[0]?.date || ASOF;
   const out = 'index.html', url = pageUrl(out);
   const homeFaq = FAQ.filter(f => f.pages.includes('home'));
   emit({ out, pri: '1.0', mod: lastPost > ASOF ? lastPost : ASOF, bodyClass: 'home',
-    title: '퀵서비스다 | 서울·경기·인천 퀵서비스, 오토바이부터 25톤 화물까지 24시간',
+    title: '퀵서비스다 | 서울퀵·인천·경기 퀵서비스, 오토바이·다마스 퀵부터 화물까지 24시간',
     description: '오토바이 퀵 8,000원부터, 다마스 20,000원부터, 1톤 40,000원부터(부가세 별도). KTX·고속버스·항공 연계로 지방도 당일 배송. 24시간 접수 1661-7462, 화물운송주선 허가 제90143호.',
     schema: S.graph(S.organization(), S.website(), S.webpage({ url, title: '퀵서비스다 — 서울·경기·인천 퀵서비스와 전국 화물운송', description: '오토바이 퀵부터 25톤 화물, KTX·항공 연계배송까지 24시간 접수' }), S.faqPage(homeFaq, url)),
     body: u => homeBody(u, posts) });
@@ -128,6 +129,16 @@ for (const it of info) {
   const t = `퀵서비스 자주 묻는 질문 ${FAQ.length}가지 — 요금·할증·취소·지방 배송 | 퀵서비스다`;
   const d = '퀵 요금 계산, 할증 시간, 취소비, 두 곳 이상 보내기, 지방·제주 배송, 세금계산서와 월 정산까지 자주 묻는 질문에 답합니다.';
   emit({ out, section: 'faq/', pri: '0.8', title: t, description: d, schema: S.graph(S.organization(), S.website(), S.webpage({ url, title: t, description: d }), bc([['홈', ''], ['자주 묻는 질문', 'faq/']]), S.faqPage(FAQ, url)), body: u => P.faqPageBody(u) });
+}
+{
+  // 서비스 지역 허브: 구·시·군 목록과 공개된 지역 글 링크(예약 글은 공개 시각이 지나야 링크됨)
+  const out = 'area/index.html', url = pageUrl(out);
+  const t = '서울·인천·경기 지역별 퀵서비스 — 구·시·군 전 지역 24시간 | 퀵서비스다';
+  const d = '서울 25개 구, 인천 9개 구·2개 군, 경기 31개 시·군 어디서든 오토바이·다마스·라보·화물차 퀵을 24시간 접수합니다. 지방은 KTX·고속버스·항공 연계로 당일 배송합니다.';
+  const areaMod = posts.filter(p => D.AREAS.some(a => a.hub === p.slug || a.units.some(x => x[1] === p.slug))).map(p => p.date).sort().pop();
+  emit({ out, section: 'area/', pri: '0.8', mod: areaMod && areaMod > ASOF ? areaMod : ASOF, title: t, description: d,
+    schema: S.graph(S.organization(), S.website(), S.webpage({ url, title: t, description: d }), bc([['홈', ''], ['서비스 지역', 'area/']]), S.faqPage(D.AREA_FAQ, url)),
+    body: u => P.areaPage(u, posts) });
 }
 for (const [id, name, render] of [['privacy', '개인정보처리방침', P.privacyBody], ['terms', '이용약관(이륜차 퀵서비스)', P.termsBody]]) {
   const out = `${id}/index.html`, url = pageUrl(out);
@@ -200,6 +211,7 @@ ${fareLines}
 ${SERVICES.map(s => `- [${s.name}](${SITE.url}${s.slug}): ${s.desc}`).join('\n')}
 - [요금 안내](${SITE.url}pricing/): 시작 요금, 할증·취소·왕복 기준, 공개 요금표 비교
 - [차량 제원](${SITE.url}vehicles/): 톤수별 적재함 크기, 차량 추천
+- [서비스 지역](${SITE.url}area/): 서울 25개 구·인천 9개 구 2개 군·경기 31개 시군 지역별 퀵서비스, 지방 연계배송 도시
 - [기업 고객](${SITE.url}business/): 월 정산·세금계산서
 - [자주 묻는 질문](${SITE.url}faq/)
 - [회사 소개](${SITE.url}about/)

@@ -52,7 +52,12 @@ GitHub Actions가 **매일 09:23 · 13:23 · 18:23(KST)** (GitHub 예약 실행�
 - `set ANTHROPIC_API_KEY=...` 후 `npm ci` → `node tools/blog-ai/generate.mjs` (특정 주제 `--topic <id>`, 여러 편 `--count 3`)
 - 검사만: `node tools/blog-ai/generate.mjs --check`
 - 사람이 쓴 글: `content/blog/<slug>.md` 로 저장(머리말 `title` `description` `slug` `date` `category` `tags`, 선택 `time` `service`) → 빌드
-- 미래 날짜(`date`)로 저장한 글은 그날이 되어야 빌드에 들어갑니다(예약 발행).
+- 예약 발행: 머리말 `date`+`time`(한국 시간)이 지나야 빌드에 들어갑니다. Railway 서버는 매시 정각에 다시 빌드하므로 09:00·13:00·18:00 글이 제시간에 공개되고, 새로 공개된 주소는 IndexNow로 네이버·빙에 알립니다. GitHub Pages 미리보기는 예약 실행 때 반영됩니다.
+- 키워드 예약 글 50편(2026-10-28 ~ 11-13, 하루 3편): `_topics.json`의 `status: "scheduled"`. 이와 겹치던 대기 주제는 `merged`로 바꿔 AI가 다시 쓰지 않습니다. 예약 글이 남아 있는 동안 AI 자동 작성은 쉬고(`--force`로 무시), 다 나가면 남은 `todo` 주제로 이어 갑니다.
+- 글에 쓸 수 있는 사실 목록 보기: `node tools/blog-ai/generate.mjs --facts`
+
+## 서비스 지역(area/)
+- `src/data.mjs`의 `AREAS`(서울 25개 구·인천 9개 구 2개 군·경기 31개 시군, 2026-10 행정구역)와 `AREA_CITIES`(지방 연계 도시). 각 구·시·군에 그 지역 글 slug를 적어 두면, 글이 공개된 뒤부터 자동으로 링크됩니다(없으면 지역 대표 글로).
 
 ## 운영 서버 (Railway)
 - Railway 프로젝트 `pleasant-commitment` → 서비스 `quickservice-preview`가 이 저장소와 연결돼 있어, `main`에 푸시하면 자동 배포됩니다.
