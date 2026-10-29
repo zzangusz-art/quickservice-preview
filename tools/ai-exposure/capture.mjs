@@ -8,7 +8,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
-import { AI_DIR, CSV, CSV_HEAD, ENG, QUERIES, BRAND_QUERY, SITE_RE, BRAND_WORD_RE, PHONE_RE, HOST, kstDate, safe, arg, flag, findChrome } from './lib.mjs';
+import { AI_DIR, CSV, CSV_HEAD, ENG, QUERIES, HOST, kstDate, safe, arg, flag, findChrome, judge, csvRow, summaryMd } from './lib.mjs';
 
 const ENGINES = {
   google: { url: (q) => `https://www.google.com/search?q=${encodeURIComponent(q)}&hl=ko&gl=kr`, wait: 4000 },
@@ -23,7 +23,6 @@ const ENGINES = {
 };
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 const LOGIN_RE = /\/login|signin|accounts\.google\.com|\/auth/i;
-const BLOCK_RE = /unusual traffic|비정상적인 트래픽|robot|보안 확인|verify you are human|Cloudflare|마지막 한 단계|과제 해결|One last step|solve the challenge|captcha/i;
 const areaText = (page, E) => page.evaluate(sel => ((document.querySelector(sel) || document.body).innerText || '').slice(0, 200000), E.area);
 
 async function runChat(page, E, q) {
@@ -63,7 +62,7 @@ function scanPage(sel, host) {
   }
   for (const c of root.querySelectorAll('cite')) { const m = (c.textContent || '').match(/([a-z0-9-]+\.)+[a-z]{2,}/i); if (m) { const h = m[0].replace(/^www\./, '').toLowerCase(); if (h !== host && !OWN.test(h) && !hosts.includes(h)) hosts.push(h); } }
   let hitEl = siteEl;
-  if (!hitEl) for (const re of [/xn--2j1bs9sn9b30bc55a|퀵서비스다\.kr/i, /1661[-\s.]?7462/, /퀵서비스다/]) {
+  if (!hitEl) for (const re of [/xn--2j1bs9sn9b30bc55a\.kr|퀵서비스다\.kr/i, /1661[-\s.]?7462/, /퀵서비스다/]) {
     const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); let n;
     while ((n = w.nextNode())) if (re.test(n.textContent) && n.parentElement.getBoundingClientRect().height) { hitEl = n.parentElement; break; }
     if (hitEl) break;
@@ -129,10 +128,11 @@ const lockPid = (f) => { try { return Number(fs.readFileSync(f, 'utf8')) || 0; }
           }
           const read = async () => E.chat ? (await areaText(page, E)).split(q).join(' ') : await page.evaluate(() => (document.body.innerText || '').slice(0, 200000));
           const T = await read();
-          if (!E.chat && ((BLOCK_RE.test(T) && T.length < 3000) || T.length < 300)) { r.blocked = true; r.error = '차단 화면'; stopped.add(e); } // 우회하지 않고 그 엔진은 그날 중단
           const scan = await page.evaluate(scanPage, E.chat ? E.area : null, HOST).catch(() => ({ hosts: [], siteLink: false, hit: null }));
-          r.site = SITE_RE.test(T) || scan.siteLink;
-          r.brand = r.site || PHONE_RE.test(T) || (q !== BRAND_QUERY && BRAND_WORD_RE.test(T)); // 브랜드 질의는 검색어 자체가 화면에 나오므로 번호·주소만 본다
+          const j = judge(e, q, T, scan.siteLink);
+          if (j.blocked) { r.blocked = true; r.error = '차단 화면'; stopped.add(e); } // 우회하지 않고 그 엔진은 그날 중단
+          else if (!r.error) r.error = j.error;
+          r.site = j.site; r.brand = j.brand; r.siteLink = scan.siteLink;
           r.domains = scan.hosts; if (r.site || r.brand) r.hit = scan.hit;
           fs.writeFileSync(path.join(outDir, `${e}_${safe(q)}.txt`), T.slice(0, 20000), 'utf8');
           r.file = path.join(outDir, `${e}_${safe(q)}.jpg`);
@@ -157,14 +157,10 @@ const lockPid = (f) => { try { return Number(fs.readFileSync(f, 'utf8')) || 0; }
   const all = [...merged.values()];
   fs.writeFileSync(resFile, JSON.stringify(all, null, 1), 'utf8');
 
-  const lines = [`# AI 검색·검색 노출 캡처 — ${date}`, '', '| 질의 | 엔진 | 우리 사이트 | 상호 언급 | 주요 인용 출처 | 비고 |', '|---|---|---|---|---|---|'];
-  for (const x of all) lines.push(`| ${x.query} | ${ENG[x.engine]} | ${x.site ? '✅' : '—'} | ${x.brand ? '✅' : '—'} | ${x.domains.slice(0, 3).join(', ') || '—'} | ${x.error ? (x.error === '로그인 필요' || x.error.startsWith('차단') ? x.error : '오류: ' + x.error) : ''} |`);
-  const ok = all.filter(x => !x.error && !x.blocked);
-  lines.push('', `- 유효 캡처 ${ok.length}/${all.length} · 우리 사이트 노출 ${ok.filter(x => x.site).length} · 상호 언급 ${ok.filter(x => x.brand).length}`, `- 캡처: \`측정/AI검색/${date}/\``);
-  fs.writeFileSync(path.join(outDir, `요약_${date}.md`), lines.join('\n') + '\n', 'utf8');
+  fs.writeFileSync(path.join(outDir, `요약_${date}.md`), summaryMd(date, all), 'utf8');
 
   if (!fs.existsSync(CSV)) fs.writeFileSync(CSV, '\uFEFF' + CSV_HEAD + '\n', 'utf8');
-  fs.appendFileSync(CSV, results.map(x => [x.date, x.engine, x.query, x.site ? 1 : 0, x.brand ? 1 : 0, x.domains.slice(0, 5).join('|'), x.blocked ? 1 : 0, x.error.replace(/[,\r\n]/g, ' ')].join(',')).join('\n') + '\n', 'utf8');
+  fs.appendFileSync(CSV, results.map(csvRow).join('\n') + '\n', 'utf8');
   console.log(`완료: ${results.length}건 → ${outDir}`);
   process.exit(0);
 })().catch(e => { console.error(e); process.exit(1); });

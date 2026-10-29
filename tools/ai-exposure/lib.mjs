@@ -15,10 +15,11 @@ export const CHECK_DIR = process.env.QS_CHECK_DIR || path.join(PROJ, '측정', '
 
 export const HOST = 'xn--2j1bs9sn9b30bc55a.kr';
 export const HOST_KO = '퀵서비스다.kr';
-// 우리 사이트: 퓨니코드·한글 주소 둘 다(Perplexity·구글은 한글로, 링크 주소는 퓨니코드로 보인다)
-export const SITE_RE = /xn--2j1bs9sn9b30bc55a|퀵서비스다\.kr/i;
-// 상호: '퀵서비스다' — '…퀵서비스다.'처럼 문장 끝 서술이나 '퀵서비스다 보니' 같은 일반 문장은 빼고, 대표번호는 상호로 본다
-export const BRAND_WORD_RE = /퀵서비스다(?![.?!。,](?:\s|$))(?!\s*(?:보니|운\s|움|워))/;
+// 우리 사이트: 퓨니코드·한글 주소 둘 다, 반드시 .kr까지(앞부분만 보면 기존 퀵서비스다.com 퓨니코드와 같아 오판 — 10/29 Perplexity 사례).
+// Perplexity처럼 출처를 TLD 없이 줄여 보여 주는 엔진은 화면의 실제 링크 주소(siteLink)로 판정한다
+export const SITE_RE = /xn--2j1bs9sn9b30bc55a\.kr|퀵서비스다\.kr/i;
+// 상호: '퀵서비스다' — '…퀵서비스다.'처럼 문장 끝 서술, '퀵서비스다 보니', '퀵서비스다마스·다양한'처럼 붙어 쓴 일반 문장은 빼고, 대표번호는 상호로 본다
+export const BRAND_WORD_RE = /퀵서비스다(?![.?!。,](?:\s|$))(?!\s*(?:보니|운\s|움|워))(?!마스|양|른|음)/;
 export const PHONE_RE = /1661[-\s.]?7462/;
 export const BRAND_QUERY = '퀵서비스다';
 // 기존 사이트 퀵서비스다.com(같은 대표번호, http) — 신규 .kr 노출과 따로 센다
@@ -43,6 +44,29 @@ export const flag = (name) => process.argv.includes('--' + name);
 
 export const CSV = path.join(AI_DIR, '추이.csv');
 export const CSV_HEAD = 'date,engine,query,site,brand,domains,blocked,error';
+export const csvRow = (x) => [x.date, x.engine, x.query, x.site ? 1 : 0, x.brand ? 1 : 0, (x.domains || []).slice(0, 5).join('|'), x.blocked ? 1 : 0, (x.error || '').replace(/[,\r\n]/g, ' ')].join(',');
+
+// 판정(캡처·재판정 공용). 봇 확인 화면은 '차단 화면', 대화형 AI에서 안내 문구만 찍히고 답변이 없으면 '답변 없음'(노출 없음과 구분)
+export const BLOCK_RE = /unusual traffic|비정상적인 트래픽|robot|보안 확인|verify you are human|Cloudflare|마지막 한 단계|과제 해결|One last step|solve the challenge|captcha/i;
+const CHAT_CHROME = /^(Gemini와의 대화|말씀하신 내용|Gemini의 응답|나의 말:?|ChatGPT의 말:?|로그인.*|Flash(-Lite)?|새 창에서 열기|Gemini는 AI이며.*|ChatGPT는 AI라.*|.*개인 정보 보호.*|claude\.ai)$/;
+export const chatAnswerLen = (T) => T.split(/\r?\n/).map(s => s.trim()).filter(s => s && !CHAT_CHROME.test(s)).join('').length;
+export function judge(engine, query, T, siteLink) {
+  const chat = CHAT.includes(engine);
+  if ((BLOCK_RE.test(T) && T.length < 3000) || (!chat && T.length < 300)) return { blocked: true, error: '차단 화면', site: false, brand: false };
+  if (chat && chatAnswerLen(T) < 40) return { blocked: false, error: '답변 없음', site: false, brand: false };
+  const site = SITE_RE.test(T) || !!siteLink;
+  const brand = site || PHONE_RE.test(T) || (query !== BRAND_QUERY && BRAND_WORD_RE.test(T)); // 브랜드 질의는 검색어 자체가 화면에 나오므로 번호·주소만 본다
+  return { blocked: false, error: '', site, brand };
+}
+
+// 하루 요약 md
+export function summaryMd(date, all) {
+  const lines = [`# AI 검색·검색 노출 캡처 — ${date}`, '', '| 질의 | 엔진 | 우리 사이트 | 상호 언급 | 주요 인용 출처 | 비고 |', '|---|---|---|---|---|---|'];
+  for (const x of all) lines.push(`| ${x.query} | ${ENG[x.engine]} | ${x.site ? '✅' : '—'} | ${x.brand ? '✅' : '—'} | ${(x.domains || []).slice(0, 3).join(', ') || '—'} | ${x.error ? (/^(로그인 필요|차단|답변 없음)/.test(x.error) ? x.error : '오류: ' + x.error) : ''} |`);
+  const ok = all.filter(x => !x.error && !x.blocked);
+  lines.push('', `- 유효 캡처 ${ok.length}/${all.length} · 우리 사이트 노출 ${ok.filter(x => x.site).length} · 상호 언급 ${ok.filter(x => x.brand).length}`, `- 캡처: \`측정/AI검색/${date}/\``);
+  return lines.join('\n') + '\n';
+}
 
 // 추이.csv → 행 목록. 같은 날 같은 엔진·질의를 다시 캡처하면 뒤 행이 이긴다(cell)
 export function readRows(upTo) {

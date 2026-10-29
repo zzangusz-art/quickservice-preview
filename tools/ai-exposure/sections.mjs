@@ -18,7 +18,7 @@ export function matrix(d, cell, engines, weekHits) {
 // 측정 못 한 엔진(차단·로그인 필요) 한 줄 설명
 export function gaps(d) {
   const res = readResult(d); const by = {};
-  for (const r of res) if (r.error || r.blocked) { const k = r.error === '로그인 필요' ? '로그인 필요' : r.error && r.error.startsWith('차단') ? '차단 화면' : '오류'; (by[r.engine] ||= {})[k] = ((by[r.engine] || {})[k] || 0) + 1; }
+  for (const r of res) if (r.error || r.blocked) { const k = r.error === '로그인 필요' ? '로그인 필요' : r.error && r.error.startsWith('차단') ? '차단 화면' : r.error === '답변 없음' ? '답변 로딩 실패' : '오류'; (by[r.engine] ||= {})[k] = ((by[r.engine] || {})[k] || 0) + 1; }
   const parts = Object.entries(by).map(([e, m]) => `${ENG[e]} ${Object.entries(m).map(([k, n]) => `${k} ${n}건`).join('·')}`);
   return parts.length ? `<p class="note">이번 측정에서 결과를 못 받은 곳: ${esc(parts.join(' / '))}. 봇 확인 화면은 우회하지 않고 '미측정'으로 둡니다. Claude·Gemini는 측정용 크롬 창에 한 번 로그인해 두면 다음 날부터 함께 측정됩니다.</p>` : '';
 }
