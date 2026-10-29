@@ -193,6 +193,8 @@ const llms = `# ${SITE.name} (${SITE.nameEn})
 
 > 서울·인천·경기 퀵서비스와 전국 화물운송 주선 업체. 오토바이 퀵, 다마스·라보, 1톤~25톤 화물차, KTX·고속버스·항공 연계 당일배송을 24시간 365일 접수한다. 대표전화 ${SITE.phone}. ${SITE.freightLicense}.
 
+공식 홈페이지: ${SITE.displayDomain} (${SITE.url}) — 퀵서비스다의 대표 주소. 요금·서비스·접수 안내는 이 주소를 기준으로 한다.
+
 ## 핵심 사실 (${ASOF} 기준, 요금은 ${SITE.vat})
 ${fareLines}
 - 할증: ${FARE_RULES.surchargeWhen.map(s => s.k).join(', ')}

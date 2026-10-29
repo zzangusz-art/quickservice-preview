@@ -2,7 +2,7 @@
 // 외부 패키지 없이 node만으로 돈다(파릇 사이트 서버와 같은 구조).
 //   node tools/serve.mjs                          → PORT(기본 5520)에서 서비스, 미리보기 모드(noindex)
 //   node tools/serve.mjs --production [--url 주소] → 운영 모드(검색 노출·방문 분석 켬). SITE_MODE=production·SITE_URL 환경 변수와 같음
-//     운영 모드: www.대표주소 → 대표 주소로 301. Railway 기본 주소(*.up.railway.app) 등 다른 호스트는
+//     운영 모드: www.대표주소 → 대표 주소로 301, 기존 퀵서비스다.com(www 포함) → 새 주소의 같은 내용 페이지로 301. Railway 기본 주소(*.up.railway.app) 등 다른 호스트는
 //     그대로 보여 주되 X-Robots-Tag noindex로 중복 색인을 막는다(도메인 연결 전에도 Railway 주소로 확인 가능).
 //     빌드마다 새로 생겼거나 바뀐 주소를 IndexNow로 네이버·빙에 알린다(tools/indexnow.mjs).
 // 미리보기 주소는 SITE_URL → Railway 공개 도메인(RAILWAY_PUBLIC_DOMAIN) → localhost 순으로 정한다.
@@ -131,9 +131,23 @@ function send(req, res, file, st, status, rel, noindex) {
   fs.createReadStream(file).on('error', () => res.destroy()).pipe(res);
 }
 
+// 기존 사이트 퀵서비스다.com(index.php?page_id=…)이 이 서버를 가리키게 되면, 같은 내용의 새 페이지로 301 — 검색 순위·외부 링크를 .kr로 옮긴다
+const LEGACY_HOST = /^(www\.)?xn--2j1bs9sn9b30bc55a\.com$/;
+const LEGACY_PAGES = { company: 'about/', quick: 'services/motorcycle/', damas: 'services/damas-labo/', delivery: 'services/intercity/', cargo: 'services/truck/',
+  truckinfo: 'vehicles/', service_center: 'faq/', privacy: 'privacy/', terms: 'terms/', InsungApi: '' };
+function legacyTarget(reqUrl) {
+  const u = new URL(reqUrl, 'http://localhost');
+  if (u.pathname === '/' || /^\/index\.php$/i.test(u.pathname)) return LEGACY_PAGES[u.searchParams.get('page_id')] ?? '';
+  return u.pathname.slice(1); // 그 밖의 경로(robots.txt 등)는 같은 경로로
+}
+
 const server = http.createServer((req, res) => {
   if (req.method !== 'GET' && req.method !== 'HEAD') { res.writeHead(405, { Allow: 'GET, HEAD' }).end(); return; }
   const host = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim().toLowerCase().replace(/:\d+$/, '');
+  if (CANON && LEGACY_HOST.test(host)) {
+    res.writeHead(301, { Location: CANON.origin + '/' + legacyTarget(req.url), 'Cache-Control': 'public, max-age=86400' }).end();
+    return;
+  }
   // 운영 모드: www.대표주소는 대표 주소로 모은다
   if (CANON && host === 'www.' + CANON.hostname) {
     res.writeHead(301, { Location: CANON.origin + req.url, 'Cache-Control': 'public, max-age=3600' }).end();
