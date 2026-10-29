@@ -37,6 +37,7 @@ ${p.noCanonical ? '' : `<link rel="canonical" href="${p.url}">`}
 ${p.published ? `<meta property="article:published_time" content="${p.published}">` : ''}
 ${SITE.naverVerification ? `<meta name="naver-site-verification" content="${SITE.naverVerification}">` : ''}
 ${SITE.googleVerification ? `<meta name="google-site-verification" content="${SITE.googleVerification}">` : ''}
+${SITE.bingVerification ? `<meta name="msvalidate.01" content="${SITE.bingVerification}">` : ''}
 <link rel="icon" href="${u('favicon.ico')}" sizes="any">
 <link rel="apple-touch-icon" href="${u('assets/img/brand/apple-touch-icon.png')}">
 <link rel="alternate" type="application/rss+xml" title="${SITE.name} 물류 가이드" href="${SITE.url}blog/feed.xml">

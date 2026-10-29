@@ -69,7 +69,7 @@ GitHub Actions가 **매일 09:23 · 13:23 · 18:23(KST)** (GitHub 예약 실행�
 - `src/data.mjs` → `SITE.analytics`: `ga4`(G-…), `gtm`(GTM-…), `naver`(네이버 애널리틱스 wa 값), `clarity`(선택). Railway Variables `GA4_ID`·`GTM_ID`·`NAVER_WA`·`CLARITY_ID`로도 덮어쓸 수 있습니다(형식이 맞을 때만).
 - 태그는 운영 빌드 + 대표 주소(퀵서비스다.kr) 접속에서만 불러옵니다. 다른 주소에서 시험하려면 `?qs_track=1`.
 - 이벤트(`assets/js/app.js` 「방문 분석 이벤트」): `contact_call`·`contact_kakao`·`order_online`·`quote_submit`(→ GA4 주요 이벤트로 표시 권장, 네이버 전환 4), `quote_start`·`quick_book`·`quote_kakao`·`vehicle_recommend`·`service_detail`·`faq_open`·`process_step`·`read_progress`(25·50·75·100%) 등. GTM은 같은 이름의 dataLayer 이벤트로 받습니다.
-- 검색 등록 인증값: `SITE.googleVerification`(서치 콘솔 HTML 태그), `SITE.naverVerification`(서치어드바이저 HTML 태그).
+- 검색 등록 인증값: `SITE.googleVerification`(서치 콘솔 HTML 태그), `SITE.naverVerification`(서치어드바이저 HTML 태그), `SITE.bingVerification`(Bing msvalidate.01 메타), `SITE.daumVerification`(다음 robots.txt 한 줄).
 
 ## 운영 도메인 전환
 - 기본 운영 주소는 `src/data.mjs`의 `SITE.url`(퀵서비스다.kr = `https://xn--2j1bs9sn9b30bc55a.kr/`). 다른 주소면 이 값이나 `SITE_URL` 환경변수만 바꾸면 canonical·sitemap·JSON-LD·OG가 모두 따라갑니다.
