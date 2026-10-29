@@ -63,7 +63,8 @@
       "라면박스 퀵"
     ],
     "service": "motorcycle",
-    "status": "todo"
+    "status": "merged",
+    "mergedInto": "motorcycle-quick-size-limit"
   },
   {
     "id": "quick-relaxed-dispatch",

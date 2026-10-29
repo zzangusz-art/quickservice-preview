@@ -5,7 +5,7 @@ slug: damas-vs-labo
 date: 2026-10-19
 time: 13:00
 category: 차량·화물
-tags: 다마스 퀵, 라보 퀵, 다마스 라보 차이, 소형 화물
+tags: 다마스 라보 차이, 라보 퀵, 다마스 퀵, 소형 화물
 service: damas-labo
 image: damas-labo
 author: 퀵서비스다 운영팀

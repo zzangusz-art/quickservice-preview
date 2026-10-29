@@ -8,12 +8,19 @@
     "build": "node build.mjs",
     "preview": "node build.mjs && python -m http.server 5520 --directory dist",
     "blog:generate": "node tools/blog-ai/generate.mjs",
-    "blog:check": "node tools/blog-ai/generate.mjs --check"
+    "blog:check": "node tools/blog-ai/generate.mjs --check",
+    "blog:overlap": "node tools/blog/overlap.mjs",
+    "ai:capture": "node tools/ai-exposure/capture.mjs",
+    "ai:weekly": "node tools/ai-exposure/weekly.mjs",
+    "ai:monthly": "node tools/ai-exposure/monthly.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "0.135.0"
   },
   "engines": {
     "node": "22.x"
+  },
+  "devDependencies": {
+    "puppeteer-core": "23.11.1"
   }
 }

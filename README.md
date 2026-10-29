@@ -71,6 +71,17 @@ GitHub Actions가 **매일 09:23 · 13:23 · 18:23(KST)** (GitHub 예약 실행�
 - 이벤트(`assets/js/app.js` 「방문 분석 이벤트」): `contact_call`·`contact_kakao`·`order_online`·`quote_submit`(→ GA4 주요 이벤트로 표시 권장, 네이버 전환 4), `quote_start`·`quick_book`·`quote_kakao`·`vehicle_recommend`·`service_detail`·`faq_open`·`process_step`·`read_progress`(25·50·75·100%) 등. GTM은 같은 이름의 dataLayer 이벤트로 받습니다.
 - 검색 등록 인증값: `SITE.googleVerification`(서치 콘솔 HTML 태그), `SITE.naverVerification`(서치어드바이저 HTML 태그), `SITE.bingVerification`(Bing msvalidate.01 메타), `SITE.daumVerification`(다음 robots.txt 한 줄).
 
+## AI·검색 노출 측정 · 블로그 겹침 점검 · 리포트
+하나회원권 프로젝트의 측정 방식을 옮겨 왔습니다. 측정·리포트 파일은 저장소 밖(`../측정/`, `../보고/`)에 쌓여 배포와 섞이지 않습니다. 크롬 자동 실행에는 개발용 의존성 `puppeteer-core`를 씁니다(`npm ci`).
+- 일일 캡처 `npm run ai:capture` (`tools/ai-exposure/capture.mjs`): 구글·네이버·네이버 AI탭·Bing·Perplexity·ChatGPT·Claude·Gemini × 핵심 키워드 10개(`lib.mjs`의 `QUERIES`: 퀵서비스다·서울퀵·오토바이 퀵·다마스 퀵·전국/수도권/인천/경기 퀵서비스·퀵서비스 추천·요금)를 측정 전용 크롬 창(프로필 `../측정/AI검색/.qs-capture-profile`)으로 열어 화면(jpg)·본문(txt)·`result.json`·`요약_<날짜>.md`를 남기고 `../측정/AI검색/추이.csv`에 누적합니다. 1시간 안팎.
+  - 판정: 결과에 퀵서비스다.kr(퓨니코드 포함) 링크·주소 = 노출, 상호·대표번호만 = 상호 언급, 기존 사이트 퀵서비스다.com은 따로 표시. 인용된 외부 도메인도 기록합니다.
+  - 봇 확인·차단 화면은 우회하지 않습니다. 나오면 그 엔진은 그날 '차단'으로 기록하고 건너뜁니다. Claude·Gemini는 측정용 크롬 창에서 한 번 로그인해 두면 그다음부터 측정됩니다(안 하면 '로그인 필요').
+  - 같은 PC의 하나회원권 캡처가 돌고 있으면 끝날 때까지 기다립니다(`--no-wait`로 생략). 일부만: `--engines naver,bing --queries "서울퀵"`.
+- 블로그 키워드 겹침 `npm run blog:overlap` (`tools/blog/overlap.mjs`): 전체 글끼리 비교. `--today --save`는 오늘 발행 글 + 3일 안 예약 글을 점검해 `../측정/블로그점검/<날짜>.md`에 저장, 제목을 인자로 주면 새 글 후보를 점검합니다. ⚠ = 주 키워드(머리말 `tags` 첫 항목)가 같거나 제목 앞머리가 겹침.
+- 주간 리포트 `npm run ai:weekly` → `../보고/퀵서비스다_주간리포트_<날짜>.pdf`(지난주 같은 요일 측정 대비 새 노출·빠진 곳, 현황표, 이번 주 발행 글 겹침 점검, 인용 출처, 다음 주 할 일). 지난주 측정이 없으면 기준선 리포트.
+- 월간 리포트 `npm run ai:monthly` (`--month YYYY-MM`, 기본은 어제가 속한 달) → `../보고/퀵서비스다_월간리포트_<YYYY-MM>.pdf`(일별 추이, 엔진·키워드별 노출률, 월초→월말 전후 화면, 블로그, 검색 등록 현황 `../측정/검색등록.json`, 인용 출처).
+- Claude 데스크톱 예약 작업 `quickservice-ai-exposure-daily`(매일 14:00): 캡처 → 겹침 점검 → 목요일 주간·매월 1일 월간 리포트. 앱이 꺼져 있으면 다음에 켤 때 실행됩니다.
+
 ## 운영 도메인 전환
 - 기본 운영 주소는 `src/data.mjs`의 `SITE.url`(퀵서비스다.kr = `https://xn--2j1bs9sn9b30bc55a.kr/`). 다른 주소면 이 값이나 `SITE_URL` 환경변수만 바꾸면 canonical·sitemap·JSON-LD·OG가 모두 따라갑니다.
 - GitHub Pages에 붙일 때: Settings → Pages → Custom domain에 `xn--2j1bs9sn9b30bc55a.kr`, 저장소 Variables에 `SITE_MODE=production`(+필요하면 `SITE_URL`). 도메인 DNS(가비아)에 GitHub Pages 주소를 연결합니다.
