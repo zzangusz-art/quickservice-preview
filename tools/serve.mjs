@@ -12,6 +12,7 @@ import path from 'node:path';
 import zlib from 'node:zlib';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { handleAdmin } from './admin/admin.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PORT = Number(process.env.PORT) || 5520;
@@ -142,7 +143,6 @@ function legacyTarget(reqUrl) {
 }
 
 const server = http.createServer((req, res) => {
-  if (req.method !== 'GET' && req.method !== 'HEAD') { res.writeHead(405, { Allow: 'GET, HEAD' }).end(); return; }
   const host = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim().toLowerCase().replace(/:\d+$/, '');
   if (CANON && LEGACY_HOST.test(host)) {
     res.writeHead(301, { Location: CANON.origin + '/' + legacyTarget(req.url), 'Cache-Control': 'public, max-age=86400' }).end();
@@ -153,6 +153,12 @@ const server = http.createServer((req, res) => {
     res.writeHead(301, { Location: CANON.origin + req.url, 'Cache-Control': 'public, max-age=3600' }).end();
     return;
   }
+  // 관리자(유입·트래픽/콘텐츠)와 방문 기록 수집 — tools/admin/admin.mjs
+  if (req.url === '/api/t' || req.url.startsWith('/admin')) {
+    handleAdmin(req, res, { CANON, PROD, host }).catch(e => { console.error('[admin]', e.message); if (!res.headersSent) res.writeHead(500).end(); });
+    return;
+  }
+  if (req.method !== 'GET' && req.method !== 'HEAD') { res.writeHead(405, { Allow: 'GET, HEAD' }).end(); return; }
   // 대표 주소가 아닌 호스트(Railway 기본 주소 등)와 미리보기 모드는 검색 노출 막기
   const noindex = !PROD || (CANON && host && host !== CANON.hostname && !/^(localhost|127\.|\[::1\])/.test(host));
   if (!live) { res.writeHead(503, { 'Retry-After': '5', 'Content-Type': 'text/plain; charset=utf-8' }).end('사이트를 준비하고 있습니다.'); return; }

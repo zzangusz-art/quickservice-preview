@@ -686,7 +686,15 @@
   if (QA) {
     const where = el => { const w = el.closest('.mbar, .hd, .bento, .drawer, .modal, .ft, section[id], section[class]'); return w ? (w.id || w.classList[0]) : ''; };
     const LEADS = new Set(['contact_call', 'contact_kakao', 'quote_submit', 'order_online']);
+    // 자체 방문 기록(관리자 「유입·트래픽」, tools/admin): 탭마다 임시 방문 번호(sessionStorage — 쿠키·IP 저장 없음)로
+    // 첫 페이지의 유입 경로, 페이지뷰, 문의 행동만 보낸다. 관리자 화면을 연 브라우저는 보내지 않는다.
+    const OWN = new Set([...LEADS, 'quote_start', 'quick_book', 'map_open', 'vehicle_recommend']);
+    let sid = '', firstPage = false;
+    try { if (!localStorage.getItem('qs_admin')) { sid = sessionStorage.getItem('qs_sid') || ''; if (!sid) { sid = Math.random().toString(36).slice(2, 12) + Date.now().toString(36); sessionStorage.setItem('qs_sid', sid); firstPage = true; } } } catch (_) { /* 저장소 막힘 — 보내지 않음 */ }
+    const beacon = o => { if (sid && navigator.sendBeacon) navigator.sendBeacon('/api/t', JSON.stringify({ s: sid, p: location.pathname, ...o })); };
+    beacon(firstPage ? { t: 'p', r: d.referrer, q: location.search.slice(0, 300) } : { t: 'p' });
     window.qsTrack = (name, p = {}) => {
+      if (OWN.has(name)) beacon({ t: 'e', e: name, l: String(p.placement || p.item || p.vehicle || '').slice(0, 60) });
       const params = { page_path: location.pathname, ...p };
       (window.dataLayer = window.dataLayer || []).push({ event: name, ...params });
       if (QA.ga4 && window.gtag) gtag('event', name, params);

@@ -71,6 +71,14 @@ GitHub Actions가 **매일 09:23 · 13:23 · 18:23(KST)** (GitHub 예약 실행�
 - 이벤트(`assets/js/app.js` 「방문 분석 이벤트」): `contact_call`·`contact_kakao`·`order_online`·`quote_submit`(→ GA4 주요 이벤트로 표시 권장, 네이버 전환 4), `quote_start`·`quick_book`·`quote_kakao`·`vehicle_recommend`·`service_detail`·`faq_open`·`process_step`·`read_progress`(25·50·75·100%) 등. GTM은 같은 이름의 dataLayer 이벤트로 받습니다.
 - 검색 등록 인증값: `SITE.googleVerification`(서치 콘솔 HTML 태그), `SITE.naverVerification`(서치어드바이저 HTML 태그), `SITE.bingVerification`(Bing msvalidate.01 메타), `SITE.daumVerification`(다음 robots.txt 한 줄).
 
+## 관리자 (유입·트래픽 / 콘텐츠)
+- 주소: `https://퀵서비스다.kr/admin/` — `tools/admin/admin.mjs`(serve.mjs가 `/admin/*`·`/api/t`를 넘김), 외부 패키지 없음.
+- 로그인: Railway Variables의 `ADMIN_PASSWORD`(7일 유지, 15분에 10회 실패하면 잠김). 설정 전에는 안내 화면만 나옵니다.
+- 유입·트래픽: 일별 방문·페이지뷰, 채널(검색·AI·SNS·광고·캠페인·외부·직접), 출처, 검색어(네이버 등 리퍼러에 남을 때), 첫 페이지, 많이 본 페이지, 기기, UTM 캠페인, 문의 행동(전화·카톡·온라인 접수·요금 문의)과 전환율, 최근 방문 60건, CSV 내려받기. 유입 판정 규칙은 `tools/admin/inflow.mjs`(하나회원권 규칙 + 기존 .com·온라인 접수·당근·카카오맵).
+- 콘텐츠: 발행·예약 글 목록(글별 조회·전환·키워드 겹침), 카테고리별 수, 마지막 예약일, 서비스 페이지 조회.
+- 기록: 사이트 스크립트(`assets/js/app.js` 「자체 방문 기록」)가 대표 주소에서만, 탭마다 임시 방문 번호(sessionStorage, 쿠키·IP 저장 없음)로 첫 페이지 유입 경로·페이지뷰·문의 행동을 `/api/t`로 보냅니다. 관리자 화면을 연 브라우저·봇·다른 출처 요청은 제외.
+- 저장: `RAILWAY_VOLUME_MOUNT_PATH`(Railway 볼륨, 마운트 경로 `/data` 권장)/`hits-YYYY-MM.jsonl`. 볼륨이 없으면 저장소의 `.data/`에 쌓이고 배포 때마다 초기화됩니다(관리자 화면 상단에 경고).
+
 ## AI·검색 노출 측정 · 블로그 겹침 점검 · 리포트
 하나회원권 프로젝트의 측정 방식을 옮겨 왔습니다. 측정·리포트 파일은 저장소 밖(`../측정/`, `../보고/`)에 쌓여 배포와 섞이지 않습니다. 크롬 자동 실행에는 개발용 의존성 `puppeteer-core`를 씁니다(`npm ci`).
 - 일일 캡처 `npm run ai:capture` (`tools/ai-exposure/capture.mjs`): 구글·네이버·네이버 AI탭·Bing·Perplexity·ChatGPT·Claude·Gemini × 핵심 키워드 10개(`lib.mjs`의 `QUERIES`: 퀵서비스다·서울퀵·오토바이 퀵·다마스 퀵·전국/수도권/인천/경기 퀵서비스·퀵서비스 추천·요금)를 측정 전용 크롬 창(프로필 `../측정/AI검색/.qs-capture-profile`)으로 열어 화면(jpg)·본문(txt)·`result.json`·`요약_<날짜>.md`를 남기고 `../측정/AI검색/추이.csv`에 누적합니다. 1시간 안팎.
