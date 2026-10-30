@@ -26,6 +26,9 @@ fs.writeFileSync(LOCK, String(process.pid));
 process.on('exit', () => { try { if (Number(fs.readFileSync(LOCK, 'utf8')) === process.pid) fs.unlinkSync(LOCK); } catch (_) { /* no-op */ } });
 
 const steps = [];
+// 0) 홈페이지 전후 화면: 매일 신규 사이트 첫 화면, 목요일·매월 1일·기준본이 없을 때는 기존 .com(살아 있으면)과 전체 페이지까지
+const weekly = weekday(DATE) === '목' || DATE.endsWith('-01') || !fs.existsSync(path.join(PROJ, '측정', '스크린샷', 'before', 'old_home_desktop.jpg'));
+steps.push({ label: '홈페이지 화면 캡처', ...run('홈페이지 화면 캡처', ['tools/ai-exposure/screens.mjs', '--date', DATE, ...(weekly ? ['--old', '--full'] : [])], 20) });
 // 1) 캡처(이미 했으면 건너뜀). 하나회원권 캡처 대기 최대 90분 + 측정 1시간 → 넉넉히 160분
 if (flag('skip-capture') || todayRows() >= 60) steps.push({ label: 'AI·검색 캡처', ok: true, tail: `오늘 측정 ${todayRows()}행 있음 — 건너뜀` });
 else steps.push({ label: 'AI·검색 캡처', ...run('AI·검색 캡처', ['tools/ai-exposure/capture.mjs', '--date', DATE], 160) });
@@ -35,6 +38,7 @@ const ov = run('블로그 겹침 점검', ['tools/blog/overlap.mjs', '--today', 
 const reports = [];
 if (weekday(DATE) === '목') { const w = run('주간 리포트', ['tools/ai-exposure/weekly.mjs', DATE], 15); steps.push({ label: '주간 리포트', ...w }); if (w.ok) reports.push(`보고/퀵서비스다_주간리포트_${DATE}.pdf`); }
 if (DATE.endsWith('-01')) { const m = addDays(DATE, -1).slice(0, 7); const r = run('월간 리포트', ['tools/ai-exposure/monthly.mjs', '--month', m], 15); steps.push({ label: '월간 리포트', ...r }); if (r.ok) reports.push(`보고/퀵서비스다_월간리포트_${m}.pdf`); }
+if (weekday(DATE) === '목' || DATE.endsWith('-01')) { const c = run('화면 전후 비교', ['tools/ai-exposure/compare.mjs', DATE], 15); steps.push({ label: '화면 전후 비교', ...c }); if (c.ok) reports.push(`보고/퀵서비스다_화면전후비교_${DATE}.pdf`); }
 
 // 5) 예약 글 공개 확인(읽기만): 어제 18시 이후 ~ 지금 10분 전까지 공개됐어야 할 글이 운영 사이트에서 200인지
 const { loadPosts } = await import('../blog/lib.mjs');

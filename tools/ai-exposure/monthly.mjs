@@ -52,6 +52,15 @@ const exposedQ = QUERIES.filter(q => dates.some(d => engines.some(e => (cell(d, 
     const a = await cropShot(shotOf(FIRST, e, q), 'top', 0.75), b = await cropShot(shotOf(LAST, e, q), ratio, 0.75);
     pairs.push(`<div class="item"><h3>${ENG[e]} — "${esc(q)}"</h3><div class="two"><div><span class="tag before">전 ${md(FIRST)}</span><figure><img src="${dataUri(a)}" alt=""><figcaption>퀵서비스다.kr 없음</figcaption></figure></div><div><span class="tag after">후 ${md(LAST)}</span><figure><img src="${dataUri(b)}" alt=""><figcaption>퀵서비스다.kr 노출${ratio !== 'top' ? ' (노출 위치 부근)' : ''}</figcaption></figure></div></div></div>`);
   }
+  // 홈페이지 전후: 기존 .com 기준본(측정/스크린샷/before) vs 그달 마지막 신규 캡처 — 홈·오토바이 퀵(데스크톱), 홈(모바일)
+  const SHOT = path.join(PROJ, '측정', '스크린샷'); const BEF = path.join(SHOT, 'before');
+  const shotDay = fs.existsSync(SHOT) ? fs.readdirSync(SHOT).filter(d => /^\d{4}-\d{2}-\d{2}$/.test(d) && d <= M1).sort().pop() : null;
+  const befDate = (() => { try { return fs.readFileSync(path.join(BEF, 'README.txt'), 'utf8').match(/\d{4}-\d{2}-\d{2}/)[0]; } catch (_) { return ''; } })();
+  const jpg = (p) => fs.existsSync(p) ? `data:image/jpeg;base64,${fs.readFileSync(p).toString('base64')}` : '';
+  const sitePair = (title, oldF, newF, style = 'height:62mm;object-fit:cover;object-position:top') => { const a = jpg(path.join(BEF, oldF)), b = shotDay ? jpg(path.join(SHOT, shotDay, newF)) : '';
+    return a && b ? `<div class="item"><h3>${esc(title)}</h3><div class="two"><div><span class="tag before">전</span><figure><img src="${a}" style="${style}" alt=""><figcaption>기존 퀵서비스다.com (${befDate} 기준본)</figcaption></figure></div><div><span class="tag after">후</span><figure><img src="${b}" style="${style}" alt=""><figcaption>신규 퀵서비스다.kr (${shotDay})</figcaption></figure></div></div></div>` : ''; };
+  const sitePairs = [sitePair('홈 — 데스크톱', 'old_home_desktop.jpg', 'new_home_desktop.jpg'), sitePair('오토바이 퀵 — 데스크톱', 'old_motorcycle_desktop.jpg', 'new_motorcycle_desktop.jpg'),
+    sitePair('홈 — 모바일', 'old_home_mobile.jpg', 'new_home_mobile.jpg', 'height:110mm;width:auto;max-width:100%;margin:0 auto;object-fit:contain')].join('');
   const [y, m] = MONTH.split('-');
   const html = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>퀵서비스다 월간 리포트 ${MONTH}</title>${FONT_LINK}<style>${REPORT_CSS}</style></head><body>
 <div class="head"><div class="k">QUICKSERVICEDA · MONTHLY REPORT</div><h1>월간 리포트 — ${y}년 ${+m}월</h1>
@@ -79,6 +88,7 @@ ${matrix(LAST, cell, lastEngines, null)}
 
 <h2>4. 월초에 없다가 월말에 노출된 화면 (${gains.length}곳)</h2>
 ${pairs.length ? pairs.join('') : `<p class="muted">${FIRST === LAST ? '이번 달 측정이 하루뿐이라 전후 비교는 다음 달부터 표시합니다.' : '월초 대비 새로 노출된 곳이 없습니다.'}</p>`}
+${sitePairs ? `<h3>홈페이지 전후 (기존 .com → 신규 .kr)</h3>${sitePairs}<p class="small muted">페이지 전체 전후 비교는 「화면 전후 비교」 시트(보고/퀵서비스다_화면전후비교_<날짜>.pdf)에 있습니다.</p>` : ''}
 
 <h2>5. 블로그 발행과 키워드 겹침 점검</h2>
 <p>이번 달 <b>${blog.published.length}</b>건 발행${Object.keys(byCat).length ? ` — ${Object.entries(byCat).sort((a, b) => b[1] - a[1]).map(([k, n]) => `${esc(k)} ${n}`).join(' · ')}` : ''}. 다음 달 예약 ${nextMonth}건.</p>
