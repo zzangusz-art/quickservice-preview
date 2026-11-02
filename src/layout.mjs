@@ -242,12 +242,15 @@ export function ctaBand(u, title = '출발지, 도착지, 물건 크기. 세 가
 </section>`;
 }
 
+// 블로그 FAQ 답변은 마크다운으로 씀 — 전화 링크만 살리고 나머지 링크는 글자만 남긴다
+const faqAnswer = a => esc(a).replace(/\[([^\]]+)\]\(([^)]+)\)/g, (m, t, h) => h.startsWith('tel:') ? `<a href="${h}">${t}</a>` : t);
+
 export function faqList(faqs, { id = 'faq', withCats = false, cats = [] } = {}) {
   const chips = withCats ? `<div class="chips" role="toolbar" aria-label="질문 분류">${cats.map((c, i) => `<button type="button" class="chip${i ? '' : ' on'}" data-faq-cat="${c.id}" aria-pressed="${i ? 'false' : 'true'}">${c.name}</button>`).join('')}</div>` : '';
   return `${chips}<div class="acc faq-list" id="${id}">${faqs.map((f, i) => `
   <div class="acc-item" data-cat="${f.cat}">
     <h3 class="acc-h"><button class="acc-btn" type="button" aria-expanded="false" aria-controls="${id}-${i}" id="${id}-b${i}"><span class="acc-q">Q</span><span class="acc-t">${esc(f.q)}</span>${ico('plus', 'acc-ico')}</button></h3>
-    <div class="acc-panel" id="${id}-${i}" role="region" aria-labelledby="${id}-b${i}" hidden><div class="acc-body"><p>${esc(f.a)}</p></div></div>
+    <div class="acc-panel" id="${id}-${i}" role="region" aria-labelledby="${id}-b${i}" hidden><div class="acc-body"><p>${faqAnswer(f.a)}</p></div></div>
   </div>`).join('')}
 </div>`;
 }

@@ -70,10 +70,13 @@ export function breadcrumb(items) {
   return { '@type': 'BreadcrumbList', itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, item: it.url })) };
 }
 
+// 답변 원문의 마크다운 링크·강조·HTML 태그는 걷어내고 글자만 남긴다(블로그 FAQ는 마크다운으로 씀)
+const plain = s => s.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/\*\*([^*]+)\*\*/g, '$1').replace(/<[^>]+>/g, '');
+
 export function faqPage(faqs, url) {
   return {
     '@type': 'FAQPage', '@id': url + '#faq',
-    mainEntity: faqs.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+    mainEntity: faqs.map(f => ({ '@type': 'Question', name: plain(f.q), acceptedAnswer: { '@type': 'Answer', text: plain(f.a) } })),
   };
 }
 
