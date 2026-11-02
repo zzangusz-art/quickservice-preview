@@ -180,7 +180,7 @@ export function pricing(u, posts) {
     subHero({}, u, { eyebrow: `요금 안내 · ${ASOF_LABEL} 기준`, h1: '퀵서비스 요금, 무엇으로 정해지고 언제 달라지나', lead: `${FARE_RULES.basis} 아래 금액은 모두 시작 요금이며 ${SITE.vat}입니다.`, crumbs,
       aside: specCard(`<div class="spec-big"><span>오토바이 퀵</span><strong>8,000원~</strong></div>`, [['다마스', '20,000원~'], ['1톤 용달', '40,000원~'], ['KTX·고속버스 연계', '25,000원~'], ['항공 연계', '40,000원~']]) }),
     `<section class="sec"><div class="wrap">
-      <div class="sec-hd"><h2>서비스별 시작 요금</h2><p class="sec-lead">시작 요금은 가장 가까운 구간의 기본요금입니다. 실제 요금은 접수할 때 거리와 물건을 확인하고 먼저 안내합니다.</p></div>
+      <div class="sec-hd"><h2>퀵서비스 요금표 — 서비스별 시작 요금</h2><p class="sec-lead">시작 요금은 가장 가까운 구간의 기본요금입니다. 실제 요금은 접수할 때 거리와 물건을 확인하고 먼저 안내합니다.</p></div>
       <div class="fare-grid">${START_FARES.map(f => `<a class="fare" href="${u(f.href)}"><span class="fare-k">${f.label}</span><strong class="fare-v">${f.from.toLocaleString('ko-KR')}원<small>~</small></strong><span class="fare-n">${f.note}</span></a>`).join('')}</div>
     </div></section>
     <section class="sec sec-soft"><div class="wrap prose-grid">

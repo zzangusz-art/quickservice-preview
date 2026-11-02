@@ -85,7 +85,7 @@ const lastPost = posts[0]?.date || ASOF;
   const out = 'index.html', url = pageUrl(out);
   const homeFaq = FAQ.filter(f => f.pages.includes('home'));
   emit({ out, pri: '1.0', mod: lastPost > ASOF ? lastPost : ASOF, bodyClass: 'home',
-    title: '퀵서비스다 | 서울퀵·인천·경기 퀵서비스, 오토바이·다마스 퀵부터 화물까지 24시간',
+    title: '서울퀵·인천·경기 퀵서비스 24시간 | 퀵서비스다', // 검색 결과에 다 보이게 30자 안팎(H1·스키마는 긴 설명 유지)
     description: '오토바이 퀵 8,000원부터, 다마스 20,000원부터, 1톤 40,000원부터(부가세 별도). KTX·고속버스·항공 연계로 지방도 당일 배송. 24시간 접수 1661-7462, 화물운송주선 허가 제90143호.',
     schema: S.graph(S.organization(), S.website(), S.webpage({ url, title: '퀵서비스다 — 서울·경기·인천 퀵서비스와 전국 화물운송', description: '오토바이 퀵부터 25톤 화물, KTX·항공 연계배송까지 24시간 접수' }), S.faqPage(homeFaq, url)),
     body: u => homeBody(u, posts) });
@@ -95,7 +95,7 @@ const lastPost = posts[0]?.date || ASOF;
 const svcRender = { motorcycle: P.motorcycle, 'damas-labo': P.damasLabo, truck: P.truck, intercity: P.intercity };
 for (const s of SERVICES) {
   const out = s.slug + 'index.html', url = pageUrl(out);
-  emit({ out, section: 'services', pri: '0.9', title: `${s.title} | 퀵서비스다`, description: s.desc,
+  emit({ out, section: 'services', pri: '0.9', title: `${s.seo || s.title} | 퀵서비스다`, description: s.desc,
     schema: S.graph(S.organization(), S.website(), S.webpage({ url, title: s.title, description: s.desc }), S.service(s), bc([['홈', ''], ['서비스', SERVICES[0].slug], [s.name, s.slug]]), S.faqPage(FAQ.filter(f => f.pages.includes(s.id)), url)),
     body: u => svcRender[s.id](u, posts) });
 }
@@ -103,13 +103,13 @@ for (const s of SERVICES) {
 // ── 안내 페이지 ──
 const info = [
   { id: 'pricing', out: 'pricing/index.html', name: '요금 안내', render: P.pricing, pri: '0.9',
-    title: '퀵서비스 요금 안내 — 시작 요금·할증·취소·왕복 기준과 타사 비교 | 퀵서비스다',
+    title: '퀵서비스 요금표·할증·취소 기준 | 퀵서비스다',
     description: '오토바이 8,000원, 다마스 20,000원, 1톤 40,000원, KTX·고속버스 연계 25,000원부터. 할증 네 가지, 취소·왕복 기준, 같은 날 공개 요금표 비교까지 정리했습니다.' },
   { id: 'vehicles', out: 'vehicles/index.html', name: '차량 제원', render: P.vehicles, pri: '0.8',
-    title: '차량 제원과 추천 — 오토바이·다마스·라보·1톤~25톤 적재함 크기 | 퀵서비스다',
+    title: '차량 제원 — 다마스·라보·1톤~25톤 | 퀵서비스다',
     description: '1톤 길이 270~285cm, 2.5톤 430cm, 5톤 620cm, 11톤 900cm. 카고·탑차·윙바디 제원표와, 크기·무게를 넣으면 맞는 차를 골라 주는 추천 도구.' },
   { id: 'business', out: 'business/index.html', name: '기업 고객', render: P.business, pri: '0.7',
-    title: '기업 고객 월 정산 — 세금계산서, 정산일 지정 | 퀵서비스다',
+    title: '기업 퀵 월 정산·세금계산서 | 퀵서비스다',
     description: '월 50만 원 이상 이용하는 법인·사업자는 원하는 날짜에 한 달 이용액을 모아 정산하고 세금계산서를 받습니다. 서울·수도권 당일부터 전국·제주까지.' },
 ];
 for (const it of info) {
@@ -120,20 +120,20 @@ for (const it of info) {
 }
 {
   const out = 'about/index.html', url = pageUrl(out);
-  const t = '회사 소개 — 서울 동대문구 장안동 퀵서비스·화물운송 주선 | 퀵서비스다';
+  const t = '회사 소개 — 화물운송주선 허가 업체 | 퀵서비스다';
   const d = '퀵서비스다(QUICKEY SERVICE)는 화물자동차운송주선사업 허가 제90143호 업체입니다. 사업자 정보, 연락처, 오시는 길을 안내합니다.';
   emit({ out, section: 'about/', pri: '0.6', title: t, description: d, schema: S.graph(S.organization(), S.website(), S.webpage({ url, title: t, description: d, type: 'AboutPage' }), bc([['홈', ''], ['회사 소개', 'about/']])), body: u => P.about(u) });
 }
 {
   const out = 'faq/index.html', url = pageUrl(out);
-  const t = `퀵서비스 자주 묻는 질문 ${FAQ.length}가지 — 요금·할증·취소·지방 배송 | 퀵서비스다`;
+  const t = `퀵서비스 자주 묻는 질문 ${FAQ.length}가지 | 퀵서비스다`;
   const d = '퀵 요금 계산, 할증 시간, 취소비, 두 곳 이상 보내기, 지방·제주 배송, 세금계산서와 월 정산까지 자주 묻는 질문에 답합니다.';
   emit({ out, section: 'faq/', pri: '0.8', title: t, description: d, schema: S.graph(S.organization(), S.website(), S.webpage({ url, title: t, description: d }), bc([['홈', ''], ['자주 묻는 질문', 'faq/']]), S.faqPage(FAQ, url)), body: u => P.faqPageBody(u) });
 }
 {
   // 서비스 지역 허브: 구·시·군 목록과 공개된 지역 글 링크(예약 글은 공개 시각이 지나야 링크됨)
   const out = 'area/index.html', url = pageUrl(out);
-  const t = '서울·인천·경기 지역별 퀵서비스 — 구·시·군 전 지역 24시간 | 퀵서비스다';
+  const t = '서울·인천·경기 지역별 퀵서비스 | 퀵서비스다';
   const d = '서울 25개 구, 인천 9개 구·2개 군, 경기 31개 시·군 어디서든 오토바이·다마스·라보·화물차 퀵을 24시간 접수합니다. 지방은 KTX·고속버스·항공 연계로 당일 배송합니다.';
   const areaMod = posts.filter(p => D.AREAS.some(a => a.hub === p.slug || a.units.some(x => x[1] === p.slug))).map(p => p.date).sort().pop();
   emit({ out, section: 'area/', pri: '0.8', mod: areaMod && areaMod > ASOF ? areaMod : ASOF, title: t, description: d,
@@ -152,7 +152,7 @@ for (const [id, name, render] of [['privacy', '개인정보처리방침', P.priv
 // ── 블로그 ──
 {
   const out = 'blog/index.html', url = pageUrl(out);
-  const t = '물류 가이드 — 퀵 요금, 차량 고르는 법, 지방 당일 배송 | 퀵서비스다';
+  const t = '물류 가이드 — 퀵 요금·차량·지방 배송 | 퀵서비스다';
   const d = '퀵서비스 요금 계산, 다마스·라보·화물차 고르는 법, KTX·항공 연계배송, 기업 물류 정산까지 접수 현장에서 자주 받는 질문을 정리합니다.';
   emit({ out, section: 'blog/', pri: '0.8', mod: lastPost, title: t, description: d, ogImage: 'assets/img/og-blog.png',
     schema: S.graph(S.organization(), S.website(), { ...S.webpage({ url, title: t, description: d, type: 'CollectionPage', modified: lastPost }), mainEntity: { '@type': 'ItemList', itemListElement: posts.slice(0, 30).map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: SITE.url + `blog/${p.slug}/` })) } }, bc([['홈', ''], ['물류 가이드', 'blog/']])),
@@ -163,7 +163,7 @@ for (const [id, name, render] of [['privacy', '개인정보처리방침', P.priv
 for (const p of posts) {
   const out = `blog/${p.slug}/index.html`, url = pageUrl(out);
   emit({ out, section: 'blog/', pri: '0.6', mod: p.updated || p.date, ogType: 'article', published: p.date, ogImage: 'assets/img/og-blog.png',
-    title: `${p.title} | 퀵서비스다`, description: p.description,
+    title: [...`${p.title} | 퀵서비스다`].length <= 34 ? `${p.title} | 퀵서비스다` : p.title, description: p.description, // 길면 상호 꼬리를 떼어 제목이 잘리지 않게(상호는 og:site_name·스키마에 있음)
     schema: S.graph(S.organization(), S.website(), S.blogPosting(p, url), bc([['홈', ''], ['물류 가이드', 'blog/'], [p.title, `blog/${p.slug}/`]]), p.faq.length ? S.faqPage(p.faq, url) : null),
     body: u => P.blogPost(u, p, posts) });
 }

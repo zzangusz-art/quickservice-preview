@@ -109,6 +109,7 @@ function send(req, res, file, st, status, rel, noindex) {
     'Referrer-Policy': 'strict-origin-when-cross-origin',
   };
   if (noindex) headers['X-Robots-Tag'] = 'noindex, nofollow';
+  if (PROD) headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'; // 운영은 Cloudflare·Railway 모두 https — 브라우저가 http로 다시 오지 않게
   if (status === 200 && req.headers['if-none-match'] === etag) { res.writeHead(304, headers).end(); return; }
 
   // 글자 파일은 brotli/gzip으로 줄여 보낸다
