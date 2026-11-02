@@ -31,10 +31,13 @@ const st = (d, e, q) => { const c = cell(d, e, q); return !c ? '미측정' : c.s
   const onlyNew = PAGES.filter(p => p.old === null).map(p => `<div><h3>${esc(p.label)}</h3>${img(f(path.join(SHOT_DIR, LAST), `new_${p.key}_desktop.jpg`), `신규에만 있는 페이지 (${LAST})`)}</div>`).join('');
   const search = [];
   if (A0) for (const [e, q] of SEARCH_PAIRS) {
-    if (!cell(A0, e, q) && !cell(A1, e, q)) continue;
-    const r1 = resultOf(A1, e, q); const ratio = r1 && r1.hit && r1.hit.h ? r1.hit.y / r1.hit.h : 'top';
-    const a = await cropShot(shotOf(A0, e, q), 'top', 0.75), b = A1 !== A0 ? await cropShot(shotOf(A1, e, q), ratio, 0.75) : null;
-    search.push(A1 !== A0 ? pair(`${ENG[e]} — "${q}"`, a, `${A0} 첫 측정: ${st(A0, e, q)}`, b, `${A1}: ${st(A1, e, q)}`, '')
+    if (!cell(A0, e, q)) continue;
+    // '후'는 첫 측정 이후 가장 최근에 유효하게 측정된 날(차단·로그인 화면인 날은 건너뜀). 없으면 이 쌍은 뺀다.
+    const B = aiDays.slice(1).reverse().find(d => cell(d, e, q));
+    if (A1 !== A0 && !B) continue;
+    const r1 = B && resultOf(B, e, q); const ratio = r1 && r1.hit && r1.hit.h ? r1.hit.y / r1.hit.h : 'top';
+    const a = await cropShot(shotOf(A0, e, q), 'top', 0.75), b = B ? await cropShot(shotOf(B, e, q), ratio, 0.75) : null;
+    search.push(A1 !== A0 ? pair(`${ENG[e]} — "${q}"`, a, `${A0} 첫 측정: ${st(A0, e, q)}`, b, `${B}: ${st(B, e, q)}`, '')
       : `<div><h3>${ENG[e]} — "${esc(q)}"</h3>${img(a, `${A0} 첫 측정(기준): ${st(A0, e, q)}`)}</div>`);
   }
   // 아직 측정일이 하루뿐이면 기준 화면만 두 장씩 나란히
