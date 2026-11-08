@@ -3,7 +3,7 @@
 // 실행: node tools/ai-exposure/monthly.mjs [--month YYYY-MM]   (기본: 어제가 속한 달 — 매월 1일에 돌리면 지난달 전체)
 import fs from 'node:fs';
 import path from 'node:path';
-import { ENG, QUERIES, PROJ, REPORT_DIR, REPORT_CSS, FONT_LINK, HOST_KO, readRows, makeCell, valid, kstDate, kstNow, addDays, md, esc, arg, eOrder, oldOf, shotOf, resultOf, cropShot, dataUri, htmlToPdf, closeHeadless } from './lib.mjs';
+import { ENG, QUERIES, CORE_QUERIES, PROJ, REPORT_DIR, REPORT_CSS, FONT_LINK, HOST_KO, readRows, makeCell, valid, kstDate, kstNow, addDays, md, esc, arg, eOrder, oldOf, shotOf, resultOf, cropShot, dataUri, htmlToPdf, closeHeadless } from './lib.mjs';
 import { matrix, blogData, blogTable, domainsTable, todo } from './sections.mjs';
 
 const MONTH = arg('month', addDays(kstDate(), -1).slice(0, 7));
@@ -17,7 +17,7 @@ const engines = Object.keys(ENG).filter(e => rows.some(r => r.engine === e));
 const lastEngines = engines.filter(e => rows.some(r => r.date === LAST && r.engine === e));
 
 // 일별 추이
-const trend = dates.map(d => { const v = rows.filter(r => r.date === d).map(r => cell(d, r.engine, r.query)).filter(Boolean); const u = [...new Map(v.map(r => [r.engine + r.query, r])).values()];
+const trend = dates.map(d => { const v = rows.filter(r => r.date === d && CORE_QUERIES.includes(r.query)).map(r => cell(d, r.engine, r.query)).filter(Boolean); const u = [...new Map(v.map(r => [r.engine + r.query, r])).values()];
   return { d, n: u.length, s: u.filter(r => r.site).length, b: u.filter(r => !r.site && (r.brand || oldOf(d, r.engine, r.query))).length }; });
 const T0 = trend[0], T1 = trend[trend.length - 1];
 const chart = (() => { const W = 680, H = 190, L = 28, R = 8, T = 16, B = 26; const mx = Math.max(5, ...trend.map(t => t.s + t.b)); const n = trend.length; const bw = Math.min(26, (W - L - R) / n * 0.7);
@@ -25,7 +25,7 @@ const chart = (() => { const W = 680, H = 190, L = 28, R = 8, T = 16, B = 26; co
   const bars = trend.map((t, i) => `<rect x="${x(i) - bw / 2}" y="${y(t.s)}" width="${bw}" height="${H - B - y(t.s)}" fill="#1e88e5"/><rect x="${x(i) - bw / 2}" y="${y(t.s + t.b)}" width="${bw}" height="${y(t.s) - y(t.s + t.b)}" fill="#b9d8f6"/>${t.s ? `<text x="${x(i)}" y="${y(t.s + t.b) - 3}" font-size="9" text-anchor="middle" fill="#0b2545">${t.s}</text>` : ''}`).join('');
   const step = Math.ceil(n / 16);
   return `<svg viewBox="0 0 ${W} ${H}" width="100%">${[0, .5, 1].map(f => `<line x1="${L}" x2="${W - R}" y1="${y(mx * f)}" y2="${y(mx * f)}" stroke="#e3e8f0"/><text x="${L - 4}" y="${y(mx * f) + 3}" font-size="9" text-anchor="end" fill="#6b7485">${Math.round(mx * f)}</text>`).join('')}${bars}${trend.map((t, i) => i % step ? '' : `<text x="${x(i)}" y="${H - 9}" font-size="9" text-anchor="middle" fill="#6b7485">${md(t.d)}</text>`).join('')}</svg>
-<p class="small muted"><span style="color:#1e88e5">■</span> 퀵서비스다.kr 노출 · <span style="color:#b9d8f6">■</span> 상호·대표번호·기존 사이트만 (막대 위 숫자 = .kr 노출 수, 날마다 측정 가능한 엔진 수가 달라 아래 엔진별 표의 비율을 함께 봅니다)</p>`; })();
+<p class="small muted"><span style="color:#1e88e5">■</span> 퀵서비스다.kr 노출 · <span style="color:#b9d8f6">■</span> 상호·대표번호·기존 사이트만 (핵심 키워드 ${CORE_QUERIES.length}개 기준 — 11/8 추가한 긴 꼬리 키워드는 아래 키워드별 표에 · 막대 위 숫자 = .kr 노출 수, 날마다 측정 가능한 엔진 수가 달라 아래 엔진별 표의 비율을 함께 봅니다)</p>`; })();
 
 // 엔진별·키워드별
 const engRows = engines.map(e => { const all = rows.filter(r => r.engine === e); const v = dates.flatMap(d => QUERIES.map(q => cell(d, e, q))).filter(Boolean);

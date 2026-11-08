@@ -1,5 +1,5 @@
 // 주간·월간 리포트 공용 구역 — 현황표, 증빙 카드, 블로그 발행·겹침 점검, 인용 출처, 다음 할 일
-import { ENG, QUERIES, SEARCH, CHAT, esc, md, mark, oldOf, resultOf, readResult, shotOf, textOf, snippet, cropShot, dataUri, qOrder, eOrder, domainLabel, valid, LEGEND } from './lib.mjs';
+import { ENG, QUERIES, LONG_TAIL, LONG_TAIL_SINCE, SEARCH, CHAT, esc, md, mark, oldOf, resultOf, readResult, shotOf, textOf, snippet, cropShot, dataUri, qOrder, eOrder, domainLabel, valid, LEGEND } from './lib.mjs';
 import { allPosts, checkTargets, keywordDupes, suspectPairs } from '../blog/overlap.mjs';
 
 // 키워드×엔진 현황표(한 날짜). weekHits가 있으면 칸 아래에 기간 노출 횟수를 작게 붙인다
@@ -10,7 +10,8 @@ export function matrix(d, cell, engines, weekHits) {
     const cells = engines.map(e => { const c = cell(d, e, q); const w = weekHits ? weekHits(e, q) : null;
       return `<td>${mark(c, c && oldOf(d, e, q))}${w && w.n > 1 ? `<br><span class="small muted">${w.hit}/${w.n}</span>` : ''}</td>`; }).join('');
     const n = engines.filter(e => (cell(d, e, q) || {}).site).length;
-    return `<tr><td>${esc(q)}</td>${cells}<td><b>${n}</b></td></tr>`;
+    const tag = LONG_TAIL.includes(q) ? `<br><span class="small muted">${md(LONG_TAIL_SINCE)} 추가</span>` : '';
+    return `<tr><td>${esc(q)}${tag}</td>${cells}<td><b>${n}</b></td></tr>`;
   }).join('');
   return `<table class="mx">${head}${body}</table>${LEGEND}`;
 }

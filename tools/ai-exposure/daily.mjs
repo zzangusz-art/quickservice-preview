@@ -1,15 +1,20 @@
 // 하루 자동 점검 묶음 — AI·검색 노출 캡처 → 블로그 키워드 겹침 점검 → (목) 주간 리포트 → (매월 1일) 지난달 월간 리포트 → 측정/일일/<날짜>.md
 // 예약 작업은 이 스크립트를 따로 띄워 두고 바로 끝난다. 한 시간 넘는 세션이 '실행 중'으로 멈춰 다음 실행을 막는 일을 피하려는 구조
 // (하나회원권 캡처 예약이 10/25부터 그렇게 멈춰 있음).
-//   node tools/ai-exposure/daily.mjs [--skip-capture] [--date YYYY-MM-DD]
+//   node tools/ai-exposure/daily.mjs [--skip-capture] [--date YYYY-MM-DD] [--if-missing] [--log]
+// --if-missing: 그날 요약(측정/일일/<날짜>.md)이 이미 있으면 바로 끝냄 — Windows 작업 스케줄러 백업 실행(14:40)이 앱 예약(14:07)과 겹치지 않게
+// --log: 출력 리디렉션이 없는 실행(작업 스케줄러)용 — 진행 로그를 <날짜>.log, 예기치 않은 오류를 <날짜>.err.log에 덧붙임
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { REPO, PROJ, AI_DIR, ENG, QUERIES, readRows, makeCell, kstDate, addDays, weekday, arg, flag } from './lib.mjs';
+import { REPO, PROJ, AI_DIR, ENG, QUERIES, LONG_TAIL, LONG_TAIL_SINCE, readRows, makeCell, kstDate, addDays, weekday, md as mdDate, arg, flag } from './lib.mjs';
 
 const DATE = arg('date', kstDate());
 const OUT = path.join(PROJ, '측정', '일일'); fs.mkdirSync(OUT, { recursive: true });
-const log = (s) => { const line = `[${new Date(Date.now() + 9 * 3600e3).toISOString().slice(11, 19)}] ${s}`; console.log(line); };
+const append = (ext, s) => { try { fs.appendFileSync(path.join(OUT, `${DATE}${ext}`), s + '\n', 'utf8'); } catch (_) { /* 다른 실행이 파일을 잡고 있으면 콘솔만 */ } };
+const log = (s) => { const line = `[${new Date(Date.now() + 9 * 3600e3).toISOString().slice(11, 19)}] ${s}`; console.log(line); if (flag('log')) append('.log', line); };
+if (flag('log')) for (const ev of ['uncaughtException', 'unhandledRejection']) process.on(ev, (e) => { append('.err.log', `[${ev}] ${e && e.stack || e}`); process.exit(1); });
+if (flag('if-missing') && fs.existsSync(path.join(OUT, `${DATE}.md`))) { log(`오늘 요약이 이미 있음(측정/일일/${DATE}.md) — 종료`); process.exit(0); }
 const run = (label, args, minutes) => {
   log(`${label} 시작`);
   const r = spawnSync(process.execPath, args, { cwd: REPO, encoding: 'utf8', timeout: minutes * 60e3, maxBuffer: 32 * 1024 * 1024 });
@@ -59,6 +64,7 @@ const siteN = today.filter(r => r.site).length, brandN = today.filter(r => r.bra
 let cmp = '직전 측정 없음';
 if (prev) { let a = 0, b = 0, n = 0; for (const t of today) { const p = cell(prev, t.engine, t.query); if (!p) continue; n++; a += p.site; b += t.site; } cmp = `직전 측정 ${prev} 대비 노출 ${a} → ${b} (공통 ${n}곳)`; }
 const hits = today.filter(r => r.site).map(r => `${r.query}/${ENG[r.engine]}`);
+const tail = today.filter(r => LONG_TAIL.includes(r.query));
 const missing = Object.keys(ENG).filter(e => !today.some(r => r.engine === e));
 const overlapLine = (ov.out.match(/^전체 글 .*$/m) || [''])[0];
 const warn = (ov.out.match(/^\| ⚠ .*$/gm) || []).map(l => l.split('|')[4]?.trim()).filter(Boolean);
@@ -66,6 +72,7 @@ const warn = (ov.out.match(/^\| ⚠ .*$/gm) || []).map(l => l.split('|')[4]?.tri
 const md = [`# 퀵서비스다 일일 점검 — ${DATE}(${weekday(DATE)})`, '',
   `- AI·검색 노출: 유효 ${today.length}곳 · 퀵서비스다.kr 노출 ${siteN} · 상호·번호만 ${brandN} · ${cmp}`,
   `- 노출된 곳: ${hits.join(', ') || '없음'}`,
+  `- 그중 긴 꼬리 키워드 ${LONG_TAIL.length}개(${mdDate(LONG_TAIL_SINCE)} 추가): 유효 ${tail.length}곳 · .kr 노출 ${tail.filter(r => r.site).length} · 상호·번호만 ${tail.filter(r => r.brand && !r.site).length}`,
   `- 미측정 엔진(차단·로그인 필요 등): ${missing.map(e => ENG[e]).join(', ') || '없음'}`,
   `- 블로그 겹침: ${overlapLine || '결과 없음'}${warn.length ? ` · ⚠ ${warn.join(' / ')}` : ' · 오늘·3일 내 예약 글 겹침 없음'}`,
   `- 예약 글 공개: ${pub.length ? pub.map(x => `${x.p.date.slice(5)} ${x.p.time} ${x.code === 200 ? '✅' : '❌' + x.code}`).join(' · ') : '확인할 글 없음'}`,

@@ -27,7 +27,11 @@ export const OLD_HOST = 'xn--2j1bs9sn9b30bc55a.com';
 export const OLD_RE = /xn--2j1bs9sn9b30bc55a\.com|퀵서비스다\.com/i;
 
 // 우선 키워드 순서(리포트도 이 순서) — 사용자 지정 핵심: 서울퀵·전국 지역 퀵·다마스 퀵·오토바이 퀵 + 수도권·인천·경기
-export const QUERIES = ['퀵서비스다', '서울퀵', '오토바이 퀵', '다마스 퀵', '전국 퀵서비스', '수도권 퀵서비스', '인천 퀵서비스', '경기 퀵서비스', '퀵서비스 추천', '퀵서비스 요금'];
+export const CORE_QUERIES = ['퀵서비스다', '서울퀵', '오토바이 퀵', '다마스 퀵', '전국 퀵서비스', '수도권 퀵서비스', '인천 퀵서비스', '경기 퀵서비스', '퀵서비스 추천', '퀵서비스 요금'];
+// 긴 꼬리 키워드(11/8 추가) — 서치콘솔에 노출이 잡히기 시작한 검색어와 지역·요금 글 키워드. 기준선이 11/8이라 월간 추이 그래프는 핵심 10개만 센다
+export const LONG_TAIL_SINCE = '2026-11-08';
+export const LONG_TAIL = ['서울 퀵 비용', '다마스 퀵 요금', '퀵 부르기', '가산디지털단지 퀵', '여의도 퀵', '서울 부산 당일 퀵'];
+export const QUERIES = [...CORE_QUERIES, ...LONG_TAIL];
 export const ENG = { google: '구글', naver: '네이버', naverai: '네이버 AI탭', bing: 'Bing', perplexity: 'Perplexity', chatgpt: 'ChatGPT', claude: 'Claude', gemini: 'Gemini' };
 export const SEARCH = ['google', 'naver', 'naverai', 'bing', 'perplexity'];
 export const CHAT = ['chatgpt', 'claude', 'gemini'];
