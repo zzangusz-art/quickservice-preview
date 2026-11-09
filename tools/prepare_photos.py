@@ -108,7 +108,8 @@ for i, name in enumerate(['cargo', 'long', 'wing', 'lift', 'top', 'cold', 'damas
     im = trim(on_white(Image.open(src(f'site/img/main3/option0{i}_big.png'))), 10)
     for spec in ERASE.get(name, []):
         im = erase(im, *spec)
-    save(im, os.path.join(PHOTO, f'opt-{name}.webp'))
+    # labo는 표기를 지운 뒤 파일 이름을 바꿈(같은 주소는 Cloudflare 캐시가 최대 24시간 옛 사진을 줌)
+    save(im, os.path.join(PHOTO, 'opt-labo-v2.webp' if name == 'labo' else f'opt-{name}.webp'))
 
 # ── 톤수별 화물차 실사(기존 차량제원 페이지 순서) ──
 for i in range(1, 16):

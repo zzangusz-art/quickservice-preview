@@ -73,11 +73,11 @@ export function damasLabo(u, posts) {
   const [, d, l] = SMALL_VEHICLES;
   return [
     subHero({}, u, { eyebrow: '다마스·라보 퀵', h1: '오토바이에 안 실리는 짐은 다마스·라보로', lead: s.lead, crumbs: crumbsSvc(s),
-      aside: specCard(`<div class="spec-photo-pair"><div class="photo-plate">${photo(u, 'opt-damas.webp', '다마스', { priority: true })}</div><div class="photo-plate">${photo(u, 'opt-labo.webp', '라보', { priority: true })}</div></div>`, [['다마스', '350kg 미만 · 20,000원~'], ['라보', '450kg 미만'], ['접수', '24시간'], ['취소(도착 후)', '5,000원']]) }),
+      aside: specCard(`<div class="spec-photo-pair"><div class="photo-plate">${photo(u, 'opt-damas.webp', '다마스', { priority: true })}</div><div class="photo-plate">${photo(u, 'opt-labo-v2.webp', '라보', { priority: true })}</div></div>`, [['다마스', '350kg 미만 · 20,000원~'], ['라보', '450kg 미만'], ['접수', '24시간'], ['취소(도착 후)', '5,000원']]) }),
     `<section class="sec"><div class="wrap prose-grid">
       <div class="prose">
         <h2 id="diff">다마스와 라보, 무엇이 다른가요?</h2>
-        <div class="prose-photos"><figure><div class="photo-plate">${photo(u, 'opt-damas.webp', '다마스 소형 밴')}</div><figcaption>다마스 — 지붕 있는 밴</figcaption></figure><figure><div class="photo-plate">${photo(u, 'opt-labo.webp', '라보 소형 트럭')}</div><figcaption>라보 — 적재함이 열린 소형 트럭</figcaption></figure></div>
+        <div class="prose-photos"><figure><div class="photo-plate">${photo(u, 'opt-damas.webp', '다마스 소형 밴')}</div><figcaption>다마스 — 지붕 있는 밴</figcaption></figure><figure><div class="photo-plate">${photo(u, 'opt-labo-v2.webp', '라보 소형 트럭')}</div><figcaption>라보 — 적재함이 열린 소형 트럭</figcaption></figure></div>
         <p><strong>다마스는 지붕이 있는 밴, 라보는 적재함이 열린 소형 트럭입니다.</strong> 젖으면 안 되는 물건이나 가전은 다마스, 길거나 무거운 자재는 라보가 맞습니다.</p>
         <table class="tbl tbl-compare"><thead><tr><th scope="col"></th><th scope="col">다마스</th><th scope="col">라보</th></tr></thead><tbody>
           <tr><th scope="row">형태</th><td>지붕 있는 소형 밴</td><td>적재함이 열린 소형 트럭</td></tr>
@@ -252,7 +252,7 @@ export function vehicles(u, posts) {
         <div class="rec-empty">${ico('truck')}<p>크기와 무게를 넣으면 여기에 추천 차량이 나옵니다.</p></div>
       </div>
       <script type="application/json" id="recData">${JSON.stringify({ trucks: TRUCKS.map(t => ({ id: t.id, art: t.id, top: !!t.photos[1], ton: t.ton, cap: t.cap, w: t.w, lenMax: Math.max(t.len[1], Number(t.topLen) || 0), lenLabel: t.len[0] === t.len[1] ? t.len[0].toLocaleString() : t.len.map(x => x.toLocaleString()).join('~') })) }).replace(/</g, '\\u003c')}</script>
-      ${[['moto', 'rider.webp', '오토바이'], ['damas', 'opt-damas.webp', '다마스'], ['labo', 'opt-labo.webp', '라보'], ['cold', 'opt-cold.webp', '냉동탑차'], ['lift', 'opt-lift.webp', '리프트 화물차'], ['wing', 'opt-wing.webp', '윙바디'],
+      ${[['moto', 'rider.webp', '오토바이'], ['damas', 'opt-damas.webp', '다마스'], ['labo', 'opt-labo-v2.webp', '라보'], ['cold', 'opt-cold.webp', '냉동탑차'], ['lift', 'opt-lift.webp', '리프트 화물차'], ['wing', 'opt-wing.webp', '윙바디'],
         ...TRUCKS.flatMap(t => [[t.id, t.photos[0], t.ton + ' 카고'], ...(t.photos[1] ? [[t.id + '-top', t.photos[1], t.ton + ' 탑차·윙바디']] : [])])]
         .map(([id, f, alt]) => `<template id="veh-${id}">${photo(u, f, alt, { lazy: false })}</template>`).join('')}
     </div></section>

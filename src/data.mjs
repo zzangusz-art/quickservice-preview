@@ -120,7 +120,7 @@ export const MOTO_SIZE = [
 export const SMALL_VEHICLES = [
   { id: 'moto', photo: 'rider.webp', name: '오토바이', max: '25kg', size: '세 변 합 150cm 이내', use: '서류, 도장, 소형 부품, 샘플, 꽃다발, 케이크', note: '가장 빠르고 요금이 낮습니다.' },
   { id: 'damas', photo: 'opt-damas.webp', name: '다마스', max: '350kg 미만', size: '라면 상자 약 20개', use: '운동기구, 화분, 꽃 배달, 가전제품, 택배사가 거절한 물품, 장거리 고가 장비', note: '지붕이 있는 밴이라 비·눈에도 물건이 젖지 않습니다.' },
-  { id: 'labo', photo: 'opt-labo.webp', name: '라보', max: '450kg 미만', size: '다마스보다 큰 물건', use: '건축 자재, 공업용 기계, 장롱·진열장, 많은 짐, 나무·화환, 신문 지국 배송물', note: '적재함이 열린 소형 트럭이라 긴 물건을 싣기 좋습니다.' },
+  { id: 'labo', photo: 'opt-labo-v2.webp', name: '라보', max: '450kg 미만', size: '다마스보다 큰 물건', use: '건축 자재, 공업용 기계, 장롱·진열장, 많은 짐, 나무·화환, 신문 지국 배송물', note: '적재함이 열린 소형 트럭이라 긴 물건을 싣기 좋습니다.' },
 ];
 
 // 화물차 제원(cm). len은 [최소, 최대]. 출처: 기존 홈페이지 차량제원
@@ -429,7 +429,7 @@ export const BLOG_IMAGES = [
   { key: 'bus', file: 'bus.webp', fit: 'cut', alt: '고속버스', words: ['고속버스', '터미널'] },
   { key: 'ktx', file: 'ktx.webp', fit: 'cut', alt: 'KTX 고속열차', words: ['KTX', '부산', '대구', '대전', '광주', '목포', '익산', '지방', '연계'] },
   { key: 'damas', file: 'opt-damas.webp', fit: 'cut', alt: '다마스 소형 밴', words: ['다마스', '가전', '택배'] },
-  { key: 'labo', file: 'opt-labo.webp', fit: 'cut', alt: '라보 소형 트럭', words: ['라보'] },
+  { key: 'labo', file: 'opt-labo-v2.webp', fit: 'cut', alt: '라보 소형 트럭', words: ['라보'] },
   { key: 'damas-labo', file: 'damas-labo.webp', fit: 'cut', alt: '다마스와 라보', words: ['원룸', '이사', '짐', '반품', '교환'] },
   { key: 'top', file: 'opt-top.webp', fit: 'cut', alt: '탑차', words: ['탑차', '비 오는', '눈', '기상'] },
   { key: 'truck1', file: 'truck-01.webp', fit: 'cut', alt: '1톤 카고 트럭', words: ['1톤', '용달', '톤', '화물', '적재함', '트럭', '하차', '혼적'] },
