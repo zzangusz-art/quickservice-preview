@@ -60,23 +60,34 @@ ${chart}
 <div><table><tr><th>검색 유입</th><th class="c">세션</th></tr>${V.sources.map(s => `<tr><td>${esc(s[0])}</td><td class="c">${s[1]}</td></tr>`).join('')}</table></div></div>
 <p class="small">검색으로 들어온 방문은 직접 방문보다 참여율과 체류 시간이 높습니다. 직접 방문에는 저희 쪽 점검 방문이 포함돼 있습니다.</p>
 
-<div style="page-break-inside:avoid"><h2>5. 많이 본 페이지 · 기기</h2>
+${V.cloudflare ? (() => { const C = V.cloudflare, R = C.rum; return `<h2>5. AI와 그 밖의 모든 접속 (Cloudflare)</h2>
+<table><tr><th>구분</th><th class="c">수치</th><th>뜻</th></tr>
+<tr><td>AI 서비스에서 넘어온 방문</td><td class="c"><b>0</b></td><td class="small">GA4·Cloudflare 모두 ChatGPT, Perplexity, Gemini, Claude 등에서 넘어온 기록이 없습니다. 출처가 지워진 방문은 직접 방문으로 잡힐 수 있습니다.</td></tr>
+<tr><td>실제 브라우저 방문(추정)</td><td class="c"><b>약 ${n(R.visits - R.headless)}</b></td><td class="small">Cloudflare 브라우저 측정 ${n(R.visits)}회에서 자동 브라우저 ${n(R.headless)}회를 뺀 값입니다. 표본 추정치(10단위)이고 저희 쪽 확인 방문도 포함됩니다.</td></tr>
+<tr><td>서버 접속 전체(최근 ${C.days}일)</td><td class="c">${n(C.requests)}건</td><td class="small">이미지·파일 요청과 봇을 모두 합친 값입니다. 방문자 수가 아닙니다.</td></tr>
+<tr><td>Cloudflare 집계 방문(최근 ${C.days}일)</td><td class="c">${n(C.visitsAll)}회</td><td class="small">봇과 스캐너가 대부분입니다. 예: ${C.agents.map(a => `${esc(a[0])} ${n(a[1])}건`).join(', ')}.</td></tr></table>
+<p class="small">브라우저 측정의 유입 출처: ${R.referrers.map(r => `${esc(r[0])} ${r[1]}`).join(' · ')}. 서버 접속 국가: ${C.countries.map(c => `${esc(c[0])} ${n(c[1])}`).join(' · ')}.</p>
+<h3>AI·검색 봇이 사이트를 읽어 간 횟수 (최근 7일)</h3>
+<table><tr>${C.ai7d.bots.map(b => `<th class="c">${esc(b[0])}</th>`).join('')}</tr><tr>${C.ai7d.bots.map(b => `<td class="c"><b>${b[1]}</b></td>`).join('')}</tr></table>
+<p class="small">7일간 ${n(C.ai7d.total)}회 중 ${n(C.ai7d.ok)}회가 정상 응답을 받았습니다. 봇이 글을 읽어 가는 단계이고, 이것이 답변 속 링크와 방문으로 이어지기까지는 시간이 더 필요합니다.</p>`; })() : ''}
+
+<div style="page-break-inside:avoid"><h2>6. 많이 본 페이지 · 기기</h2>
 <div class="two"><div><table><tr><th>페이지</th><th class="c">조회</th><th class="c">사람</th></tr>${V.pages.map(p => `<tr><td>${esc(p[0])}</td><td class="c">${p[2]}</td><td class="c">${p[3]}</td></tr>`).join('')}</table></div>
 <div><table><tr><th>기기</th><th class="c">방문자</th></tr>${V.devices.map(p => `<tr><td>${esc(p[0])}</td><td class="c">${p[1]}</td></tr>`).join('')}</table><table><tr><th>브라우저</th><th class="c">방문자</th></tr>${V.browsers.map(p => `<tr><td>${esc(p[0])}</td><td class="c">${p[1]}</td></tr>`).join('')}</table></div></div></div>
 
-${G ? `<h2>6. 구글 검색 (${md(G.from)}~${md(G.to)})</h2>
+${G ? `<h2>7. 구글 검색 (${md(G.from)}~${md(G.to)})</h2>
 <p>구글 검색 결과에서 <b>노출 ${n(G.impressions)}회, 클릭 ${n(G.clicks)}회</b>(클릭률 ${G.ctr}%, 평균 순위 ${G.position})입니다. 검색 노출이 방문으로 이어지는 양은 아직 적어서, 순위가 올라가야 방문이 함께 늘어납니다.</p>` : ''}
 
-<h2>${G ? 7 : 6}. 앞으로 볼 것</h2>
+<h2>${G ? 8 : 7}. 앞으로 볼 것</h2>
 <ul>
 <li>기존 퀵서비스다.com을 .kr로 연결하면 그쪽 방문과 검색 신호가 옮겨 옵니다. 방문자를 가장 크게 늘릴 수 있는 작업입니다.</li>
 <li>네이버 플레이스·카카오맵·구글 비즈니스 프로필에 .kr을 등록해 외부 유입 경로를 만듭니다.</li>
 <li>실제 접수 건수와 GA4 전환 행동을 맞춰 보면 어떤 경로가 매출로 이어지는지 알 수 있습니다.</li>
 </ul>
 
-<h2>${G ? 8 : 7}. 수치의 한계</h2>
+<h2>${G ? 9 : 8}. 수치의 한계</h2>
 <ul class="small">
-<li>저희 쪽 점검·측정 방문이 일부 포함돼 있어 실제 방문자는 이 수치보다 적습니다.</li>
+<li>저희 쪽 점검·측정 방문이 일부 포함돼 있어 실제 방문자는 이 수치보다 적습니다. GA4와 Cloudflare는 세는 방식이 달라 수치가 일치하지 않습니다.</li>
 <li>GA4는 클릭과 작성까지만 기록합니다. 실제 접수·매출 건수는 알 수 없고, PC에서 번호를 보고 직접 전화한 경우는 잡히지 않습니다.</li>
 <li>광고 차단이나 쿠키 거부 환경의 방문은 빠질 수 있습니다.</li>
 </ul>
