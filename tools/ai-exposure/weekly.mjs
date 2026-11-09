@@ -53,7 +53,7 @@ const blog = blogData(from, DATE, nowStr);
 <div><b>${brandN}</b><span>링크 없이 상호·대표번호만 나온 곳${oldN ? ` (그중 기존 사이트 .com ${oldN})` : ''}</span></div>
 <div><b>${blog.published.length}</b><span>이번 주 발행한 블로그 글 (누적 ${blog.total}건)</span></div>
 </div>
-<p class="small muted">같은 키워드 ${new Set(today.map(t => t.query)).size}개(긴 꼬리 ${LONG_TAIL.length}개는 ${md(LONG_TAIL_SINCE)}부터)를 매번 같은 방법(측정 전용 크롬, 로그인 없는 상태 기준)으로 검색·질문해 결과 화면을 저장하고, 결과에 퀵서비스다.kr 링크·주소가 나오면 '노출', 상호나 대표번호만 나오면 '상호 언급'으로 판정했습니다. 원본 캡처: 측정/AI검색/${DATE}/</p>
+<p class="small muted">같은 키워드 ${new Set(today.map(t => t.query)).size}개(긴 꼬리 ${LONG_TAIL.length}개는 ${md(LONG_TAIL_SINCE)}부터)를 매번 같은 방법(측정 전용 크롬. Claude는 시크릿 모드)으로 검색·질문해 결과 화면을 저장하고, 결과에 퀵서비스다.kr 링크·주소가 나오면 '노출', 상호나 대표번호만 나오면 '상호 언급'으로 판정했습니다. 원본 캡처: 측정/AI검색/${DATE}/</p>
 
 <h2>1. 키워드별 노출 현황 (${md(DATE)})</h2>
 ${matrix(DATE, cell, engines, week.length > 1 ? weekHits : null)}
