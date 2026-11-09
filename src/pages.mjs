@@ -421,9 +421,9 @@ export function blogIndex(u, posts, cats) {
   ].join('\n');
 }
 
-export function blogPost(u, p, posts) {
+export function blogPost(u, p) {
   const crumbs = [{ name: '홈', href: '' }, { name: '물류 가이드', href: 'blog/' }, { name: p.title, href: `blog/${p.slug}/` }];
-  const rel = posts.filter(x => x.slug !== p.slug && (x.category === p.category || x.tags.some(t => p.tags.includes(t)))).slice(0, 3);
+  const rel = p.related;
   const svc = SERVICES.find(s => s.id === p.service) || null;
   return `<div class="read-bar" aria-hidden="true"><span id="readBar"></span></div>
 <article class="post">

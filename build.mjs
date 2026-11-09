@@ -78,6 +78,32 @@ const posts = loadPosts(BLOG, { now: process.env.BUILD_NOW || nowKST }).map(p =>
     recent.push(p.image.key);
   }
 }
+// 글마다 관련 글 3칸: 첫 칸은 주제가 가장 가까운 글, 나머지는 같은 갈래에서 링크를 아직 적게 받은 글. 최신 글에만 링크가 몰리지 않게 한다.
+// 오래된 글부터 앞선 글 중에서만 고르므로 새 글이 올라와도 기존 글의 선택은 그대로다(맨 앞 몇 편의 빈 칸만 전체에서 채운다).
+{
+  const inbound = new Map(posts.map(p => [p.slug, 0]));
+  const linked = new Map(posts.map(p => [p, new Set([...p.html.matchAll(/href="[^"]*blog\/([a-z0-9-]+)\//g)].map(m => m[1]).filter(s => inbound.has(s) && s !== p.slug))]));
+  const shared = (p, c) => c.tags.filter(t => p.tags.includes(t)).length;
+  const near = (p, c) => c.category === p.category || (p.category === '기업 물류' && c.category === '요금 가이드') || (p.service && c.service === p.service) || shared(p, c) > 0; // 기업 글은 정산 얘기라 요금 글과 잇는다
+  const docs = new Map(); const rare = w => { if (!docs.has(w)) docs.set(w, posts.filter(x => x.main.includes(w)).length); return docs.get(w) <= posts.length / 4; }; // '오토바이'처럼 거의 모든 글에 나오는 말은 근거로 안 친다
+  const score = (p, c) => { const word = c.tags[0].split(' ')[0]; // 주 키워드의 앞말(지역·차종)이 이 글에 나오면 가까운 글
+    return shared(p, c) * 3 + (word.length > 1 && rare(word) && p.main.includes(word) ? 2 : 0) + (p.service && c.service === p.service ? 1 : 0) + (c.category === p.category ? 1 : 0); };
+  const tie = (p, c) => crypto.createHash('md5').update(`${p.slug}|${c.slug}`).digest('hex');
+  const fresh = (p, c) => near(p, c) && !linked.get(p).has(c.slug); // 본문에서 이미 링크한 글은 뺀다
+  const fill = (p, pool, ok) => {
+    const cands = pool.filter(c => c !== p && ok(p, c) && !p.related.includes(c));
+    const fewer = (a, b) => inbound.get(a.slug) - inbound.get(b.slug), closer = (a, b) => score(p, b) - score(p, a), even = (a, b) => tie(p, a).localeCompare(tie(p, b));
+    while (p.related.length < 3) {
+      const [x, y] = p.related.length ? [fewer, closer] : [closer, fewer]; // 첫 칸은 가까운 글 우선, 나머지는 링크가 적은 글 우선
+      const c = cands.filter(k => !p.related.includes(k)).sort((a, b) => x(a, b) || y(a, b) || even(a, b))[0];
+      if (!c) break;
+      p.related.push(c); inbound.set(c.slug, inbound.get(c.slug) + 1);
+    }
+  };
+  const oldest = [...posts].reverse();
+  oldest.forEach((p, i) => { p.related = []; for (const s of linked.get(p)) inbound.set(s, inbound.get(s) + 1); fill(p, oldest.slice(0, i), fresh); });
+  for (const p of oldest) for (const ok of [fresh, near, () => true]) fill(p, oldest, ok); // 빈 칸: 전체에서 → 본문에 링크한 글까지 → 아무 글
+}
 const lastPost = posts[0]?.date || ASOF;
 
 // ── 홈 ──
@@ -165,7 +191,7 @@ for (const p of posts) {
   emit({ out, section: 'blog/', pri: '0.6', mod: p.updated || p.date, ogType: 'article', published: p.date, ogImage: 'assets/img/og-blog.png',
     title: [...`${p.title} | 퀵서비스다`].length <= 34 ? `${p.title} | 퀵서비스다` : p.title, description: p.description, // 길면 상호 꼬리를 떼어 제목이 잘리지 않게(상호는 og:site_name·스키마에 있음)
     schema: S.graph(S.organization(), S.website(), S.blogPosting(p, url), bc([['홈', ''], ['물류 가이드', 'blog/'], [p.title, `blog/${p.slug}/`]]), p.faq.length ? S.faqPage(p.faq, url) : null),
-    body: u => P.blogPost(u, p, posts) });
+    body: u => P.blogPost(u, p) });
 }
 // RSS
 {
