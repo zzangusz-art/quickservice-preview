@@ -194,27 +194,6 @@
   }), { threshold: .6 });
   $$('[data-count]').forEach(el => cio.observe(el));
 
-  // ── 히어로: 빠른 접수 → 요금 문의 모달로 이어 쓰기 ─────────
-  const qb = $('#quickBook');
-  if (qb) qb.addEventListener('submit', e => {
-    e.preventDefault();
-    const from = qb.elements.from, to = qb.elements.to;
-    let bad = null;
-    [from, to].forEach(inp => { const v = inp.value.trim(); inp.setAttribute('aria-invalid', v ? 'false' : 'true'); if (!v && !bad) bad = inp; });
-    if (bad) { bad.focus(); toast('출발지와 도착지 동 이름을 적어 주세요', 'info'); return; }
-    const qf2 = $('#quoteForm');
-    qf2.elements.from.value = from.value.trim();
-    qf2.elements.to.value = to.value.trim();
-    $$('input[name=item]', qf2).forEach(r => { r.checked = r.value === qb.querySelector('[name=item]').value; });
-    const when = (qb.querySelector('input[name=when]:checked') || {}).value;
-    if (when) [...qf2.elements.when.options].forEach(o => { o.selected = o.text === when; });
-    $('#quoteDone').hidden = true; qf2.hidden = false;
-    openLayer('modalQuote', qb.querySelector('button[type=submit]'));
-    trackEv('quick_book', { item: qb.querySelector('[name=item]').value, when: when || '' });
-    setTimeout(() => qf2.elements.weight.focus({ preventScroll: true }), 120);
-    toast('출발·도착을 옮겨 적었습니다. 무게만 고르면 접수 글이 완성됩니다', 'ok', 3200);
-  });
-
   // ── 히어로 벤토: 타일 위에서 마우스를 따라오는 스포트라이트 ─────
   const bento = $('#bento');
   if (bento && !reduce && matchMedia('(hover: hover)').matches) {

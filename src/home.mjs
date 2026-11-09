@@ -51,7 +51,7 @@ function hero(u) {
             <option value="큰 짐·가구">큰 짐·가구</option>
             <option value="화물(파레트·자재)">화물</option>
           </select>
-          <button class="btn btn-sky" type="submit">접수하기${ico('arrow')}</button>
+          <a class="btn btn-sky" href="${SITE.order}" target="_blank" rel="noopener">접수하기${ico('arrow')}</a>
         </div>
         <p class="qb-note"><span>${ico('check', 'ico-s')}가까운 기사 바로 배차</span><span>${ico('check', 'ico-s')}확정 요금 먼저 안내</span></p>
       </form>
