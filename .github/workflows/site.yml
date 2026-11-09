@@ -21,6 +21,10 @@ on:
         description: '작성할 편수(1~5)'
         type: string
         default: '1'
+      check_key:
+        description: 'API 키만 확인(글 작성 안 함)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -49,6 +53,7 @@ jobs:
         run: |
           if [ -z "$ANTHROPIC_API_KEY" ]; then echo "::warning::ANTHROPIC_API_KEY 미설정 — 글 작성을 건너뜁니다"; exit 0; fi
           npm ci --no-audit --no-fund
+          if [ "${{ inputs.check_key }}" = "true" ]; then node tools/blog-ai/generate.mjs --check-key; exit $?; fi
           node tools/blog-ai/generate.mjs ${{ github.event_name == 'schedule' && '--weekly' || '' }} --count "$COUNT" || echo "::warning::이번 회차에 발행된 글이 없습니다(content/drafts 확인)"
           git config user.name "quickservice-blog-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

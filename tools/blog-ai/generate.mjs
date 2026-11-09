@@ -7,6 +7,7 @@
 //   node tools/blog-ai/generate.mjs --facts      글에 쓸 수 있는 사실 목록 출력(사람이 직접 쓸 때)
 //   node tools/blog-ai/generate.mjs --weekly     예약 실행용: 사례가 없는 주의 수요일 회차는 쉬어 월·금 2편만 발행(사례가 있으면 주 3편까지)
 //   node tools/blog-ai/generate.mjs --dry-run    API 호출 없이 다음에 쓸 글(사례·주제)만 출력
+//   node tools/blog-ai/generate.mjs --check-key  글을 쓰지 않고 API 키가 작동하는지만 확인(모델 목록 조회)
 // 실제 배송 사례: content/cases/*.json(작성법은 content/cases/README.md). 사례에 적힌 사실만 쓰고 지어내지 않는다.
 // 제목 키워드: _topics.json의 titleKeyword(네이버 블로그 2026년 1월 이후 글 제목의 키워드, 오래된 순). 글 제목은 이 키워드로 시작한다(사례 글 포함).
 // 남은 주제(todo)가 6개 아래로 떨어지면 기존 글과 겹치지 않는 새 주제를 AI에게 받아 대기열에 보충한다.
@@ -243,6 +244,13 @@ async function main() {
   const posts = loadPosts(BLOG);
 
   if (flag('--facts')) { console.log(sheet); return; } // 사람이 글을 쓸 때 참고할 사실 목록
+
+  if (flag('--check-key')) {
+    const { default: Anthropic } = await import('@anthropic-ai/sdk');
+    const page = await new Anthropic().models.list({ limit: 1 });
+    console.log(`API 키 정상: 모델 조회 성공(${page.data[0]?.id ?? '목록 없음'})`);
+    return;
+  }
 
   if (flag('--check')) {
     let bad = 0;
