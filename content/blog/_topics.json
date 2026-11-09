@@ -9,9 +9,11 @@
       "안산퀵 안산퀵서비스 비용"
     ],
     "service": "",
-    "status": "todo",
+    "status": "scheduled",
     "source": "naver",
-    "naverDate": "2026-01-02"
+    "naverDate": "2026-01-02",
+    "slug": "ansan-quick-cost",
+    "date": "2026-11-10"
   },
   {
     "id": "nb-224131510342",
@@ -23,9 +25,11 @@
       "남양주퀵 남양주퀵서비스 비용"
     ],
     "service": "",
-    "status": "todo",
+    "status": "scheduled",
     "source": "naver",
-    "naverDate": "2026-01-02"
+    "naverDate": "2026-01-02",
+    "slug": "namyangju-quick-cost",
+    "date": "2026-11-10"
   },
   {
     "id": "nb-224134858406",
@@ -37,9 +41,11 @@
       "대구용달 비용"
     ],
     "service": "truck",
-    "status": "todo",
+    "status": "scheduled",
     "source": "naver",
-    "naverDate": "2026-01-05"
+    "naverDate": "2026-01-05",
+    "slug": "daegu-yongdal-cost",
+    "date": "2026-11-10"
   },
   {
     "id": "nb-224134867155",
@@ -51,9 +57,11 @@
       "전국화물 용달차 화물차"
     ],
     "service": "truck",
-    "status": "todo",
+    "status": "scheduled",
     "source": "naver",
-    "naverDate": "2026-01-05"
+    "naverDate": "2026-01-05",
+    "slug": "nationwide-cargo-yongdal",
+    "date": "2026-11-11"
   },
   {
     "id": "nb-224136382722",
@@ -65,9 +73,11 @@
       "하남퀵 하남퀵서비스 가격"
     ],
     "service": "",
-    "status": "todo",
+    "status": "scheduled",
     "source": "naver",
-    "naverDate": "2026-01-06"
+    "naverDate": "2026-01-06",
+    "slug": "hanam-quick-price",
+    "date": "2026-11-11"
   },
   {
     "id": "nb-224136394280",
@@ -79,9 +89,11 @@
       "일산퀵 일산퀵서비스 비용 가격"
     ],
     "service": "",
-    "status": "todo",
+    "status": "scheduled",
     "source": "naver",
-    "naverDate": "2026-01-06"
+    "naverDate": "2026-01-06",
+    "slug": "ilsan-quick-cost",
+    "date": "2026-11-11"
   },
   {
     "id": "nb-224137641657",
@@ -93,9 +105,11 @@
       "인천터미널택배 비용"
     ],
     "service": "intercity",
-    "status": "todo",
+    "status": "scheduled",
     "source": "naver",
-    "naverDate": "2026-01-07"
+    "naverDate": "2026-01-07",
+    "slug": "incheon-terminal-parcel-cost",
+    "date": "2026-11-12"
   },
   {
     "id": "nb-224137655936",
@@ -107,9 +121,11 @@
       "수원터미널택배 요금"
     ],
     "service": "intercity",
-    "status": "todo",
+    "status": "scheduled",
     "source": "naver",
-    "naverDate": "2026-01-07"
+    "naverDate": "2026-01-07",
+    "slug": "suwon-terminal-parcel-fare",
+    "date": "2026-11-12"
   },
   {
     "id": "nb-224139022386",
@@ -121,9 +137,11 @@
       "용인용달 용인화물"
     ],
     "service": "truck",
-    "status": "todo",
+    "status": "scheduled",
     "source": "naver",
-    "naverDate": "2026-01-08"
+    "naverDate": "2026-01-08",
+    "slug": "yongin-yongdal-cargo",
+    "date": "2026-11-12"
   },
   {
     "id": "nb-224139033852",
@@ -135,9 +153,11 @@
       "김해용달 화물차 가격"
     ],
     "service": "truck",
-    "status": "todo",
+    "status": "scheduled",
     "source": "naver",
-    "naverDate": "2026-01-08"
+    "naverDate": "2026-01-08",
+    "slug": "gimhae-yongdal-price",
+    "date": "2026-11-13"
   },
   {
     "id": "nb-224140353929",
@@ -149,9 +169,11 @@
       "부평퀵 부평퀵서비스 요금"
     ],
     "service": "",
-    "status": "todo",
+    "status": "scheduled",
     "source": "naver",
-    "naverDate": "2026-01-09"
+    "naverDate": "2026-01-09",
+    "slug": "bupyeong-quick-fare",
+    "date": "2026-11-13"
   },
   {
     "id": "nb-224140365927",
@@ -163,9 +185,11 @@
       "청주용달"
     ],
     "service": "truck",
-    "status": "todo",
+    "status": "scheduled",
     "source": "naver",
-    "naverDate": "2026-01-09"
+    "naverDate": "2026-01-09",
+    "slug": "cheongju-yongdal",
+    "date": "2026-11-13"
   },
   {
     "id": "nb-224143493802",
@@ -177,9 +201,11 @@
       "안성용달 기업화물"
     ],
     "service": "truck",
-    "status": "todo",
+    "status": "scheduled",
     "source": "naver",
-    "naverDate": "2026-01-12"
+    "naverDate": "2026-01-12",
+    "slug": "anseong-yongdal-business",
+    "date": "2026-11-16"
   },
   {
     "id": "nb-224143507309",
@@ -191,9 +217,11 @@
       "울산용달 기업물류"
     ],
     "service": "truck",
-    "status": "todo",
+    "status": "scheduled",
     "source": "naver",
-    "naverDate": "2026-01-12"
+    "naverDate": "2026-01-12",
+    "slug": "ulsan-yongdal-logistics",
+    "date": "2026-11-20"
   },
   {
     "id": "nb-224144847587",
@@ -205,9 +233,11 @@
       "경기도퀵 경기도퀵서비스 요금"
     ],
     "service": "",
-    "status": "todo",
+    "status": "scheduled",
     "source": "naver",
-    "naverDate": "2026-01-13"
+    "naverDate": "2026-01-13",
+    "slug": "gyeonggi-quick-fare",
+    "date": "2026-11-23"
   },
   {
     "id": "nb-224144858208",
@@ -219,9 +249,11 @@
       "파주퀵 파주퀵서비스 요금"
     ],
     "service": "",
-    "status": "todo",
+    "status": "scheduled",
     "source": "naver",
-    "naverDate": "2026-01-13"
+    "naverDate": "2026-01-13",
+    "slug": "paju-quick-fare",
+    "date": "2026-11-27"
   },
   {
     "id": "nb-224146160145",
@@ -233,9 +265,11 @@
       "동서울터미널택배"
     ],
     "service": "intercity",
-    "status": "todo",
+    "status": "scheduled",
     "source": "naver",
-    "naverDate": "2026-01-14"
+    "naverDate": "2026-01-14",
+    "slug": "dongseoul-terminal-parcel",
+    "date": "2026-11-30"
   },
   {
     "id": "nb-224146172422",
@@ -247,9 +281,11 @@
       "강남터미널택배"
     ],
     "service": "intercity",
-    "status": "todo",
+    "status": "scheduled",
     "source": "naver",
-    "naverDate": "2026-01-14"
+    "naverDate": "2026-01-14",
+    "slug": "gangnam-terminal-parcel",
+    "date": "2026-12-04"
   },
   {
     "id": "nb-224147476391",
@@ -261,9 +297,11 @@
       "전국화물 신용결제"
     ],
     "service": "truck",
-    "status": "todo",
+    "status": "scheduled",
     "source": "naver",
-    "naverDate": "2026-01-15"
+    "naverDate": "2026-01-15",
+    "slug": "nationwide-cargo-credit-payment",
+    "date": "2026-12-07"
   },
   {
     "id": "nb-224147487406",
@@ -275,9 +313,11 @@
       "오토바이퀵 요금"
     ],
     "service": "motorcycle",
-    "status": "todo",
+    "status": "scheduled",
     "source": "naver",
-    "naverDate": "2026-01-15"
+    "naverDate": "2026-01-15",
+    "slug": "motorcycle-quick-fare-guide",
+    "date": "2026-12-11"
   },
   {
     "id": "nb-224148747091",
@@ -289,9 +329,11 @@
       "다마스퀵 실시간 상담"
     ],
     "service": "damas-labo",
-    "status": "todo",
+    "status": "scheduled",
     "source": "naver",
-    "naverDate": "2026-01-16"
+    "naverDate": "2026-01-16",
+    "slug": "damas-quick-live-consult",
+    "date": "2026-12-14"
   },
   {
     "id": "nb-224148755605",
@@ -5995,7 +6037,7 @@
       "택배 대신 퀵"
     ],
     "service": "motorcycle",
-    "status": "scheduled",
+    "status": "shelved",
     "slug": "quick-vs-parcel",
     "date": "2026-11-10",
     "time": "13:00",
@@ -6729,7 +6771,7 @@
       "파주 퀵서비스"
     ],
     "service": "damas-labo",
-    "status": "scheduled",
+    "status": "shelved",
     "slug": "gimpo-paju-quick",
     "date": "2026-11-10",
     "time": "09:00",
@@ -6747,7 +6789,7 @@
       "중고거래 퀵"
     ],
     "service": "motorcycle",
-    "status": "scheduled",
+    "status": "shelved",
     "slug": "seoul-northeast-quick",
     "date": "2026-11-10",
     "time": "18:00",
@@ -6765,7 +6807,7 @@
       "경기 북부 퀵"
     ],
     "service": "motorcycle",
-    "status": "scheduled",
+    "status": "shelved",
     "slug": "uijeongbu-namyangju-quick",
     "date": "2026-11-11",
     "time": "09:00",
@@ -6783,7 +6825,7 @@
       "제주도 퀵서비스"
     ],
     "service": "intercity",
-    "status": "scheduled",
+    "status": "shelved",
     "slug": "jeju-same-day-quick",
     "date": "2026-11-11",
     "time": "13:00",
@@ -6801,7 +6843,7 @@
       "신림 퀵"
     ],
     "service": "motorcycle",
-    "status": "scheduled",
+    "status": "shelved",
     "slug": "gwanak-dongjak-quick",
     "date": "2026-11-11",
     "time": "18:00",
@@ -6819,7 +6861,7 @@
       "공항 물건 전달"
     ],
     "service": "motorcycle",
-    "status": "scheduled",
+    "status": "shelved",
     "slug": "incheon-airport-quick",
     "date": "2026-11-12",
     "time": "09:00",
@@ -6837,7 +6879,7 @@
       "하남 퀵서비스"
     ],
     "service": "damas-labo",
-    "status": "scheduled",
+    "status": "shelved",
     "slug": "hanam-gwangju-quick",
     "date": "2026-11-12",
     "time": "13:00",
@@ -6855,7 +6897,7 @@
       "천호 퀵"
     ],
     "service": "motorcycle",
-    "status": "scheduled",
+    "status": "shelved",
     "slug": "gwangjin-gangdong-quick",
     "date": "2026-11-12",
     "time": "18:00",
@@ -6873,7 +6915,7 @@
       "포항 항공 퀵"
     ],
     "service": "intercity",
-    "status": "scheduled",
+    "status": "shelved",
     "slug": "ulsan-pohang-same-day-quick",
     "date": "2026-11-13",
     "time": "09:00",
@@ -6891,7 +6933,7 @@
       "퀵 월정산"
     ],
     "service": "",
-    "status": "scheduled",
+    "status": "shelved",
     "slug": "business-quick-partner",
     "date": "2026-11-13",
     "time": "13:00",
@@ -6909,7 +6951,7 @@
       "트럭 크기"
     ],
     "service": "truck",
-    "status": "scheduled",
+    "status": "shelved",
     "slug": "truck-ton-choose",
     "date": "2026-11-13",
     "time": "18:00",

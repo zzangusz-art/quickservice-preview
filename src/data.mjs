@@ -455,16 +455,16 @@ export const AREAS = [
   {
     id: 'incheon', name: '인천광역시', short: '인천', unitLabel: '9개 구·2개 군', hub: 'incheon-quick-service',
     lead: '인천 전 지역에서 서울·경기로, 서울·경기에서 인천으로 보내는 물건을 24시간 접수합니다. 인천과 서울 사이는 장거리로 계산되는 경우가 많고, 오토바이 장거리는 2시간~2시간 30분이 기준입니다. 섬 지역은 갈 수 있는지 접수할 때 확인합니다.',
-    units: [['제물포구'], ['영종구', 'incheon-airport-quick'], ['미추홀구'], ['연수구', 'songdo-quick'], ['남동구', 'namdong-industrial-quick'], ['부평구'], ['계양구'], ['서해구'], ['검단구'], ['강화군'], ['옹진군']],
+    units: [['제물포구'], ['영종구', 'incheon-airport-quick'], ['미추홀구'], ['연수구', 'songdo-quick'], ['남동구', 'namdong-industrial-quick'], ['부평구', 'bupyeong-quick-fare'], ['계양구'], ['서해구'], ['검단구'], ['강화군'], ['옹진군']],
   },
   {
     id: 'gyeonggi', name: '경기도', short: '경기', unitLabel: '31개 시·군', hub: 'gyeonggi-quick-service',
     lead: '경기 31개 시·군 전 지역을 오토바이, 다마스·라보, 1톤부터 25톤 화물차로 연결합니다. 같은 경기도 안에서도 거리 차이가 커서 출발·도착 동을 알려 주시면 확정 요금을 먼저 안내합니다. 공장·창고 화물은 화물차, 급하지 않으면 오늘 중 여유 배차로 요금을 아낄 수 있습니다.',
-    units: [['수원시', 'suwon-quick'], ['성남시', 'pangyo-bundang-quick'], ['의정부시', 'uijeongbu-namyangju-quick'], ['안양시', 'anyang-gunpo-quick'], ['부천시', 'bucheon-quick'], ['광명시'], ['평택시', 'hwaseong-pyeongtaek-quick'], ['동두천시'], ['안산시', 'ansan-siheung-quick'], ['고양시', 'ilsan-goyang-quick'], ['과천시'], ['구리시', 'uijeongbu-namyangju-quick'], ['남양주시', 'uijeongbu-namyangju-quick'], ['오산시'], ['시흥시', 'ansan-siheung-quick'], ['군포시', 'anyang-gunpo-quick'], ['의왕시', 'anyang-gunpo-quick'], ['하남시', 'hanam-gwangju-quick'], ['용인시', 'yongin-quick'], ['파주시', 'gimpo-paju-quick'], ['이천시'], ['안성시'], ['김포시', 'gimpo-paju-quick'], ['화성시', 'hwaseong-pyeongtaek-quick'], ['광주시', 'hanam-gwangju-quick'], ['양주시'], ['포천시'], ['여주시'], ['연천군'], ['가평군'], ['양평군']],
+    units: [['수원시', 'suwon-quick'], ['성남시', 'pangyo-bundang-quick'], ['의정부시', 'uijeongbu-namyangju-quick'], ['안양시', 'anyang-gunpo-quick'], ['부천시', 'bucheon-quick'], ['광명시'], ['평택시', 'hwaseong-pyeongtaek-quick'], ['동두천시'], ['안산시', 'ansan-siheung-quick'], ['고양시', 'ilsan-goyang-quick'], ['과천시'], ['구리시', 'uijeongbu-namyangju-quick'], ['남양주시', 'namyangju-quick-cost'], ['오산시'], ['시흥시', 'ansan-siheung-quick'], ['군포시', 'anyang-gunpo-quick'], ['의왕시', 'anyang-gunpo-quick'], ['하남시', 'hanam-quick-price'], ['용인시', 'yongin-quick'], ['파주시', 'paju-quick-fare'], ['이천시'], ['안성시', 'anseong-yongdal-business'], ['김포시', 'gimpo-paju-quick'], ['화성시', 'hwaseong-pyeongtaek-quick'], ['광주시', 'hanam-gwangju-quick'], ['양주시'], ['포천시'], ['여주시'], ['연천군'], ['가평군'], ['양평군']],
   },
 ];
 // 지방 당일 배송(연계배송) 도시 → 글
-export const AREA_CITIES = { hub: 'nationwide-quick-same-day', list: [['부산', 'seoul-to-busan-same-day'], ['대전', 'daejeon-same-day-quick'], ['대구', 'daegu-same-day-quick'], ['광주', 'gwangju-jeolla-same-day-quick'], ['목포', 'gwangju-jeolla-same-day-quick'], ['익산(전주)', 'gwangju-jeolla-same-day-quick'], ['울산', 'ulsan-pohang-same-day-quick'], ['포항', 'ulsan-pohang-same-day-quick'], ['여수(순천)'], ['제주', 'jeju-same-day-quick']] };
+export const AREA_CITIES = { hub: 'nationwide-quick-same-day', list: [['부산', 'seoul-to-busan-same-day'], ['대전', 'daejeon-same-day-quick'], ['대구', 'daegu-same-day-quick'], ['광주', 'gwangju-jeolla-same-day-quick'], ['목포', 'gwangju-jeolla-same-day-quick'], ['익산(전주)', 'gwangju-jeolla-same-day-quick'], ['울산', 'ulsan-yongdal-logistics'], ['포항', 'ulsan-pohang-same-day-quick'], ['여수(순천)'], ['제주', 'jeju-same-day-quick']] };
 export const AREA_FAQ = [
   { q: '서울·인천·경기 어디서든 퀵을 부를 수 있나요?', a: '네. 서울 25개 구, 인천 9개 구·2개 군, 경기 31개 시·군 전 지역에서 24시간·365일 접수합니다. 일부 도서 지역은 갈 수 있는지 접수할 때 확인합니다.' },
   { q: '지역마다 퀵 요금이 다른가요?', a: '요금은 지역 이름이 아니라 출발지와 도착지 사이의 거리, 물건 크기·무게, 차량, 시간대로 정합니다. 출발·도착 동 이름을 알려 주시면 확정 요금을 먼저 안내합니다.' },
