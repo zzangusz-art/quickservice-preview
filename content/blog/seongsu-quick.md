@@ -7,6 +7,7 @@ time: 18:00
 category: 보내는 방법
 tags: 성수 퀵, 성동구 퀵, 성수동 퀵서비스, 팝업 물품 퀵, 행사 물품 배송
 service: motorcycle
+image: truck1
 author: 퀵서비스다 운영팀
 topic: seongsu-quick
 ---

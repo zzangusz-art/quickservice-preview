@@ -7,6 +7,7 @@ time: 09:00
 category: 차량·화물
 tags: 라보 퀵, 라보 퀵 요금, 라보 용달, 소형 트럭 퀵
 service: damas-labo
+image: labo
 author: 퀵서비스다 운영팀
 topic: labo-quick-when
 ---

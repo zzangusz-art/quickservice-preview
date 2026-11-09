@@ -7,6 +7,7 @@ time: 13:00
 category: 차량·화물
 tags: 화성 퀵, 평택 퀵, 화성 화물, 평택 용달
 service: truck
+image: truck1
 author: 퀵서비스다 운영팀
 topic: hwaseong-pyeongtaek-quick
 ---

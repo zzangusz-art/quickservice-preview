@@ -7,6 +7,7 @@ time: 13:00
 category: 보내는 방법
 tags: 하남 퀵, 경기 광주 퀵, 하남 용달, 하남 퀵서비스
 service: damas-labo
+image: damas-labo
 author: 퀵서비스다 운영팀
 topic: hanam-gwangju-quick
 ---

@@ -102,6 +102,7 @@ ERASE = {
     'top': [((325, 42, 458, 182), 38, 186)],
     'cold': [((36, 50, 138, 152), 46, 156)],
     'damas': [((60, 116, 172, 152), 114, 154)],
+    'labo': [((301, 108, 317, 126), 107, 126), ((316, 109, 374, 122), 108, 122)],  # 원형 로고 / 글자(아래 비스듬한 선은 남긴다)
 }
 for i, name in enumerate(['cargo', 'long', 'wing', 'lift', 'top', 'cold', 'damas', 'labo'], 1):
     im = trim(on_white(Image.open(src(f'site/img/main3/option0{i}_big.png'))), 10)

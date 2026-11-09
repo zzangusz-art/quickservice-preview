@@ -7,6 +7,7 @@ time: 09:00
 category: 보내는 방법
 tags: 김포 퀵, 파주 퀵, 김포 용달, 파주 퀵서비스
 service: damas-labo
+image: damas
 author: 퀵서비스다 운영팀
 topic: gimpo-paju-quick
 ---

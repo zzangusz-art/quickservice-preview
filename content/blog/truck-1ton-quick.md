@@ -7,6 +7,7 @@ time: 18:00
 category: 차량·화물
 tags: 1톤 용달, 용달 퀵, 1톤 퀵, 1톤 화물
 service: truck
+image: truck1
 author: 퀵서비스다 운영팀
 topic: truck-1ton-quick
 ---
