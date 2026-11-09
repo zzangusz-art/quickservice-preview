@@ -410,7 +410,7 @@ export function blogIndex(u, posts, cats, naver = []) {
   const first = posts.slice(0, 9);
   return [
     `<section class="sub-hero sub-hero-plain"><div class="wrap"><nav class="crumbs" aria-label="현재 위치"><ol>${crumbs.map((c, i) => i < crumbs.length - 1 ? `<li><a href="${u(c.href)}">${c.name}</a></li>` : `<li aria-current="page">${c.name}</li>`).join('')}</ol></nav>
-    <p class="eyebrow">물류 가이드</p><h1>보내기 전에 알아 두면 좋은 것</h1><p class="lead">퀵 요금, 차량 고르는 법, 지방 당일 배송, 기업 물류까지. 접수 현장에서 자주 받는 질문을 글로 정리합니다. 매일 새 글이 올라옵니다.</p></div></section>`,
+    <p class="eyebrow">물류 가이드</p><h1>보내기 전에 알아 두면 좋은 것</h1><p class="lead">퀵 요금, 차량 고르는 법, 지방 당일 배송, 기업 물류까지. 접수 현장에서 자주 받는 질문과 실제 배송 사례를 글로 정리합니다.</p></div></section>`,
     `<section class="sec" aria-labelledby="postListH"><div class="wrap">
       <h2 class="sr-only" id="postListH">글 목록</h2>
       <div class="chips" role="toolbar" aria-label="글 분류"><button type="button" class="chip on" data-blog-cat="all" aria-pressed="true">전체 <span>${posts.length}</span></button>${cats.map(c => { const n = posts.filter(p => p.category === c).length; return n ? `<button type="button" class="chip" data-blog-cat="${esc(c)}" aria-pressed="false">${esc(c)} <span>${n}</span></button>` : ''; }).join('')}</div>

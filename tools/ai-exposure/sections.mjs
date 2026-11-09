@@ -71,7 +71,7 @@ export function todo({ d, cell, engines, b, weekHits }) {
   const chatMiss = CHAT.filter(e => engines.includes(e) && QUERIES.every(q => !(cell(d, e, q) || {}).site));
   if (chatMiss.length) items.push(`대화형 AI(${chatMiss.map(e => ENG[e]).join('·')})에서는 아직 인용이 없습니다. 이 엔진들은 검색 색인(Bing·구글)과 외부 언급을 따라가므로, Bing 색인·IndexNow 알림과 지역 업체 정보(네이버 플레이스·카카오맵·구글 비즈니스) 등록이 먼저입니다.`);
   if (b && (b.dupes.length || b.checked.some(r => r.level === 2))) items.push('블로그 주 키워드가 겹치는 글이 있습니다 — 뒤 글의 앞머리 키워드를 바꾸거나 앞 글을 보강하는 쪽으로 정리합니다.');
-  if (b) items.push(`예약 발행 대기 ${b.scheduled.length}건 — 하루 3편(09·13·18시) 자동 발행이 이어집니다.`);
+  if (b) items.push(b.scheduled.length ? `예약 발행 대기 ${b.scheduled.length}건 — 11/13까지 하루 3편, 이후 실제 배송 사례 중심으로 주 2~3편 발행합니다.` : '실제 배송 사례 중심으로 주 2~3편(월·수·금) 발행합니다.');
   return `<ul>${items.map(x => `<li>${x}</li>`).join('')}</ul>`;
 }
 

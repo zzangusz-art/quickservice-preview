@@ -1,4 +1,4 @@
-# 퀵서비스다: 빌드 → GitHub Pages 배포 + 물류 가이드 글 AI 자동 발행(하루 3회: 09:23 · 13:23 · 18:23 KST, GitHub 예약 실행은 몇 시간 늦어질 수 있음)
+# 퀵서비스다: 빌드 → GitHub Pages 배포 + 물류 가이드 글 AI 자동 발행(월·수·금 09:23 KST, 실제 배송 사례 우선 · 사례가 없는 주는 월·금 2편)
 # 처음 한 번 설정(저장소 Settings):
 #   1) Pages → Source: GitHub Actions
 #   2) Secrets and variables → Actions → Secrets: ANTHROPIC_API_KEY (없으면 글 작성만 건너뛰고 배포는 진행)
@@ -10,9 +10,7 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: '23 0 * * *'  # 09:23 KST
-    - cron: '23 4 * * *'  # 13:23 KST
-    - cron: '23 9 * * *'  # 18:23 KST
+    - cron: '23 0 * * 1,3,5'  # 월·수·금 09:23 KST
   workflow_dispatch:
     inputs:
       generate:
@@ -51,7 +49,7 @@ jobs:
         run: |
           if [ -z "$ANTHROPIC_API_KEY" ]; then echo "::warning::ANTHROPIC_API_KEY 미설정 — 글 작성을 건너뜁니다"; exit 0; fi
           npm ci --no-audit --no-fund
-          node tools/blog-ai/generate.mjs --count "$COUNT" || echo "::warning::이번 회차에 발행된 글이 없습니다(content/drafts 확인)"
+          node tools/blog-ai/generate.mjs ${{ github.event_name == 'schedule' && '--weekly' || '' }} --count "$COUNT" || echo "::warning::이번 회차에 발행된 글이 없습니다(content/drafts 확인)"
           git config user.name "quickservice-blog-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add content

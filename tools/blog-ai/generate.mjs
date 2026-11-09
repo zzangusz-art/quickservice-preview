@@ -1,10 +1,13 @@
-// 퀵서비스다 물류 가이드 — AI 글 자동 작성기 (GitHub Actions가 하루 3번 실행)
+// 퀵서비스다 물류 가이드 — AI 글 자동 작성기 (GitHub Actions가 월·수·금 09:23 KST 실행. 실제 배송 사례가 있으면 사례 글이 먼저)
 // 사용:
 //   node tools/blog-ai/generate.mjs              다음 주제 1편 작성 → 검증 통과 시 content/blog/<slug>.md 로 발행
 //   node tools/blog-ai/generate.mjs --count 3    3편 연속 작성
 //   node tools/blog-ai/generate.mjs --topic id   특정 주제
 //   node tools/blog-ai/generate.mjs --check      API 호출 없이 기존 글 전체를 같은 검증기로 검사
 //   node tools/blog-ai/generate.mjs --facts      글에 쓸 수 있는 사실 목록 출력(사람이 직접 쓸 때)
+//   node tools/blog-ai/generate.mjs --weekly     예약 실행용: 사례가 없는 주의 수요일 회차는 쉬어 월·금 2편만 발행(사례가 있으면 주 3편까지)
+//   node tools/blog-ai/generate.mjs --dry-run    API 호출 없이 다음에 쓸 글(사례·주제)만 출력
+// 실제 배송 사례: content/cases/*.json(작성법은 content/cases/README.md). 사례에 적힌 사실만 쓰고 지어내지 않는다.
 // 남은 주제(todo)가 6개 아래로 떨어지면 기존 글과 겹치지 않는 새 주제를 AI에게 받아 대기열에 보충한다.
 // 검증에 실패한 글은 발행하지 않고 content/drafts/ 에 남긴다(사람이 고쳐서 content/blog/ 로 옮기면 발행).
 import fs from 'node:fs';
@@ -16,6 +19,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const BLOG = path.join(ROOT, 'content/blog');
 const DRAFTS = path.join(ROOT, 'content/drafts');
 const TOPICS = path.join(BLOG, '_topics.json');
+const CASES = path.join(ROOT, 'content/cases');
 const MODEL = process.env.BLOG_MODEL || 'claude-opus-5-5';
 const args = process.argv.slice(2);
 const flag = n => args.includes(n);
@@ -141,13 +145,45 @@ tags: (쉼표로 구분 3~5개)
 [사실 목록]
 ${sheet}`;
 
+// 실제 배송 사례: content/cases/*.json 중 공개 동의가 있고 아직 안 쓴 것(파일 이름순). 연락처·번지가 섞인 파일은 쓰지 않는다
+const CASE_FIELDS = ['date', 'from', 'to', 'item', 'vehicle', 'situation', 'handling', 'result'];
+function loadCases() {
+  if (!fs.existsSync(CASES)) return [];
+  const list = [];
+  for (const f of fs.readdirSync(CASES).filter(n => n.endsWith('.json') && !n.startsWith('_')).sort()) {
+    let c; try { c = JSON.parse(fs.readFileSync(path.join(CASES, f), 'utf8')); } catch (e) { console.log(`[사례] ${f} 읽기 실패: ${e.message}`); continue; }
+    if (c.status !== 'todo') continue;
+    const miss = CASE_FIELDS.filter(k => !c[k]), text = CASE_FIELDS.map(k => c[k]).join(' ');
+    if (miss.length) console.log(`[사례] ${f} 건너뜀 — 빠진 항목: ${miss.join(', ')}`);
+    else if (c.consent !== true) console.log(`[사례] ${f} 건너뜀 — 공개 동의(consent: true) 없음`);
+    else if (/\d{2,4}-\d{3,4}-\d{4}|@|\d+번지|\d+호(?![가-힣])/.test(text)) console.log(`[사례] ${f} 건너뜀 — 연락처·번지로 보이는 내용 있음`);
+    else list.push({ ...c, file: f });
+  }
+  return list;
+}
+const serviceOf = v => /오토바이/.test(v) ? 'motorcycle' : /다마스|라보/.test(v) ? 'damas-labo' : /KTX|고속버스|항공/.test(v) ? 'intercity' : /톤|화물|용달|트럭/.test(v) ? 'truck' : '';
+const caseTopic = c => ({ id: 'case-' + c.file.replace(/\.json$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-'), title: `${c.from}에서 ${c.to}까지 ${c.item}을 ${c.vehicle}(으)로 보낸 실제 사례`, angle: '실제 배송 기록을 상황, 차량을 고른 이유, 결과, 비슷한 경우의 요령 순서로 씁니다.', category: c.category || '보내는 방법', keywords: [`${c.from} 퀵`, `${c.to} 퀵`, `${c.vehicle} 퀵`], service: c.service || serviceOf(c.vehicle), case: c });
+const caseBlock = c => `
+
+[실제 배송 사례] (업체가 제공한 실제 기록)
+배송일: ${c.date}
+출발: ${c.from} / 도착: ${c.to}
+물건: ${c.item}
+차량: ${c.vehicle}
+상황: ${c.situation}
+처리: ${c.handling}
+결과: ${c.result}${c.fare ? `\n요금: ${Number(c.fare).toLocaleString('ko-KR')}원(이 건의 실제 요금, 같은 구간의 표준 요금처럼 쓰지 않음)` : ''}
+
+이 글은 실제 사례 글입니다. 제목에 사례임이 드러나게 쓰고, 상황 → 차량을 고른 이유 → 결과 → 비슷한 경우의 요령 순서로 씁니다.
+위 기록에 없는 시간·금액·고객 반응·현장 묘사를 보태지 않습니다. 요령과 요금 설명은 [사실 목록]에 있는 내용만 씁니다. 고객 상호·이름·연락처·번지는 쓰지 않습니다.`;
+
 function userMsg(topic, posts, today) {
   return `오늘 날짜: ${today}
 주제 ID: ${topic.id}
 주제: ${topic.title}
 다룰 방향: ${topic.angle}
 포함할 검색어: ${(topic.keywords || []).join(', ')}
-권장 카테고리: ${topic.category}
+권장 카테고리: ${topic.category}${topic.case ? caseBlock(topic.case) : ''}
 
 이미 발행된 글(내용이 겹치지 않게 하고, 관련 있으면 내부 링크로 연결):
 ${posts.slice(0, 60).map(p => `- ${p.title} → blog/${p.slug}/`).join('\n') || '- 없음'}
@@ -177,7 +213,7 @@ async function refillTopics(client, system, topics, posts) {
   const msg = `물류 가이드에 이어서 쓸 새 주제 12개를 제안해 주세요. 조건:
 - 아래 기존 주제·글과 겹치지 않을 것
 - [사실 목록]만으로 정확하게 쓸 수 있을 것(목록에 없는 숫자가 필요한 주제는 제외)
-- 카테고리(${BLOG_CATEGORIES.join(', ')})를 고르게 섞고, 서울·인천·경기 지역 이름이 들어간 주제를 3개 이상 포함(지역 정보는 단정하지 말고 요금 정하는 방식·차량 선택·접수 방법 중심)
+- 카테고리(${BLOG_CATEGORIES.join(', ')})를 고르게 섞고, 지역 이름만 바꾼 비슷한 주제는 내지 않을 것
 - 사람들이 실제로 검색하는 질문 형태
 
 기존 주제·글:
@@ -225,6 +261,9 @@ async function main() {
     }
   }
   const topics = JSON.parse(fs.readFileSync(TOPICS, 'utf8'));
+  const cases = loadCases();
+  if (flag('--weekly') && !cases.length && new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Seoul', weekday: 'short' }).format(new Date()) === 'Wed') { console.log('수요일 회차: 쓸 실제 사례가 없어 쉽니다(사례가 없는 주는 월·금 2편).'); return; }
+  if (flag('--dry-run')) { console.log(cases.length ? `다음 글: 실제 사례 ${cases[0].file} (대기 ${cases.length}건)${caseBlock(cases[0])}` : `다음 글: 일반 주제 ${(topics.find(t => t.status === 'todo') || {}).id}`); return; }
   const { default: Anthropic } = await import('@anthropic-ai/sdk');
   const client = new Anthropic(); // ANTHROPIC_API_KEY 등 환경 자격 증명 사용
   const now = new Date();
@@ -244,10 +283,11 @@ async function main() {
   let published = 0, tried = 0;
   while (published < count && tried < (id ? 1 : count + 2)) {
     tried++;
-    const topic = id ? topics.find(t => t.id === id) : topics.find(t => t.status === 'todo');
+    const topic = id ? topics.find(t => t.id === id) : cases.length ? caseTopic(cases.shift()) : topics.find(t => t.status === 'todo');
     if (!topic) { console.log('작성할 주제가 없습니다(_topics.json 의 status:"todo" 없음).'); break; }
     if (await writeOne(topic)) published++;
-    fs.writeFileSync(TOPICS, JSON.stringify(topics, null, 2) + '\n');
+    if (topic.case) { const { file, ...c } = topic.case; fs.writeFileSync(path.join(CASES, file), JSON.stringify({ ...c, status: topic.status, slug: topic.slug, published: topic.date, draft: topic.draft }, null, 2) + '\n'); }
+    else fs.writeFileSync(TOPICS, JSON.stringify(topics, null, 2) + '\n');
   }
   console.log(`이번 실행: 발행 ${published}편 / 시도 ${tried}개 주제`);
   if (!published && !flag('--allow-empty')) process.exitCode = 2;
@@ -255,6 +295,7 @@ async function main() {
   async function writeOne(topic) {
     const cur = loadPosts(BLOG);
     const slugs = new Set(cur.map(p => p.slug));
+    const numbers = topic.case ? new Set([...allowed, ...allowedNumbers(JSON.stringify(topic.case))]) : allowed; // 사례 글은 그 사례의 숫자까지 허용
     const messages = [{ role: 'user', content: userMsg(topic, cur, today) }];
     let out, v;
     for (let attempt = 1; attempt <= 2; attempt++) {
@@ -262,7 +303,7 @@ async function main() {
       if (out.refused) { console.log(`[${topic.id}] 거절됨(${out.res.stop_details?.category ?? '분류 없음'}) — 이 주제는 건너뜁니다.`); topic.status = 'skipped'; return false; }
       const u = out.res.usage;
       console.log(`[${topic.id}] 응답 ${attempt}차: 입력 ${u.input_tokens} / 캐시 읽기 ${u.cache_read_input_tokens ?? 0} / 출력 ${u.output_tokens} 토큰, 모델 ${out.res.model}`);
-      v = validate(out.text, { allowed, slugs });
+      v = validate(out.text, { allowed: numbers, slugs });
       if (v.ok) break;
       console.log('검증 실패:\n  - ' + v.errs.join('\n  - '));
       if (attempt === 1) {

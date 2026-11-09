@@ -1,0 +1,14 @@
+{
+  "date": "2026-11-12",
+  "from": "출발 동",
+  "to": "도착 동",
+  "item": "물건과 수량",
+  "vehicle": "다마스",
+  "situation": "어떤 상황이었는지",
+  "handling": "어떻게 배차·처리했는지",
+  "result": "결과",
+  "fare": null,
+  "category": "보내는 방법",
+  "consent": false,
+  "status": "todo"
+}
