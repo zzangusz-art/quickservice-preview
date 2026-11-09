@@ -16,9 +16,10 @@ const ENGINES = {
   naverai: { url: (q) => `https://search.naver.com/search.naver?ssc=tab.ait.all&query=${encodeURIComponent(q)}`, wait: 15000 }, // 네이버 AI탭(로그인 불필요)
   bing: { url: (q) => `https://www.bing.com/search?q=${encodeURIComponent(q)}&setlang=ko&cc=KR`, wait: 5000 },
   perplexity: { url: (q) => `https://www.perplexity.ai/search?q=${encodeURIComponent(q)}`, wait: 18000 },
+  // Claude는 주소에 질문을 실으면 전송 전 경고에서 멈추므로 Gemini처럼 입력창에 직접 넣는다
   // 대화형 AI: 질의를 입력창에 넣고 답변 길이가 멈출 때까지 대기. 사이드바(지난 대화 제목) 오탐을 막으려 대화 영역만 본다
   chatgpt: { url: (q) => `https://chatgpt.com/?q=${encodeURIComponent(q)}&hints=search`, wait: 6000, chat: true, area: 'main', input: '#prompt-textarea, div[contenteditable="true"], textarea' },
-  claude: { url: (q) => `https://claude.ai/new?q=${encodeURIComponent(q)}`, wait: 6000, chat: true, area: 'main', input: 'div[contenteditable="true"], textarea' },
+  claude: { url: () => 'https://claude.ai/new', wait: 6000, chat: true, area: 'main', input: 'div[contenteditable="true"], textarea' },
   gemini: { url: () => 'https://gemini.google.com/app?hl=ko', wait: 6000, chat: true, area: 'chat-window', input: 'rich-textarea div[contenteditable="true"], div[contenteditable="true"], textarea' },
 };
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
