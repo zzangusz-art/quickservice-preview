@@ -405,7 +405,7 @@ function legalWrap(u, title, href, inner) {
 }
 
 // ── 블로그 ──────────────────────────────────────────
-export function blogIndex(u, posts, cats) {
+export function blogIndex(u, posts, cats, naver = []) {
   const crumbs = [{ name: '홈', href: '' }, { name: '물류 가이드', href: 'blog/' }];
   const first = posts.slice(0, 9);
   return [
@@ -417,6 +417,8 @@ export function blogIndex(u, posts, cats) {
       <div class="post-grid" id="postGrid" data-total="${posts.length}">${first.map(p => postCard(p, u).replace('<article class="post-card reveal">', `<article class="post-card reveal" data-cat="${esc(p.category)}">`)).join('')}</div>
       ${posts.length > first.length ? `<div class="more-wrap"><button class="btn btn-line" type="button" id="moreBtn" data-src="${u('blog/posts.json')}">글 더 보기${ico('down')}</button></div>` : ''}
     </div></section>`,
+    naver.length ? `<section class="sec sec-soft" aria-labelledby="naverH"><div class="wrap"><div class="sec-hd sec-hd-row"><div><p class="eyebrow">네이버 블로그</p><h2 id="naverH">네이버 블로그 새 글</h2></div><a class="link-arrow" href="${SITE.naverBlog}" target="_blank" rel="noopener">블로그 바로가기${ico('arrow', 'ico-s')}</a></div>
+      <ul class="nb-list">${naver.map(n => `<li><a href="${esc(n.url)}" target="_blank" rel="noopener"><span>${esc(n.title)}</span><time datetime="${n.date}">${kdate(n.date)}</time></a></li>`).join('')}</ul></div></section>` : '',
     ctaBand(u),
   ].join('\n');
 }

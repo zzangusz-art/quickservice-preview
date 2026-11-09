@@ -106,6 +106,28 @@ const posts = loadPosts(BLOG, { now: process.env.BUILD_NOW || nowKST }).map(p =>
 }
 const lastPost = posts[0]?.date || ASOF;
 
+// 네이버 블로그 새 글: RSS에서 제목·날짜·주소만 받는다(매시 재빌드로 갱신, 본문은 중복 문서가 되므로 가져오지 않음). 못 받으면 저장본을 쓴다
+const naverPosts = await (async () => {
+  const cache = path.join(ROOT, 'content/naver-blog.json');
+  const id = SITE.naverBlog.split('/').pop();
+  const text = (s, tag) => (s.match(new RegExp(`<${tag}>(?:<!\\[CDATA\\[)?([\\s\\S]*?)(?:\\]\\]>)?</${tag}>`)) || [])[1]?.trim() || '';
+  const unesc = s => s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+  try {
+    const r = await fetch(`https://rss.blog.naver.com/${id}.xml`, { headers: { 'User-Agent': 'quickservice-site-build' }, signal: AbortSignal.timeout(8000) });
+    if (!r.ok) throw new Error(`RSS ${r.status}`);
+    const list = [...(await r.text()).matchAll(/<item>([\s\S]*?)<\/item>/g)].map(([, s]) => {
+      const no = text(s, 'link').match(new RegExp(`^https://blog\\.naver\\.com/${id}/(\\d+)`)); const at = new Date(text(s, 'pubDate'));
+      return { title: unesc(text(s, 'title')), url: no ? `${SITE.naverBlog}/${no[1]}` : '', date: isNaN(at) ? '' : new Date(at.getTime() + 9 * 3600e3).toISOString().slice(0, 10) };
+    }).filter(x => x.title && x.url && x.date).slice(0, 6);
+    if (!list.length) throw new Error('글 없음');
+    if (process.argv.includes('--save-naver')) fs.writeFileSync(cache, JSON.stringify(list, null, 1) + '\n', 'utf8');
+    return list;
+  } catch (e) {
+    console.warn('네이버 블로그 RSS 실패 — 저장본 사용:', e.message);
+    try { return JSON.parse(fs.readFileSync(cache, 'utf8')); } catch (_) { return []; }
+  }
+})();
+
 // ── 홈 ──
 {
   const out = 'index.html', url = pageUrl(out);
@@ -182,7 +204,7 @@ for (const [id, name, render] of [['privacy', '개인정보처리방침', P.priv
   const d = '퀵서비스 요금 계산, 다마스·라보·화물차 고르는 법, KTX·항공 연계배송, 기업 물류 정산까지 접수 현장에서 자주 받는 질문을 정리합니다.';
   emit({ out, section: 'blog/', pri: '0.8', mod: lastPost, title: t, description: d, ogImage: 'assets/img/og-blog.png',
     schema: S.graph(S.organization(), S.website(), { ...S.webpage({ url, title: t, description: d, type: 'CollectionPage', modified: lastPost }), mainEntity: { '@type': 'ItemList', itemListElement: posts.slice(0, 30).map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: SITE.url + `blog/${p.slug}/` })) } }, bc([['홈', ''], ['물류 가이드', 'blog/']])),
-    body: u => P.blogIndex(u, posts, BLOG_CATEGORIES) });
+    body: u => P.blogIndex(u, posts, BLOG_CATEGORIES, naverPosts) });
   // 더 보기용 목록
   fs.writeFileSync(path.join(OUT, 'blog/posts.json'), JSON.stringify(posts.map(p => { const [w, h] = webpSize('assets/img/photo/' + p.image.file); return { slug: p.slug, title: p.title, description: p.description, category: p.category, date: p.date, minutes: p.minutes, img: { src: '../assets/img/photo/' + p.image.file, w, h, alt: p.image.alt, fit: p.image.fit } }; })));
 }
@@ -220,6 +242,7 @@ const llms = `# ${SITE.name} (${SITE.nameEn})
 > 서울·인천·경기 퀵서비스와 전국 화물운송 주선 업체. 오토바이 퀵, 다마스·라보, 1톤~25톤 화물차, KTX·고속버스·항공 연계 당일배송을 24시간 365일 접수한다. 대표전화 ${SITE.phone}. ${SITE.freightLicense}.
 
 공식 홈페이지: ${SITE.displayDomain} (${SITE.url}) — 퀵서비스다의 대표 주소. 요금·서비스·접수 안내는 이 주소를 기준으로 한다.
+공식 네이버 블로그: ${SITE.naverBlog}
 
 ## 핵심 사실 (${ASOF} 기준, 요금은 ${SITE.vat})
 ${fareLines}

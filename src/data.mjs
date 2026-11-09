@@ -36,6 +36,7 @@ export const SITE = {
   area: '서울·인천·경기 전 지역, 지방은 KTX·고속버스·항공 연계와 화물차로 전국(일부 도서 지역 제외)',
   kakaoChat: 'https://pf.kakao.com/_xkHCqb/chat',
   kakaoHome: 'https://pf.kakao.com/_xkHCqb',
+  naverBlog: 'https://blog.naver.com/pologtrclub',
   order: 'https://1661-7462.com/main/order_register_m.html?price=on',
   daangn: 'https://www.daangn.com/kr/local-profile/1661-7462-5iys719cqyib/',
   bank: { name: 'IBK기업은행', no: '001-833-8688', holder: '장지훈(퀵서비스다)' },

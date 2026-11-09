@@ -54,7 +54,7 @@ export function organization() {
       })),
     },
     contactPoint: [{ '@type': 'ContactPoint', telephone: '+82-1661-7462', contactType: 'customer service', availableLanguage: 'Korean', hoursAvailable: 'Mo-Su 00:00-23:59' }],
-    sameAs: [SITE.kakaoHome, SITE.daangn],
+    sameAs: [SITE.kakaoHome, SITE.naverBlog, SITE.daangn],
   };
 }
 
