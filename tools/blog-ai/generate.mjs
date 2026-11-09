@@ -266,7 +266,9 @@ async function main() {
   {
     const nowKST = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Seoul' }).format(new Date()) + ' ' + new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date());
     const queued = posts.filter(p => `${p.date} ${p.time || '00:00'}` > nowKST);
-    if (queued.length && !flag('--force')) {
+    // 미리 써 둔 글은 월·금에 나가므로, 11/14 이후 수요일 회차에 실제 사례가 있으면 사례 글은 쓴다
+    const caseDay = flag('--weekly') && nowKST >= '2026-11-14' && new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Seoul', weekday: 'short' }).format(new Date()) === 'Wed' && loadCases().length > 0;
+    if (queued.length && !flag('--force') && !caseDay) {
       console.log(`예약 글 ${queued.length}편이 남아 있어 AI 글 작성을 건너뜁니다(마지막 예약: ${queued.map(p => p.date + ' ' + (p.time || '')).sort().pop()}). 강제로 쓰려면 --force`);
       return;
     }
