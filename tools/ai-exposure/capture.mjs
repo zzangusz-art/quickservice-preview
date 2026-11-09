@@ -28,7 +28,10 @@ const areaText = (page, E) => page.evaluate(sel => ((document.querySelector(sel)
 
 async function runChat(page, E, q) {
   if (LOGIN_RE.test(page.url())) return 'login';
-  const input = await page.waitForSelector(E.input, { visible: true, timeout: 25000 }).catch(() => null);
+  // 창이 다른 창에 가려져 있어도 잡히도록 화면 그리기(raf) 대신 일정 간격으로 입력창을 찾는다
+  const shown = (sel) => [...document.querySelectorAll(sel)].find(el => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0; }) || null;
+  await page.waitForFunction(shown, { polling: 500, timeout: 25000 }, E.input).catch(() => null);
+  const input = (await page.evaluateHandle(shown, E.input)).asElement();
   if (!input) return LOGIN_RE.test(page.url()) ? 'login' : 'noinput';
   await sleep(2500);
   const mainText = () => areaText(page, E).catch(() => ''); // 자동 전송 직후 /c/… 로 이동하면 컨텍스트가 바뀌므로 실패는 빈 값
