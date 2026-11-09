@@ -8,6 +8,7 @@
 //   node tools/blog-ai/generate.mjs --weekly     예약 실행용: 사례가 없는 주의 수요일 회차는 쉬어 월·금 2편만 발행(사례가 있으면 주 3편까지)
 //   node tools/blog-ai/generate.mjs --dry-run    API 호출 없이 다음에 쓸 글(사례·주제)만 출력
 // 실제 배송 사례: content/cases/*.json(작성법은 content/cases/README.md). 사례에 적힌 사실만 쓰고 지어내지 않는다.
+// 제목 키워드: _topics.json의 titleKeyword(네이버 블로그 2026년 1월 이후 글 제목의 키워드, 오래된 순). 글 제목은 이 키워드로 시작한다(사례 글 포함).
 // 남은 주제(todo)가 6개 아래로 떨어지면 기존 글과 겹치지 않는 새 주제를 AI에게 받아 대기열에 보충한다.
 // 검증에 실패한 글은 발행하지 않고 content/drafts/ 에 남긴다(사람이 고쳐서 content/blog/ 로 옮기면 발행).
 import fs from 'node:fs';
@@ -76,7 +77,7 @@ const BANNED = [
 ];
 const UNITS = /(\d[\d,]*(?:\.\d+)?)\s*(원|kg|cm|CBM|m|톤|분|시간|시|%|개|일|km|명|건)/g;
 
-function validate(md, { allowed, slugs }) {
+function validate(md, { allowed, slugs, keyword }) {
   const errs = [];
   let meta, body;
   try { ({ meta, body } = parseFrontmatter(md)); } catch (e) { return { ok: false, errs: ['머리말 형식 오류: ' + e.message] }; }
@@ -85,6 +86,7 @@ function validate(md, { allowed, slugs }) {
   if (meta.slug && slugs.has(meta.slug)) errs.push(`이미 있는 slug: ${meta.slug}`);
   if (meta.category && !BLOG_CATEGORIES.includes(meta.category)) errs.push(`category는 ${BLOG_CATEGORIES.join('/')} 중 하나`);
   if (meta.title && (meta.title.length < 12 || meta.title.length > 60)) errs.push(`제목은 12~60자(현재 ${meta.title.length}자)`);
+  if (keyword && meta.title && !meta.title.startsWith(keyword)) errs.push(`제목은 「${keyword}」로 시작해야 함(현재: ${meta.title})`);
   if (meta.description && (meta.description.length < 40 || meta.description.length > 150)) errs.push(`설명은 40~150자(현재 ${meta.description.length}자)`);
   const len = (body || '').replace(/\s+/g, '').length;
   if (len < 900 || len > 4500) errs.push(`본문 길이 ${len}자(공백 제외) — 900~4,500자`);
@@ -162,7 +164,7 @@ function loadCases() {
   return list;
 }
 const serviceOf = v => /오토바이/.test(v) ? 'motorcycle' : /다마스|라보/.test(v) ? 'damas-labo' : /KTX|고속버스|항공/.test(v) ? 'intercity' : /톤|화물|용달|트럭/.test(v) ? 'truck' : '';
-const caseTopic = c => ({ id: 'case-' + c.file.replace(/\.json$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-'), title: `${c.from}에서 ${c.to}까지 ${c.item}을 ${c.vehicle}(으)로 보낸 실제 사례`, angle: '실제 배송 기록을 상황, 차량을 고른 이유, 결과, 비슷한 경우의 요령 순서로 씁니다.', category: c.category || '보내는 방법', keywords: [`${c.from} 퀵`, `${c.to} 퀵`, `${c.vehicle} 퀵`], service: c.service || serviceOf(c.vehicle), case: c });
+const caseTopic = (c, topics) => { const kw = topics.find(t => t.status === 'todo' && t.titleKeyword && t.titleKeyword.includes(c.vehicle)) || topics.find(t => t.status === 'todo' && t.titleKeyword); return { id: 'case-' + c.file.replace(/\.json$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-'), titleKeyword: kw && kw.titleKeyword, linked: kw, title: `${c.from}에서 ${c.to}까지 ${c.item}을 ${c.vehicle}(으)로 보낸 실제 사례`, angle: '실제 배송 기록을 상황, 차량을 고른 이유, 결과, 비슷한 경우의 요령 순서로 씁니다.', category: c.category || '보내는 방법', keywords: [...(kw ? [kw.titleKeyword] : []), `${c.from} 퀵`, `${c.to} 퀵`, `${c.vehicle} 퀵`], service: c.service || serviceOf(c.vehicle), case: c }; };
 const caseBlock = c => `
 
 [실제 배송 사례] (업체가 제공한 실제 기록)
@@ -183,7 +185,8 @@ function userMsg(topic, posts, today) {
 주제: ${topic.title}
 다룰 방향: ${topic.angle}
 포함할 검색어: ${(topic.keywords || []).join(', ')}
-권장 카테고리: ${topic.category}${topic.case ? caseBlock(topic.case) : ''}
+권장 카테고리: ${topic.category}${topic.titleKeyword ? `
+제목 키워드: 제목은 반드시 「${topic.titleKeyword}」로 시작합니다(글자·띄어쓰기 그대로). 뒤에 이어지는 말은 새로 쓰고, 첫 문단에도 이 키워드를 그대로 씁니다.` : ''}${topic.case ? caseBlock(topic.case) : ''}
 
 이미 발행된 글(내용이 겹치지 않게 하고, 관련 있으면 내부 링크로 연결):
 ${posts.slice(0, 60).map(p => `- ${p.title} → blog/${p.slug}/`).join('\n') || '- 없음'}
@@ -263,7 +266,7 @@ async function main() {
   const topics = JSON.parse(fs.readFileSync(TOPICS, 'utf8'));
   const cases = loadCases();
   if (flag('--weekly') && !cases.length && new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Seoul', weekday: 'short' }).format(new Date()) === 'Wed') { console.log('수요일 회차: 쓸 실제 사례가 없어 쉽니다(사례가 없는 주는 월·금 2편).'); return; }
-  if (flag('--dry-run')) { console.log(cases.length ? `다음 글: 실제 사례 ${cases[0].file} (대기 ${cases.length}건)${caseBlock(cases[0])}` : `다음 글: 일반 주제 ${(topics.find(t => t.status === 'todo') || {}).id}`); return; }
+  if (flag('--dry-run')) { const n = cases.length ? caseTopic(cases[0], topics) : topics.find(t => t.status === 'todo') || {}; console.log(`다음 글: ${cases.length ? `실제 사례 ${cases[0].file} (대기 ${cases.length}건)` : `일반 주제 ${n.id}`}\n제목 키워드: ${n.titleKeyword || '없음'}\n분류: ${n.category}${cases.length ? caseBlock(cases[0]) : ''}`); return; }
   const { default: Anthropic } = await import('@anthropic-ai/sdk');
   const client = new Anthropic(); // ANTHROPIC_API_KEY 등 환경 자격 증명 사용
   const now = new Date();
@@ -283,11 +286,11 @@ async function main() {
   let published = 0, tried = 0;
   while (published < count && tried < (id ? 1 : count + 2)) {
     tried++;
-    const topic = id ? topics.find(t => t.id === id) : cases.length ? caseTopic(cases.shift()) : topics.find(t => t.status === 'todo');
+    const topic = id ? topics.find(t => t.id === id) : cases.length ? caseTopic(cases.shift(), topics) : topics.find(t => t.status === 'todo');
     if (!topic) { console.log('작성할 주제가 없습니다(_topics.json 의 status:"todo" 없음).'); break; }
     if (await writeOne(topic)) published++;
-    if (topic.case) { const { file, ...c } = topic.case; fs.writeFileSync(path.join(CASES, file), JSON.stringify({ ...c, status: topic.status, slug: topic.slug, published: topic.date, draft: topic.draft }, null, 2) + '\n'); }
-    else fs.writeFileSync(TOPICS, JSON.stringify(topics, null, 2) + '\n');
+    if (topic.case) { const { file, ...c } = topic.case; fs.writeFileSync(path.join(CASES, file), JSON.stringify({ ...c, status: topic.status, slug: topic.slug, published: topic.date, draft: topic.draft }, null, 2) + '\n'); if (topic.linked && topic.status === 'done') Object.assign(topic.linked, { status: 'done', slug: topic.slug, date: topic.date }); }
+    fs.writeFileSync(TOPICS, JSON.stringify(topics, null, 2) + '\n');
   }
   console.log(`이번 실행: 발행 ${published}편 / 시도 ${tried}개 주제`);
   if (!published && !flag('--allow-empty')) process.exitCode = 2;
@@ -303,7 +306,7 @@ async function main() {
       if (out.refused) { console.log(`[${topic.id}] 거절됨(${out.res.stop_details?.category ?? '분류 없음'}) — 이 주제는 건너뜁니다.`); topic.status = 'skipped'; return false; }
       const u = out.res.usage;
       console.log(`[${topic.id}] 응답 ${attempt}차: 입력 ${u.input_tokens} / 캐시 읽기 ${u.cache_read_input_tokens ?? 0} / 출력 ${u.output_tokens} 토큰, 모델 ${out.res.model}`);
-      v = validate(out.text, { allowed: numbers, slugs });
+      v = validate(out.text, { allowed: numbers, slugs, keyword: topic.titleKeyword });
       if (v.ok) break;
       console.log('검증 실패:\n  - ' + v.errs.join('\n  - '));
       if (attempt === 1) {
