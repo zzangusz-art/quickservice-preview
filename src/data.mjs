@@ -49,7 +49,7 @@ export const SITE = {
   analytics: {
     ga4: envId('GA4_ID', /^G-[A-Z0-9]{4,}$/, 'G-5GKY3M0EL3'), // GA4 계정 「퀵서비스다」 a413723012 → 속성 p561103150 → 웹 스트림 16218515933
     gtm: envId('GTM_ID', /^GTM-[A-Z0-9]{4,}$/, 'GTM-WNJ79F43'), // GTM 계정 「퀵서비스다」 6400560612 → 컨테이너 283977274(빈 초기 버전 게시, GA4 태그는 넣지 않음: 사이트 gtag와 중복)
-    naver: envId('NAVER_WA', /^[a-z0-9]{6,}$/i, ''),
+    naver: envId('NAVER_WA', /^[a-z0-9]{6,}$/i, '1bdfb0747d7a750'), // 네이버 애널리틱스 사이트 ID(2026-11-10 사용자 제공)
     clarity: envId('CLARITY_ID', /^[a-z0-9]{6,}$/i, ''),
   },
   indexNowKey: 'a36baa55f569e6ec024f7902edafcfcf', // IndexNow(네이버·빙 즉시 수집 알림) 키 — /<키>.txt 로 공개
