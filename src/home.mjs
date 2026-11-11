@@ -1,5 +1,5 @@
 // 홈: 히어로 → 접수 5단계 스크롤 시퀀스 → 서비스 → 차량 가로 시퀀스 → 후기 → 요금 → 타사 비교 → 기업 → FAQ → 가이드 → 문의
-import { SITE, SERVICES, PROCESS, START_FARES, FARE_RULES, SAVE_TIPS, REVIEWS, MARKET, CHECKLIST, FAQ, FAQ_CATS, SMALL_VEHICLES, TRUCKS, INTERCITY, MOTO_TIME, ASOF_LABEL, avg } from './data.mjs';
+import { SITE, SERVICES, PROCESS, START_FARES, FARE_RULES, SAVE_TIPS, REVIEWS, MARKET, CHECKLIST, FAQ, FAQ_CATS, SMALL_VEHICLES, TRUCKS, INTERCITY, MOTO_TIME, ASOF_LABEL, avg, areaGroups } from './data.mjs';
 import { esc, won, nl2br, kdate, webpSize, photo } from './lib.mjs';
 import { ico, consoleMap, koreaMap } from './art.mjs';
 import { ctaBand, faqList } from './layout.mjs';
@@ -347,6 +347,18 @@ function intercityBand(u) {
 </section>`;
 }
 
+// 지역별 퀵: 서울퀵·인천퀵·경기퀵·지방퀵 아래에 공개된 지역 글을 검색어 모양 문구로 연결(글이 공개되면 자동 추가)
+function areaStrip(u, posts) {
+  const groups = areaGroups(posts).filter(g => g.items.length);
+  if (!groups.length) return '';
+  return `<section class="sec sec-soft" id="areas" aria-labelledby="arTitle">
+  <div class="wrap">
+    <div class="sec-hd sec-hd-row"><div><p class="eyebrow">서비스 지역</p><h2 id="arTitle">서울퀵·인천퀵·경기퀵, 지방퀵까지</h2></div><a class="link-arrow" href="${u('area/')}">지역별 안내 전체${ico('arrow', 'ico-s')}</a></div>
+    <div class="home-areas">${groups.map(g => `<div><h3><a href="${u('area/#' + g.id)}">${g.h}</a></h3><ul class="area-units">${g.items.map(i => `<li><a class="area-chip" href="${u('blog/' + i.post.slug + '/')}" title="${esc(i.post.title)}">${esc(i.label)}</a></li>`).join('')}</ul></div>`).join('')}</div>
+  </div>
+</section>`;
+}
+
 function business() {
   return `<section class="biz" aria-labelledby="bizTitle">
   <div class="wrap biz-in">
@@ -403,5 +415,5 @@ export function postCard(p, u) {
 export const catIcon = c => ({ '요금 가이드': 'receipt', '보내는 방법': 'route', '차량·화물': 'truck', '지방·연계배송': 'rail', '기업 물류': 'building' }[c] || 'box');
 
 export function homeBody(u, posts) {
-  return [hero(u), sequence(u), services(u), fleet(u), reviews(), pricing(u), compare(u), intercityBand(u), business(), faqSec(u), blogSec(u, posts), ctaBand(u)].join('\n') + serviceDrawers(u);
+  return [hero(u), sequence(u), services(u), fleet(u), reviews(), pricing(u), compare(u), intercityBand(u), areaStrip(u, posts), business(), faqSec(u), blogSec(u, posts), ctaBand(u)].join('\n') + serviceDrawers(u);
 }

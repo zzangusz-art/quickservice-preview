@@ -364,8 +364,8 @@ export const SERVICES = [
   {
     id: 'motorcycle', slug: 'services/motorcycle/', icon: 'moto', photo: 'rider.webp', photoAlt: '배송 상자를 싣고 달리는 오토바이', name: '오토바이 퀵',
     title: '오토바이 퀵서비스 — 서울·경기·인천 8,000원부터, 24시간 접수',
-    seo: '오토바이 퀵 8,000원부터, 24시간', // <title>용 짧은 제목(검색 결과에 다 보이게 30자 안팎)
-    desc: '서류·소형 물품을 오토바이로 바로 보냅니다. 세 변 합 150cm·25kg까지, 5~20분 안에 픽업하고 근거리는 30~50분 안에 도착합니다. 8,000원부터(부가세 별도).',
+    seo: '오토바이퀵 8,000원부터, 서울·수도권 24시간', // <title>용 짧은 제목(검색 결과에 다 보이게 30자 안팎)
+    desc: '오토바이퀵은 서류·소형 물품을 바로 보냅니다. 세 변 합 150cm·25kg까지, 5~20분 안에 픽업하고 근거리는 30~50분 안에 도착합니다. 서울퀵·인천퀵·경기퀵 8,000원부터(부가세 별도).',
     lead: '서류, 도장, 샘플, 소형 부품처럼 한 사람이 들고 갈 수 있는 물건은 오토바이가 가장 빠르고 저렴합니다. 가로·세로·높이 합 150cm, 25kg 이하라면 오토바이로 보낼 수 있습니다.',
     card: '서류·소형 물품. 세 변 합 150cm, 25kg까지.',
     from: 8000, keywords: ['오토바이퀵', '퀵서비스', '서류 퀵', '서울 퀵서비스'],
@@ -373,8 +373,8 @@ export const SERVICES = [
   {
     id: 'damas-labo', slug: 'services/damas-labo/', icon: 'van', photo: 'damas-labo.webp', photoAlt: '다마스와 라보', name: '다마스·라보 퀵',
     title: '다마스·라보 퀵 — 350kg·450kg 미만 소형 화물, 20,000원부터',
-    seo: '다마스·라보 퀵 20,000원부터', // <title>용 짧은 제목(검색 결과에 다 보이게 30자 안팎)
-    desc: '오토바이에 싣지 못하는 큰 짐은 다마스(350kg 미만, 라면 상자 약 20개)나 라보(450kg 미만)로 보냅니다. 다마스 20,000원부터, 24시간 접수.',
+    seo: '다마스퀵·라보퀵 20,000원부터, 24시간', // <title>용 짧은 제목(검색 결과에 다 보이게 30자 안팎)
+    desc: '다마스퀵·라보퀵은 오토바이에 싣지 못하는 큰 짐을 보냅니다. 다마스 350kg 미만(라면 상자 약 20개), 라보 450kg 미만. 다마스퀵 20,000원부터(부가세 별도), 서울·인천·경기 24시간 접수.',
     lead: '오토바이에 실리지 않는 짐부터는 다마스와 라보입니다. 지붕 있는 밴 다마스는 350kg 미만, 적재함이 열린 라보는 450kg 미만까지 싣습니다.',
     card: '오토바이에 안 실리는 짐. 다마스 350kg·라보 450kg 미만.',
     from: 20000, keywords: ['다마스퀵', '라보퀵', '다마스 요금', '용달'],
@@ -382,8 +382,8 @@ export const SERVICES = [
   {
     id: 'truck', slug: 'services/truck/', icon: 'truck', photo: 'small-truck.webp', photoAlt: '퀵서비스다 로고가 들어간 화물 탑차', name: '화물운송 1톤~25톤',
     title: '화물운송 1톤~25톤 — 카고·윙바디·냉동탑차, 전국 당일 배차',
-    seo: '화물차 퀵 1톤~25톤 전국 배차', // <title>용 짧은 제목(검색 결과에 다 보이게 30자 안팎)
-    desc: '1톤 용달부터 25톤, 츄레라·특수 화물까지 전 차종을 배차합니다. 지방은 현지 차량 수배와 혼적으로 운송비를 줄입니다. 1톤 40,000원부터.',
+    seo: '화물차 퀵·용달 1톤~25톤 전국 배차', // <title>용 짧은 제목(검색 결과에 다 보이게 30자 안팎)
+    desc: '1톤 용달부터 25톤, 츄레라·특수 화물까지 전 차종을 전국으로 배차합니다. 지방은 현지 차량 수배와 혼적으로 운송비를 줄입니다. 1톤 용달 40,000원부터(부가세 별도).',
     lead: '1톤 용달부터 25톤 트럭, 츄레라와 특수 화물까지 차종을 가리지 않고 배차합니다. 카고·탑차·윙바디·리프트·냉동탑차 중 화물에 맞는 적재함을 고릅니다.',
     card: '1톤부터 25톤, 츄레라·특수 화물까지.',
     from: 40000, keywords: ['화물운송', '용달', '1톤 용달', '윙바디', '냉동탑차'],
@@ -391,8 +391,8 @@ export const SERVICES = [
   {
     id: 'intercity', slug: 'services/intercity/', icon: 'rail', photo: 'ktx.webp', photoAlt: 'KTX 고속열차', name: 'KTX·고속버스·항공 연계',
     title: '전국 퀵·지방 당일배송 — KTX·고속버스·항공 연계 25,000원부터',
-    seo: '전국 퀵·지방 당일배송 25,000원~', // <title>용 짧은 제목(검색 결과에 다 보이게 30자 안팎)
-    desc: '서울·경기에서 부산·대구·광주·제주까지 당일에 받습니다. KTX 최대 5시간·25,000원부터, 고속버스 최대 7시간·25,000원부터, 항공 최대 4시간·40,000원부터.',
+    seo: '지방퀵·전국퀵 당일배송 25,000원부터', // <title>용 짧은 제목(검색 결과에 다 보이게 30자 안팎)
+    desc: '지방퀵·전국퀵은 KTX(최대 5시간)·고속버스(최대 7시간) 연계 25,000원부터, 항공(최대 4시간) 40,000원부터입니다. 서울·경기에서 부산·대전·대구·광주·제주까지 오늘 받습니다.',
     lead: '작은 짐을 지방으로 당일에 보내야 할 때는 화물차보다 KTX·고속버스·항공에 실어 보내는 편이 빠르고 저렴합니다. 문 앞에서 받아 문 앞까지 전합니다.',
     card: '수도권↔지방 당일 문전 배송.',
     from: 25000, keywords: ['KTX 퀵', '고속버스 퀵', '항공 퀵', '지방 당일배송', '연계배송'],
@@ -459,12 +459,39 @@ export const AREAS = [
   },
   {
     id: 'gyeonggi', name: '경기도', short: '경기', unitLabel: '31개 시·군', hub: 'gyeonggi-quick-service',
+    extra: ['ansan-siheung-quick', 'ilsan-quick-cost', 'yongin-yongdal-cargo', 'gyeonggi-quick-fare'], // 칩 외에 지역 글 목록에 넣을 글
     lead: '경기 31개 시·군 전 지역을 오토바이, 다마스·라보, 1톤부터 25톤 화물차로 연결합니다. 같은 경기도 안에서도 거리 차이가 커서 출발·도착 동을 알려 주시면 확정 요금을 먼저 안내합니다. 공장·창고 화물은 화물차, 급하지 않으면 오늘 중 여유 배차로 요금을 아낄 수 있습니다.',
-    units: [['수원시', 'suwon-quick'], ['성남시', 'pangyo-bundang-quick'], ['의정부시', 'uijeongbu-namyangju-quick'], ['안양시', 'anyang-gunpo-quick'], ['부천시', 'bucheon-quick'], ['광명시'], ['평택시', 'hwaseong-pyeongtaek-quick'], ['동두천시'], ['안산시', 'ansan-siheung-quick'], ['고양시', 'ilsan-goyang-quick'], ['과천시'], ['구리시', 'uijeongbu-namyangju-quick'], ['남양주시', 'namyangju-quick-cost'], ['오산시'], ['시흥시', 'ansan-siheung-quick'], ['군포시', 'anyang-gunpo-quick'], ['의왕시', 'anyang-gunpo-quick'], ['하남시', 'hanam-quick-price'], ['용인시', 'yongin-quick'], ['파주시', 'paju-quick-fare'], ['이천시'], ['안성시', 'anseong-yongdal-business'], ['김포시', 'gimpo-paju-quick'], ['화성시', 'hwaseong-pyeongtaek-quick'], ['광주시', 'hanam-gwangju-quick'], ['양주시'], ['포천시'], ['여주시'], ['연천군'], ['가평군'], ['양평군']],
+    units: [['수원시', 'suwon-quick'], ['성남시', 'pangyo-bundang-quick'], ['의정부시', 'uijeongbu-namyangju-quick'], ['안양시', 'anyang-gunpo-quick'], ['부천시', 'bucheon-quick'], ['광명시'], ['평택시', 'hwaseong-pyeongtaek-quick'], ['동두천시'], ['안산시', 'ansan-quick-cost'], ['고양시', 'ilsan-goyang-quick'], ['과천시'], ['구리시', 'uijeongbu-namyangju-quick'], ['남양주시', 'namyangju-quick-cost'], ['오산시'], ['시흥시', 'ansan-siheung-quick'], ['군포시', 'anyang-gunpo-quick'], ['의왕시', 'anyang-gunpo-quick'], ['하남시', 'hanam-quick-price'], ['용인시', 'yongin-quick'], ['파주시', 'paju-quick-fare'], ['이천시'], ['안성시', 'anseong-yongdal-business'], ['김포시', 'gimpo-paju-quick'], ['화성시', 'hwaseong-pyeongtaek-quick'], ['광주시', 'hanam-gwangju-quick'], ['양주시'], ['포천시'], ['여주시'], ['연천군'], ['가평군'], ['양평군']],
   },
 ];
 // 지방 당일 배송(연계배송) 도시 → 글
-export const AREA_CITIES = { hub: 'nationwide-quick-same-day', list: [['부산', 'seoul-to-busan-same-day'], ['대전', 'daejeon-same-day-quick'], ['대구', 'daegu-same-day-quick'], ['광주', 'gwangju-jeolla-same-day-quick'], ['목포', 'gwangju-jeolla-same-day-quick'], ['익산(전주)', 'gwangju-jeolla-same-day-quick'], ['울산', 'ulsan-yongdal-logistics'], ['포항', 'ulsan-pohang-same-day-quick'], ['여수(순천)'], ['제주', 'jeju-same-day-quick']] };
+export const AREA_CITIES = {
+  hub: 'nationwide-quick-same-day',
+  // [도시, 글 slug, 칩 문구(없으면 「도시+퀵」)]
+  list: [['부산', 'seoul-to-busan-same-day'], ['대전', 'daejeon-same-day-quick'], ['대구', 'daegu-same-day-quick'], ['대구', 'daegu-yongdal-cost', '대구용달'], ['광주', 'gwangju-jeolla-same-day-quick'], ['목포', 'gwangju-jeolla-same-day-quick'], ['익산(전주)', 'gwangju-jeolla-same-day-quick', '전주·익산퀵'], ['울산', 'ulsan-yongdal-logistics'], ['울산', 'ulsan-yongdal-logistics', '울산용달'], ['포항', 'ulsan-pohang-same-day-quick'], ['여수(순천)', null, '여수·순천퀵'], ['제주', 'jeju-same-day-quick'], ['청주', 'cheongju-yongdal', '청주용달'], ['김해', 'gimhae-yongdal-price', '김해용달']],
+  // 고속버스 터미널택배 글(공개 전에는 링크 없이 글자만)
+  terminals: [['동서울', 'dongseoul-terminal-parcel', '동서울터미널택배'], ['강남', 'gangnam-terminal-parcel', '강남터미널택배'], ['인천', 'incheon-terminal-parcel-cost', '인천터미널택배'], ['수원', 'suwon-terminal-parcel-fare', '수원터미널택배']],
+};
+// 지역 칩 문구를 검색어 모양으로(강남구 → 강남, 수원시 → 수원). 두 글자 이름(중구)은 그대로, 경기 광주시는 광주광역시와 구분
+export const areaKw = n => ({ '광주시': '경기광주' })[n] || (n.length > 2 ? n.replace(/(구|시|군)$/, '') : n);
+// 글의 짧은 대표 키워드: 태그 앞 두 개 중 퀵·용달·택배가 든 가장 짧은 것(띄어쓰기 없이). 예: 「안산퀵 안산퀵서비스 비용, 안산퀵」 → 안산퀵
+export const postKw = p => (p.tags.slice(0, 2).filter(t => /퀵|용달|택배/.test(t)).sort((a, b) => a.length - b.length)[0] || p.tags[0]).replace(/\s+/g, '');
+// 홈·llms.txt용 지역 키워드 묶음(공개된 글만). 같은 키워드는 제목이 그 키워드로 시작하는 글을 쓰고, 같은 글은 한 번만
+export function areaGroups(posts) {
+  const pub = new Map(posts.map(p => [p.slug, p]));
+  const starts = (p, k) => p.title.replace(/\s+/g, '').startsWith(k);
+  const pick = pairs => {
+    const byKw = new Map();
+    for (const [k, p] of pairs) if (p && (!byKw.has(k) || (!starts(byKw.get(k), k) && starts(p, k)))) byKw.set(k, p);
+    const seen = new Set();
+    return [...byKw].filter(([, p]) => !seen.has(p.slug) && seen.add(p.slug)).map(([label, post]) => ({ label, post }));
+  };
+  const slugs = a => [...new Set([a.hub, ...a.units.map(x => x[1]), ...(a.extra || [])].filter(Boolean))];
+  return [
+    ...AREAS.map(a => ({ id: a.id, h: `${a.short}퀵`, items: pick(slugs(a).map(s => pub.get(s)).filter(Boolean).map(p => [postKw(p), p])) })),
+    { id: 'nationwide', h: '지방퀵·전국퀵', items: pick([[`지방퀵`, pub.get(AREA_CITIES.hub)], ...[...AREA_CITIES.list, ...AREA_CITIES.terminals].map(([n, s, l]) => [l || `${n}퀵`, pub.get(s)])]) },
+  ];
+}
 export const AREA_FAQ = [
   { q: '서울·인천·경기 어디서든 퀵을 부를 수 있나요?', a: '네. 서울 25개 구, 인천 9개 구·2개 군, 경기 31개 시·군 전 지역에서 24시간·365일 접수합니다. 일부 도서 지역은 갈 수 있는지 접수할 때 확인합니다.' },
   { q: '지역마다 퀵 요금이 다른가요?', a: '요금은 지역 이름이 아니라 출발지와 도착지 사이의 거리, 물건 크기·무게, 차량, 시간대로 정합니다. 출발·도착 동 이름을 알려 주시면 확정 요금을 먼저 안내합니다.' },

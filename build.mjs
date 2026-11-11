@@ -133,8 +133,8 @@ const naverPosts = await (async () => {
   const out = 'index.html', url = pageUrl(out);
   const homeFaq = FAQ.filter(f => f.pages.includes('home'));
   emit({ out, pri: '1.0', mod: lastPost > ASOF ? lastPost : ASOF, bodyClass: 'home',
-    title: '서울퀵·인천·경기 퀵서비스 24시간 | 퀵서비스다', // 검색 결과에 다 보이게 30자 안팎(H1·스키마는 긴 설명 유지)
-    description: '오토바이 퀵 8,000원부터, 다마스 20,000원부터, 1톤 40,000원부터(부가세 별도). KTX·고속버스·항공 연계로 지방도 당일 배송. 24시간 접수 1661-7462, 화물운송주선 허가 제90143호.',
+    title: '서울퀵·인천퀵·경기퀵·다마스퀵·지방퀵 24시간 | 퀵서비스다', // 핵심 검색어 위주, 30자 안팎(H1·스키마는 긴 설명 유지)
+    description: '서울퀵·인천퀵·경기퀵 24시간 접수. 오토바이퀵 8,000원, 다마스퀵 20,000원, 1톤 용달 40,000원부터(부가세 별도). 지방퀵·전국퀵은 KTX·고속버스·항공 연계로 당일 배송합니다. 1661-7462',
     schema: S.graph(S.organization(), S.website(), S.webpage({ url, title: '퀵서비스다 — 서울·경기·인천 퀵서비스와 전국 화물운송', description: '오토바이 퀵부터 25톤 화물, KTX·항공 연계배송까지 24시간 접수' }), S.faqPage(homeFaq, url)),
     body: u => homeBody(u, posts) });
 }
@@ -152,7 +152,7 @@ for (const s of SERVICES) {
 const info = [
   { id: 'pricing', out: 'pricing/index.html', name: '요금 안내', render: P.pricing, pri: '0.9',
     title: '퀵서비스 요금표·할증·취소 기준 | 퀵서비스다',
-    description: '오토바이 8,000원, 다마스 20,000원, 1톤 40,000원, KTX·고속버스 연계 25,000원부터. 할증 네 가지, 취소·왕복 기준, 같은 날 공개 요금표 비교까지 정리했습니다.' },
+    description: '오토바이퀵 8,000원, 다마스퀵 20,000원, 1톤 용달 40,000원, 지방퀵(KTX·고속버스 연계) 25,000원부터. 할증 네 가지, 취소·왕복 기준, 같은 날 공개 요금표 비교까지 정리했습니다.' },
   { id: 'vehicles', out: 'vehicles/index.html', name: '차량 제원', render: P.vehicles, pri: '0.8',
     title: '차량 제원 — 다마스·라보·1톤~25톤 | 퀵서비스다',
     description: '1톤 길이 270~285cm, 2.5톤 430cm, 5톤 620cm, 11톤 900cm. 카고·탑차·윙바디 제원표와, 크기·무게를 넣으면 맞는 차를 골라 주는 추천 도구.' },
@@ -181,9 +181,9 @@ for (const it of info) {
 {
   // 서비스 지역 허브: 구·시·군 목록과 공개된 지역 글 링크(예약 글은 공개 시각이 지나야 링크됨)
   const out = 'area/index.html', url = pageUrl(out);
-  const t = '서울·인천·경기 지역별 퀵서비스 | 퀵서비스다';
-  const d = '서울 25개 구, 인천 9개 구·2개 군, 경기 31개 시·군 어디서든 오토바이·다마스·라보·화물차 퀵을 24시간 접수합니다. 지방은 KTX·고속버스·항공 연계로 당일 배송합니다.';
-  const areaMod = posts.filter(p => D.AREAS.some(a => a.hub === p.slug || a.units.some(x => x[1] === p.slug))).map(p => p.date).sort().pop();
+  const t = '지역별 퀵서비스 — 서울퀵·인천퀵·경기퀵·지방퀵 | 퀵서비스다';
+  const d = '서울퀵(강남·여의도·가산·송파·성수·마포), 인천퀵(부평·송도·남동공단), 경기퀵(수원·안산·일산·용인·하남·남양주·파주·판교), 부산·대전·대구·광주 지방퀵까지 24시간 접수합니다.';
+  const areaMod = posts.filter(p => D.AREAS.some(a => a.hub === p.slug || a.units.some(x => x[1] === p.slug) || (a.extra || []).includes(p.slug))).map(p => p.updated || p.date).sort().pop();
   emit({ out, section: 'area/', pri: '0.8', mod: areaMod && areaMod > ASOF ? areaMod : ASOF, title: t, description: d,
     schema: S.graph(S.organization(), S.website(), S.webpage({ url, title: t, description: d }), bc([['홈', ''], ['서비스 지역', 'area/']]), S.faqPage(D.AREA_FAQ, url)),
     body: u => P.areaPage(u, posts) });
@@ -266,6 +266,9 @@ ${SERVICES.map(s => `- [${s.name}](${SITE.url}${s.slug}): ${s.desc}`).join('\n')
 - [기업 고객](${SITE.url}business/): 월 정산·세금계산서
 - [자주 묻는 질문](${SITE.url}faq/)
 - [회사 소개](${SITE.url}about/)
+
+## 지역별 퀵
+${D.areaGroups(posts).filter(g => g.items.length).map(g => `- [${g.h}](${SITE.url}area/#${g.id}): ${g.items.map(i => `[${i.label}](${SITE.url}blog/${i.post.slug}/)`).join(', ')}`).join('\n')}
 
 ## 물류 가이드(블로그)
 ${posts.slice(0, 50).map(p => `- [${p.title}](${SITE.url}blog/${p.slug}/): ${p.description}`).join('\n')}

@@ -666,7 +666,7 @@ html:not(.js) .acc-panel[hidden] { display: block; }
 .ft-logo { height: 52px; width: auto; }
 .ft-brand p { margin-top: 16px; max-width: 26em; }
 .ft-tel { display: inline-block; margin-top: 16px; font-size: 1.7rem; font-weight: 900; color: #fff; letter-spacing: 0; }
-.ft-nav { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.ft-nav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
 .ft-nav h2 { font-size: .86rem; color: #fff; margin-bottom: 12px; letter-spacing: 0; }
 .ft-nav a { display: block; padding: 5px 0; }
 .ft-nav a:hover, .ft-legal a:hover { color: #fff; }
@@ -974,4 +974,9 @@ a.area-chip:hover { background: var(--sky-100); border-color: var(--sky-500); }
 .area-guides { margin: 22px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 8px 24px; }
 .area-guides a { display: block; padding: 10px 0; border-bottom: 1px solid var(--line); font-weight: 600; color: var(--ink-800); }
 .area-guides a:hover { color: var(--sky-700); }
+.area-sub { margin: 22px 0 0; font-size: 1rem; color: var(--ink-700); }
+.home-areas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 48px; }
+.home-areas h3 { margin: 20px 0 0; font-size: 1.1rem; }
+.home-areas h3 a:hover { color: var(--sky-700); }
+@media (max-width: 760px) { .home-areas { grid-template-columns: minmax(0, 1fr); } }
 .area-more { margin-top: 18px; }
