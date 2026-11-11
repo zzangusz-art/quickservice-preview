@@ -618,6 +618,10 @@ html:not(.js) .acc-panel[hidden] { display: block; }
 .nb-list a:hover span { color: var(--sky-700); }
 .nb-list time { flex: none; font-size: .86rem; font-weight: 500; color: var(--ink-500); }
 @media (max-width: 640px) { .nb-list { grid-template-columns: minmax(0, 1fr); } }
+.all-count { font-weight: 600; color: var(--ink-500); }
+.all-cat { margin: 28px 0 0; font-size: 1.05rem; }
+.all-cat span { margin-left: 4px; font-size: .86rem; font-weight: 500; color: var(--ink-500); }
+.all-list a { padding: 11px 2px; font-weight: 500; }
 .post-card a { display: flex; flex-direction: column; height: 100%; border-radius: var(--radius-lg); overflow: hidden; background: #fff; border: 1px solid var(--line); transition: box-shadow .25s, transform .25s, border-color .25s; }
 .post-card a:hover { box-shadow: var(--shadow); transform: translateY(-3px); border-color: var(--sky-200); }
 .pc-cover { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 0; background: linear-gradient(165deg, var(--sky-100) 0%, var(--sky-50) 55%, #fff 100%); }

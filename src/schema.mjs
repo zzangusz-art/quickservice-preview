@@ -1,5 +1,6 @@
 // 구조화 데이터(JSON-LD). 모든 페이지는 @graph 하나로 내보낸다.
 import { SITE, START_FARES, SERVICES, ASOF } from './data.mjs';
+import { webpSize } from './lib.mjs';
 
 const ORG_ID = () => SITE.url + '#org';
 const SITE_ID = () => SITE.url + '#website';
@@ -98,8 +99,16 @@ export function blogPosting(p, url) {
     mainEntityOfPage: url, articleSection: p.category, keywords: p.tags.join(', '),
     author: { '@type': 'Organization', name: p.author || '퀵서비스다 운영팀', url: SITE.url + 'about/' },
     publisher: { '@id': ORG_ID() },
-    image: SITE.url + 'assets/img/og-blog.png',
+    image: postImages(p),
   };
+}
+
+function postImages(p) {
+  const og = SITE.url + 'assets/img/og-blog.png';
+  if (!p.image || !p.image.file) return og;
+  const rel = p.image.file.startsWith('assets/') ? p.image.file : 'assets/img/photo/' + p.image.file;
+  const [width, height] = webpSize(rel);
+  return [{ '@type': 'ImageObject', url: SITE.url + rel, width, height, caption: p.image.alt }, og];
 }
 
 export const graph = (...nodes) => ({ '@context': 'https://schema.org', '@graph': nodes.flat().filter(Boolean) });

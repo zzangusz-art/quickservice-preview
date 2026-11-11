@@ -417,6 +417,9 @@ export function blogIndex(u, posts, cats, naver = []) {
       <div class="post-grid" id="postGrid" data-total="${posts.length}">${first.map(p => postCard(p, u).replace('<article class="post-card reveal">', `<article class="post-card reveal" data-cat="${esc(p.category)}">`)).join('')}</div>
       ${posts.length > first.length ? `<div class="more-wrap"><button class="btn btn-line" type="button" id="moreBtn" data-src="${u('blog/posts.json')}">글 더 보기${ico('down')}</button></div>` : ''}
     </div></section>`,
+    `<section class="sec" aria-labelledby="allPostsH"><div class="wrap"><div class="sec-hd sec-hd-row"><div><p class="eyebrow">전체 글</p><h2 id="allPostsH">분류별 전체 글 목록</h2></div><span class="all-count">총 ${posts.length}편</span></div>
+      ${cats.map(c => { const list = posts.filter(p => p.category === c); return list.length ? `<h3 class="all-cat">${esc(c)} <span>${list.length}</span></h3><ul class="nb-list all-list">${list.map(p => `<li><a href="${u('blog/' + p.slug + '/')}"><span>${esc(p.title)}</span><time datetime="${p.date}">${kdate(p.date)}</time></a></li>`).join('')}</ul>` : ''; }).join('')}
+    </div></section>`,
     naver.length ? `<section class="sec sec-soft" aria-labelledby="naverH"><div class="wrap"><div class="sec-hd sec-hd-row"><div><p class="eyebrow">네이버 블로그</p><h2 id="naverH">네이버 블로그 새 글</h2></div><a class="link-arrow" href="${SITE.naverBlog}" target="_blank" rel="noopener">블로그 바로가기${ico('arrow', 'ico-s')}</a></div>
       <ul class="nb-list">${naver.map(n => `<li><a href="${esc(n.url)}" target="_blank" rel="noopener"><span>${esc(n.title)}</span><time datetime="${n.date}">${kdate(n.date)}</time></a></li>`).join('')}</ul></div></section>` : '',
     ctaBand(u),

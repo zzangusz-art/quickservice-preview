@@ -217,8 +217,8 @@ for (const p of posts) {
 }
 // RSS
 {
-  const items = posts.slice(0, 30).map(p => `<item><title>${esc(p.title)}</title><link>${SITE.url}blog/${p.slug}/</link><guid isPermaLink="true">${SITE.url}blog/${p.slug}/</guid><pubDate>${new Date(p.date + 'T' + (p.time || '09:00') + ':00+09:00').toUTCString()}</pubDate><category>${esc(p.category)}</category><description>${esc(p.description)}</description></item>`).join('\n');
-  write('blog/feed.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>${SITE.name} 물류 가이드</title><link>${SITE.url}blog/</link><atom:link href="${SITE.url}blog/feed.xml" rel="self" type="application/rss+xml"/><description>퀵서비스·화물운송 이용 가이드</description><language>ko</language>\n${items}\n</channel></rss>\n`);
+  const items = posts.map(p => `<item><title>${esc(p.title)}</title><link>${SITE.url}blog/${p.slug}/</link><guid isPermaLink="true">${SITE.url}blog/${p.slug}/</guid><pubDate>${new Date(p.date + 'T' + (p.time || '09:00') + ':00+09:00').toUTCString()}</pubDate><category>${esc(p.category)}</category><description>${esc(p.description)}</description></item>`).join('\n');
+  write('blog/feed.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>${SITE.name} 물류 가이드</title><link>${SITE.url}blog/</link><atom:link href="${SITE.url}blog/feed.xml" rel="self" type="application/rss+xml"/><description>퀵서비스·화물운송 이용 가이드</description><language>ko</language><lastBuildDate>${new Date().toUTCString()}</lastBuildDate>\n${items}\n</channel></rss>\n`);
 }
 
 // ── 404 (어느 경로에서나 열리므로 절대 주소) ──
