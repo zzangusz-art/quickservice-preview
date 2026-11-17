@@ -476,6 +476,21 @@ export const AREA_CITIES = {
 export const areaKw = n => ({ '광주시': '경기광주' })[n] || (n.length > 2 ? n.replace(/(구|시|군)$/, '') : n);
 // 글의 짧은 대표 키워드: 태그 앞 두 개 중 퀵·용달·택배가 든 가장 짧은 것(띄어쓰기 없이). 예: 「안산퀵 안산퀵서비스 비용, 안산퀵」 → 안산퀵
 export const postKw = p => (p.tags.slice(0, 2).filter(t => /퀵|용달|택배/.test(t)).sort((a, b) => a.length - b.length)[0] || p.tags[0]).replace(/\s+/g, '');
+// 글이 다루는 지역(BlogPosting spatialCoverage). 지역 허브·구·시 칸·지방 도시·터미널 글에서 모은다
+const CITY_FULL = { 부산: '부산광역시', 대전: '대전광역시', 대구: '대구광역시', 광주: '광주광역시', 울산: '울산광역시', 목포: '전라남도 목포시', 익산: '전북특별자치도 익산시', 포항: '경상북도 포항시', 제주: '제주특별자치도', 청주: '충청북도 청주시', 김해: '경상남도 김해시', 동서울: '서울특별시', 강남: '서울특별시', 인천: '인천광역시', 수원: '경기도 수원시' };
+const PLACE_EXTRA = { 'ansan-siheung-quick': ['경기도 안산시'], 'ilsan-quick-cost': ['경기도 고양시'], 'yongin-yongdal-cargo': ['경기도 용인시'], 'gyeonggi-quick-fare': ['경기도'] };
+export function postPlaces(slug) {
+  const out = [...(PLACE_EXTRA[slug] || [])];
+  for (const a of AREAS) {
+    if (a.hub === slug) out.push(a.name);
+    for (const [n, s] of a.units) if (s === slug) out.push(`${a.name} ${n}`);
+  }
+  for (const [n, s] of [...AREA_CITIES.list, ...AREA_CITIES.terminals]) {
+    const c = CITY_FULL[n.replace(/\(.*\)$/, '')];
+    if (s === slug && c) out.push(c);
+  }
+  return [...new Set(out)];
+}
 // 홈·llms.txt용 지역 키워드 묶음(공개된 글만). 같은 키워드는 제목이 그 키워드로 시작하는 글을 쓰고, 같은 글은 한 번만
 export function areaGroups(posts) {
   const pub = new Map(posts.map(p => [p.slug, p]));

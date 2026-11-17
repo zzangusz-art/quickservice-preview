@@ -37,7 +37,21 @@
   // ── 레이어(모달·드로어): 포커스 가두기, Esc, 바깥 클릭 ──────────
   const stack = [];
   const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])';
+  // 공통 레이어(전체 메뉴·요금 문의·월 정산·안내)는 <template id="tplLayers">에 두고 처음 열 때 붙인다.
+  // 모든 쪽 원본 HTML에 같은 문구가 반복되면 검색·AI가 읽는 본문 비중이 줄어서다(src/layout.mjs layers()).
+  let layersReady = false;
+  function ensureLayers() {
+    if (layersReady) return;
+    layersReady = true;
+    const t = d.getElementById('tplLayers');
+    if (!t) return;
+    const frag = t.content;
+    initAcc(frag);
+    t.replaceWith(frag);
+    initQuote();
+  }
   function openLayer(id, opener) {
+    ensureLayers();
     const el = d.getElementById(id);
     if (!el || stack.includes(el)) return;
     clearTimeout(el._hideT);  // 닫히는 중에 다시 열면 숨김 예약을 취소
@@ -92,6 +106,7 @@
     const b = e.target.closest('[data-info]');
     if (!b) return;
     const c = INFO[b.dataset.info]; if (!c) return;
+    ensureLayers();
     $('#miTitle').textContent = c.t; $('#miBody').innerHTML = c.b;
     openLayer('modalInfo', b);
   });
@@ -105,13 +120,16 @@
   });
 
   // ── 아코디언 ──────────────────────────────────────
-  $$('.acc-panel').forEach(p => {
-    const btn = d.querySelector(`[aria-controls="${p.id}"]`);
-    const item = p.closest('.acc-item, .dm-group');
-    const open = btn && btn.getAttribute('aria-expanded') === 'true';
-    p.hidden = false;
-    if (item) item.classList.toggle('open', open);
-  });
+  function initAcc(root) {
+    $$('.acc-panel', root).forEach(p => {
+      const btn = root.querySelector(`[aria-controls="${p.id}"]`);
+      const item = p.closest('.acc-item, .dm-group');
+      const open = btn && btn.getAttribute('aria-expanded') === 'true';
+      p.hidden = false;
+      if (item) item.classList.toggle('open', open);
+    });
+  }
+  initAcc(d);
   d.addEventListener('click', e => {
     const b = e.target.closest('.acc-btn');
     if (!b) return;
@@ -482,6 +500,8 @@
   }
 
   // ── 요금 문의 모달 ───────────────────────────────────
+  // 레이어를 붙인 뒤(ensureLayers) 한 번 실행된다
+  function initQuote() {
   const qf = $('#quoteForm'), qd = $('#quoteDone'), qp = $('#quotePreview');
   let quoteText = '';
   if (qf) {
@@ -515,6 +535,7 @@
       }
       if (e.target.closest('[data-quote-back]')) { qd.hidden = true; qf.hidden = false; qf.elements.from.focus(); }
     });
+  }
   }
 
   // ── FAQ 분류 ──

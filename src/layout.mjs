@@ -105,7 +105,10 @@ export function layers(p, u) {
   const nav = NAV.map(n => n.children
     ? `<div class="dm-group"><button class="acc-btn dm-acc" type="button" aria-expanded="false" aria-controls="dm-sub">${n.label}${ico('down', 'acc-ico')}</button><div class="acc-panel" id="dm-sub" hidden><div>${n.children.map(c => `<a href="${u(c.href)}">${c.label}<small>${c.sub}</small></a>`).join('')}</div></div></div>`
     : `<a class="dm-link" href="${u(n.href)}">${n.label}${ico('arrow', 'ico-s')}</a>`).join('');
+  // 메뉴·요금 문의·월 정산·안내 레이어는 <template>에 넣는다: 원본 HTML 본문에 같은 문구가 모든 쪽마다 반복되지 않게.
+  // 처음 열 때 app.js(ensureLayers)가 붙인다. 알림(toasts)·하단 바·맨 위로 버튼은 그대로 둔다.
   return `
+<template id="tplLayers">
 <div class="drawer drawer-right" id="drawerMenu" role="dialog" aria-modal="true" aria-label="전체 메뉴" hidden>
   <div class="drawer-scrim" data-close></div>
   <div class="drawer-panel">
@@ -182,6 +185,7 @@ export function layers(p, u) {
     <div class="modal-body" id="miBody"></div>
   </div>
 </div>
+</template>
 
 <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
 

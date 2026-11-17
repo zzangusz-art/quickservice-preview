@@ -1,5 +1,5 @@
 // 구조화 데이터(JSON-LD). 모든 페이지는 @graph 하나로 내보낸다.
-import { SITE, START_FARES, SERVICES, ASOF } from './data.mjs';
+import { SITE, START_FARES, SERVICES, ASOF, postPlaces } from './data.mjs';
 import { webpSize } from './lib.mjs';
 
 const ORG_ID = () => SITE.url + '#org';
@@ -93,6 +93,7 @@ export function service(s) {
 }
 
 export function blogPosting(p, url) {
+  const places = postPlaces(p.slug);
   return {
     '@type': 'BlogPosting', '@id': url + '#article', headline: p.title, description: p.description,
     datePublished: p.date, dateModified: p.updated || p.date, inLanguage: 'ko-KR', url,
@@ -100,6 +101,8 @@ export function blogPosting(p, url) {
     author: { '@type': 'Organization', name: p.author || '퀵서비스다 운영팀', url: SITE.url + 'about/' },
     publisher: { '@id': ORG_ID() },
     image: postImages(p),
+    // 지역 글이면 다루는 지역을 밝힌다(검색·AI가 「어느 지역 퀵」 글인지 알도록)
+    ...(places.length ? { spatialCoverage: places.map(name => ({ '@type': 'Place', name })) } : {}),
   };
 }
 

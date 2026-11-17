@@ -187,7 +187,7 @@ function userMsg(topic, posts, today) {
 다룰 방향: ${topic.angle}
 포함할 검색어: ${(topic.keywords || []).join(', ')}
 권장 카테고리: ${topic.category}${topic.titleKeyword ? `
-제목 키워드: 제목은 반드시 「${topic.titleKeyword}」로 시작합니다(글자·띄어쓰기 그대로). 뒤에 이어지는 말은 새로 쓰고, 첫 문단에도 이 키워드를 그대로 씁니다.` : ''}${topic.case ? caseBlock(topic.case) : ''}
+제목 키워드: 제목은 반드시 「${topic.titleKeyword}」로 시작합니다(글자·띄어쓰기 그대로). 뒤에 이어지는 말은 새로 씁니다. 설명(description)과 첫 문단에는 키워드를 자연스러운 문장으로 한 번 씁니다. 「안산퀵 안산퀵서비스 비용」처럼 같은 말을 붙여 늘어놓은 키워드는 「안산퀵서비스 비용은」처럼 풀어 쓰고, 본문에서 키워드를 반복해 채우지 않습니다.` : ''}${topic.case ? caseBlock(topic.case) : ''}
 
 이미 발행된 글(내용이 겹치지 않게 하고, 관련 있으면 내부 링크로 연결):
 ${posts.slice(0, 60).map(p => `- ${p.title} → blog/${p.slug}/`).join('\n') || '- 없음'}
