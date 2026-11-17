@@ -10,6 +10,7 @@
 //   node tools/blog-ai/generate.mjs --check-key  글을 쓰지 않고 API 키가 작동하는지만 확인(모델 목록 조회)
 // 실제 배송 사례: content/cases/*.json(작성법은 content/cases/README.md). 사례에 적힌 사실만 쓰고 지어내지 않는다.
 // 제목 키워드: _topics.json의 titleKeyword(네이버 블로그 2026년 1월 이후 글 제목의 키워드, 오래된 순). 글 제목은 이 키워드로 시작한다(사례 글 포함).
+// 2026-11-17부터 붙여 늘인 단어(「안산퀵 안산퀵서비스」)는 긴 쪽만 쓴다(kwTokens) — 제목은 첫 단어로 시작하고 나머지 단어를 모두 포함.
 // 남은 주제(todo)가 6개 아래로 떨어지면 기존 글과 겹치지 않는 새 주제를 AI에게 받아 대기열에 보충한다.
 // 검증에 실패한 글은 발행하지 않고 content/drafts/ 에 남긴다(사람이 고쳐서 content/blog/ 로 옮기면 발행).
 import fs from 'node:fs';
@@ -78,6 +79,9 @@ const BANNED = [
 ];
 const UNITS = /(\d[\d,]*(?:\.\d+)?)\s*(원|kg|cm|CBM|m|톤|분|시간|시|%|개|일|km|명|건)/g;
 
+// 네이버 제목 키워드를 제목용 단어로 정리(2026-11-17 사용자 결정): 「안산퀵 안산퀵서비스 비용」처럼 앞말을 그대로 늘인 단어는
+// 긴 쪽만 남긴다 → [안산퀵서비스, 비용]. 같은 단어가 두 번이면 한 번만.
+const kwTokens = kw => { const w = String(kw || '').trim().split(/\s+/).filter(Boolean); return w.filter((t, i) => !(w[i + 1] && w[i + 1].startsWith(t)) && w.indexOf(t) === i); };
 function validate(md, { allowed, slugs, keyword }) {
   const errs = [];
   let meta, body;
@@ -87,7 +91,13 @@ function validate(md, { allowed, slugs, keyword }) {
   if (meta.slug && slugs.has(meta.slug)) errs.push(`이미 있는 slug: ${meta.slug}`);
   if (meta.category && !BLOG_CATEGORIES.includes(meta.category)) errs.push(`category는 ${BLOG_CATEGORIES.join('/')} 중 하나`);
   if (meta.title && (meta.title.length < 12 || meta.title.length > 60)) errs.push(`제목은 12~60자(현재 ${meta.title.length}자)`);
-  if (keyword && meta.title && !meta.title.startsWith(keyword)) errs.push(`제목은 「${keyword}」로 시작해야 함(현재: ${meta.title})`);
+  if (keyword && meta.title) {
+    const toks = kwTokens(keyword), w = String(keyword).trim().split(/\s+/);
+    if (!meta.title.startsWith(toks[0])) errs.push(`제목은 「${toks[0]}」로 시작해야 함(현재: ${meta.title})`);
+    const miss = toks.filter(x => !meta.title.includes(x));
+    if (miss.length) errs.push(`제목에 키워드 「${miss.join('」「')}」가 빠짐(현재: ${meta.title})`);
+    for (let i = 0; i < w.length - 1; i++) if (w[i + 1].startsWith(w[i]) && meta.title.includes(`${w[i]} ${w[i + 1]}`)) errs.push(`제목에 「${w[i]} ${w[i + 1]}」처럼 같은 말을 붙여 반복하지 않음`);
+  }
   if (meta.description && (meta.description.length < 40 || meta.description.length > 150)) errs.push(`설명은 40~150자(현재 ${meta.description.length}자)`);
   const len = (body || '').replace(/\s+/g, '').length;
   if (len < 900 || len > 4500) errs.push(`본문 길이 ${len}자(공백 제외) — 900~4,500자`);
@@ -187,7 +197,7 @@ function userMsg(topic, posts, today) {
 다룰 방향: ${topic.angle}
 포함할 검색어: ${(topic.keywords || []).join(', ')}
 권장 카테고리: ${topic.category}${topic.titleKeyword ? `
-제목 키워드: 제목은 반드시 「${topic.titleKeyword}」로 시작합니다(글자·띄어쓰기 그대로). 뒤에 이어지는 말은 새로 씁니다. 설명(description)과 첫 문단에는 키워드를 자연스러운 문장으로 한 번 씁니다. 「안산퀵 안산퀵서비스 비용」처럼 같은 말을 붙여 늘어놓은 키워드는 「안산퀵서비스 비용은」처럼 풀어 쓰고, 본문에서 키워드를 반복해 채우지 않습니다.` : ''}${topic.case ? caseBlock(topic.case) : ''}
+제목 키워드: 제목은 반드시 「${kwTokens(topic.titleKeyword)[0]}」로 시작하고 「${kwTokens(topic.titleKeyword).join('」「')}」를 모두 넣습니다(각 단어는 글자 그대로). 같은 말을 붙여 늘어놓지 말고 쉼표나 「·」로 자연스럽게 잇습니다(예: 「하남퀵 하남화물 비용」 → 「하남퀵·하남화물 비용, 짐 크기로 고르는 차」). 뒤에 이어지는 말은 새로 씁니다. 설명(description)과 첫 문단에는 키워드를 자연스러운 문장으로 한 번 씁니다. 「안산퀵 안산퀵서비스 비용」처럼 같은 말을 붙여 늘어놓은 키워드는 「안산퀵서비스 비용은」처럼 풀어 쓰고, 본문에서 키워드를 반복해 채우지 않습니다.` : ''}${topic.case ? caseBlock(topic.case) : ''}
 
 이미 발행된 글(내용이 겹치지 않게 하고, 관련 있으면 내부 링크로 연결):
 ${posts.slice(0, 60).map(p => `- ${p.title} → blog/${p.slug}/`).join('\n') || '- 없음'}
