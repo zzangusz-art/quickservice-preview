@@ -81,8 +81,8 @@ const maxM = mentions.reduce((a, b) => b.brand > a.brand ? b : a);
   const engHead = ENGINES.map(([, l]) => `<th class="c">${l}</th>`).join('');
   const heat = MATRIX.map(m => `<tr><td><b>${esc(m.q)}</b></td>${m.cells.map(c => {
     if (!c.valid) return '<td class="c muted">·</td>';
-    const ratio = c.brand / c.valid;
-    return `<td class="c" style="background:${shade(ratio)};color:${inkOn(ratio)}">${c.brand ? c.brand : '<span class="muted">0</span>'}${c.site ? `<sup class="kr">●${c.site}</sup>` : ''}</td>`;
+    const ratio = c.brand / DATES.length; // 측정 횟수 전체 대비(한두 번만 잰 엔진이 진하게 보이지 않게)
+    return `<td class="c" style="background:${shade(ratio)};color:${inkOn(ratio)}">${c.brand ? c.brand : '<span class="muted">0</span>'}${c.site ? ` <span class="kr">●${c.site}</span>` : ''}</td>`;
   }).join('')}<td class="c"><b>${m.brand}</b></td></tr>`).join('');
   const validRow = `<tr class="vr"><td>측정된 날(평균)</td>${ENGINES.map((_, i) => `<td class="c">${Math.round(MATRIX.reduce((a, m) => a + m.cells[i].valid, 0) / MATRIX.length)}</td>`).join('')}<td></td></tr>`;
 
@@ -91,10 +91,10 @@ const maxM = mentions.reduce((a, b) => b.brand > a.brand ? b : a);
 .hero{background:linear-gradient(135deg,#0b2545,#1e5fa8);color:#fff;border-radius:10px;padding:9mm 9mm 8mm;margin-bottom:6mm}.hero .k{font-size:9pt;letter-spacing:.12em;font-weight:800;color:#9fd0ff}.hero h1{font-size:22pt;margin:4px 0 2px}.hero p{margin:0;color:#d6e8fb;font-size:10pt}
 .hl{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin:6px 0}.hl div{border-left:4px solid var(--green);background:#f3faf6;padding:5px 9px;border-radius:0 6px 6px 0;font-size:9.6pt}.hl b{color:var(--green)}
 .up{color:var(--green);font-weight:800}.rk{color:var(--green);font-weight:800}
-.heat td,.heat th{padding:3px 4px;font-size:8.8pt}.heat td:first-child{white-space:nowrap}.heat sup.kr{color:#0a7a3e;font-weight:800;margin-left:2px;font-size:7.5pt}.heat .vr td{background:#f6f8fb;color:var(--muted);font-size:8pt}
+.heat td,.heat th{padding:3px 4px;font-size:8.8pt}.heat td:first-child{white-space:nowrap}.heat .kr{display:inline-block;background:#fff;color:#0a7a3e;border:1px solid #9fd8b8;border-radius:7px;padding:0 4px;font-weight:800;font-size:7.5pt;line-height:1.3}.heat .vr td{background:#f6f8fb;color:var(--muted);font-size:8pt}
 .nx{border:1px solid var(--line);border-radius:8px;padding:6px 10px;margin:6px 0;page-break-inside:avoid}.nx b{color:var(--navy)}
 .tl td:first-child{white-space:nowrap;font-weight:800;color:var(--navy);width:52px}
-.pb{page-break-before:always}</style></head><body>
+.pb{page-break-before:always}.keep{page-break-inside:avoid}</style></head><body>
 
 <div class="hero"><div class="k">QUICKSERVICEDA · 키워드 노출·문의 성과 리포트</div><h1>어떤 검색에서 보이고, 어디서 문의가 오는가</h1>
 <p>퀵서비스다.kr · 운영 시작 ${D.open.replace(/-/g, '.')} · 자료 ${g.range} · 작성 ${DATE.replace(/-/g, '.')} · 구글 애널리틱스(GA4)·구글 서치콘솔·매일 AI·검색 측정(${DATES.length}회)</p></div>
@@ -125,7 +125,7 @@ ${bars(wk.map(w => [w.label, +(w.inq / w.days).toFixed(1)]), { h: 120, hi: [last
 <div class="chart"><h3>읽어 둘 점</h3><ul class="small">${g.notes.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>
 </div>
 
-<h2 class="pb">2. 방문</h2>
+<h2>2. 방문</h2>
 <table><tr><th>구분</th><th>기간</th><th class="c">월 방문자</th><th class="c">세션</th><th class="c">페이지뷰</th><th class="c">문의 행동</th></tr>
 ${g.months.map(m => `<tr><td><b>${m.label}</b></td><td>${m.range}</td><td class="c">${m.users}명</td><td class="c">${m.sessions}</td><td class="c">${m.pageviews}</td><td class="c">${m.inquiries}회</td></tr>`).join('')}
 <tr><td><b>증가</b></td><td>10월 → 11월</td><td class="c up">+${m1.users - m0.users}명(+${pct(m1.users, m0.users)}%)</td><td class="c up">+${m1.sessions - m0.sessions}</td><td class="c up">+${m1.pageviews - m0.pageviews}</td><td class="c up">+${m1.inquiries - m0.inquiries}회</td></tr></table>
@@ -138,25 +138,27 @@ ${bars(g.daily.map(([d, v]) => [md(d), v]), { h: 140, hi: ['11/11', md(g.daily[g
 <div class="chart"><h3>네이버 검색 방문자가 본 페이지</h3>${hbars(g.naverPages.map(p => [p[0], p[2]]))}<p class="small muted">방문자 수. ${naver.users}명 중 ${g.naverPages[0][2]}명이 홈을 봤습니다(상호·지역 검색에서 홈으로 들어옴).</p></div>
 </div>
 
-<h2 class="pb">3. 키워드 노출</h2>
+<div class="keep"><h2>3. 키워드 노출</h2>
 <h3>AI·검색 키워드 노출 현황</h3>
-<p class="small">매일 ${MATRIX.length}개 키워드를 8개 검색·AI에 물어(${md(DATES[0])}~${md(DATES[DATES.length - 1])}, ${DATES.length}회) 답변·결과에 퀵서비스다 상호·대표번호·사이트가 나온 날 수입니다. 진할수록 자주 나옴, <span style="color:#0a7a3e;font-weight:800">●</span>는 퀵서비스다.kr 링크가 직접 나온 날 수.</p>
-<table class="heat"><tr><th>키워드</th>${engHead}<th class="c">합계</th></tr>${heat}${validRow}</table>
+<p class="small">매일 ${MATRIX.length}개 키워드를 8개 검색·AI에 물어(${md(DATES[0])}~${md(DATES[DATES.length - 1])}, ${DATES.length}회) 답변·결과에 퀵서비스다 상호·대표번호·사이트가 나온 날 수입니다. 칸이 진할수록 측정 ${DATES.length}회 중 자주 나온 것이고, <span style="color:#0a7a3e;font-weight:800">●</span>는 퀵서비스다.kr 링크가 직접 나온 날 수입니다.</p>
+<table class="heat"><tr><th>키워드</th>${engHead}<th class="c">합계</th></tr>${heat}${validRow}</table></div>
 <p class="small muted">· 는 측정 안 됨(로그인·사람 확인 화면). 상호 언급에는 기존 퀵서비스다.com 결과도 포함됩니다. Perplexity·Claude는 최근 사람 확인·로그인 화면으로 측정이 적습니다.</p>
+<div class="chart"><h3>AI·검색 답변의 상호·번호 언급</h3><p class="small muted">하루 측정에서 퀵서비스다 상호나 대표번호가 나온 곳 수. ${md(firstM.d)} ${firstM.brand}곳 → 최고 ${md(maxM.d)} ${maxM.brand}곳 → ${md(lastM.d)} ${lastM.brand}곳.</p>
+${bars(mentions.map(m => [md(m.d), m.brand]), { h: 125, hi: [md(maxM.d), md(lastM.d)], unit: '곳' })}</div>
 <div class="two">
 <div>${ev || ''}</div>
-<div class="chart"><h3>AI·검색 답변의 상호·번호 언급</h3><p class="small muted">하루 측정에서 퀵서비스다 상호나 대표번호가 나온 곳 수. ${md(firstM.d)} ${firstM.brand}곳 → 최고 ${md(maxM.d)} ${maxM.brand}곳 → ${md(lastM.d)} ${lastM.brand}곳.</p>
-${bars(mentions.map(m => [md(m.d), m.brand]), { h: 130, hi: [md(maxM.d), md(lastM.d)], unit: '곳', labelEvery: 2 })}
-<p class="small"><b>네이버 웹문서 수집</b>: 글 제목으로 검색해 퀵서비스다.kr이 나온 글 ${D.naver.beforeAt} ${D.naver.before}편 → ${D.naver.at} <b class="up">${D.naver.found}편</b>.</p></div>
+<div><div class="note"><b>네이버 웹문서 수집</b> — 글 제목으로 검색해 퀵서비스다.kr이 나온 글 ${D.naver.beforeAt} ${D.naver.before}편 → ${D.naver.at} <b class="up">${D.naver.found}편</b>. 네이버가 사이트 글을 하나씩 받아들이는 중입니다.</div>
+<div class="note"><b>네이버 키워드</b> — 「경기 퀵서비스」는 퀵서비스다.kr 링크가 ${naverSite}회, 「퀵서비스다」「인천 퀵서비스」「수도권 퀵서비스」는 상호·번호가 측정일 대부분 나옵니다. 네이버 AI 답변에는 「서울퀵」에서 ${MATRIX.find(m => m.q === '서울퀵').cells[1].brand}회 언급됐습니다.</div></div>
 </div>
 
-<h3 class="pb">구글 검색어 순위</h3>
+<h3>구글 검색어 순위</h3>
 <div class="kpi"><div><b>${s.queryCount}개</b><span>노출된 검색어(${s.range})</span></div><div><b>${ones.length}개</b><span>1위 검색어</span></div><div><b>${n(s.impressions)}회</b><span>검색 노출 · 클릭 ${s.clicks}회</span></div><div><b>${s.position}위</b><span>평균 게재 순위</span></div></div>
+<div class="chart"><h3>하루 구글 노출</h3>${bars(s.daily.map(([d, , v]) => [md(d), v]), { h: 120, hi: ['11/8'], unit: '회' })}
+<p class="small muted">11/8 하루 84회까지 올랐다가 구글 재평가로 색인이 ${s.index.before}쪽 → ${s.index.now}쪽이 되며 줄었습니다. 11/17 정리 작업·재요청 후 회복을 확인 중입니다.</p></div>
 <div class="two">
 <div><table><tr><th>검색어</th><th class="c">노출</th><th class="c">클릭</th><th class="c">순위</th></tr>${s.queries.map(q => `<tr><td>${esc(q[0])}</td><td class="c">${q[2]}</td><td class="c">${q[1] || ''}</td><td class="c">${q[3] === 1 ? '<b class="rk">1위</b>' : q[3] <= 10 ? `<b>${q[3].toFixed(0)}위</b>` : q[3].toFixed(0) + '위'}</td></tr>`).join('')}</table></div>
 <div><table><tr><th>페이지</th><th class="c">노출</th><th class="c">클릭</th><th class="c">순위</th></tr>${s.pages.map(p => `<tr><td>${esc(p[0])}</td><td class="c">${p[3]}</td><td class="c">${p[2] || ''}</td><td class="c">${p[4].toFixed(0)}위</td></tr>`).join('')}</table>
-<div class="chart"><h3>하루 구글 노출</h3>${bars(s.daily.map(([d, , v]) => [md(d), v]), { h: 110, hi: ['11/8'], unit: '회', labelEvery: 3 })}
-<p class="small muted">11/8 하루 84회까지 올랐다가 구글 재평가로 색인이 ${s.index.before}쪽 → ${s.index.now}쪽이 되며 줄었습니다. 11/17 정리 작업·재요청 후 회복을 확인 중입니다.</p></div></div>
+</div>
 </div>
 
 <h2>4. 최근 작업과 다음 단계</h2>
