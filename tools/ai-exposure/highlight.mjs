@@ -6,10 +6,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { PROJ, REPORT_DIR, REPORT_CSS, FONT_LINK, esc, htmlToPdf, kstDate } from './lib.mjs';
 import { evidence } from './sections.mjs';
+import { bars, hbars, n } from './charts.mjs';
 
 const DATE = process.argv.slice(2).find(a => /^\d{4}-\d{2}-\d{2}$/.test(a)) || kstDate();
 const D = JSON.parse(fs.readFileSync(path.join(PROJ, '측정', `성과_${DATE}.json`), 'utf8'));
-const n = v => Number(v).toLocaleString('ko-KR');
 const pct = (a, b) => b ? Math.round((a - b) / b * 100) : 0;
 const mdDate = d => d.replace(/^\d{4}-/, '').replace(/^0?(\d+)-0?(\d+)$/, '$1/$2');
 
@@ -22,26 +22,6 @@ const mentions = fs.readdirSync(DAILY).filter(f => /^\d{4}-\d{2}-\d{2}\.md$/.tes
 }).filter(x => x.valid > 0);
 const firstM = mentions[0], lastM = mentions[mentions.length - 1];
 const siteDays = mentions.filter(m => m.site > 0);
-
-// ── 막대 그래프(단일 계열, 0 기준선, 위쪽만 4px 둥글게, 막대 사이 2px 이상 간격, 강조 막대만 진하게·값 표시)
-function bars(data, { h = 150, unit = '', hi = null, labelEvery = 1, color = '#1e88e5', hiColor = '#0b2545' } = {}) {
-  const W = 640, padL = 30, padB = 22, padT = 16, cw = W - padL - 6, ch = h - padB - padT;
-  const max = Math.max(...data.map(d => d[1]), 1);
-  const step = Math.pow(10, Math.floor(Math.log10(max))); const top = Math.ceil(max / step) * step;
-  const slot = cw / data.length, bw = Math.max(4, Math.min(26, slot - 4)), r = Math.min(4, bw / 2);
-  const y = v => padT + ch - v / top * ch;
-  const grid = [0, top / 2, top].map(v => `<line x1="${padL}" x2="${W - 6}" y1="${y(v)}" y2="${y(v)}" stroke="${v ? '#e6edf5' : '#b9c6d4'}" stroke-width="1"/><text x="${padL - 5}" y="${y(v) + 3}" text-anchor="end" font-size="8.5" fill="#5d6b7c">${n(v)}</text>`).join('');
-  const marks = data.map(([lab, v], i) => {
-    const x = padL + i * slot + (slot - bw) / 2, yy = y(v), isHi = hi && hi.includes(lab);
-    const shape = v > 0 ? `<path d="M${x},${y(0)} L${x},${yy + r} Q${x},${yy} ${x + r},${yy} L${x + bw - r},${yy} Q${x + bw},${yy} ${x + bw},${yy + r} L${x + bw},${y(0)} Z" fill="${isHi ? hiColor : color}"/>` : '';
-    const val = isHi ? `<text x="${x + bw / 2}" y="${yy - 4}" text-anchor="middle" font-size="9" font-weight="800" fill="#0b2545">${n(v)}${unit}</text>` : '';
-    const xl = i % labelEvery === 0 || isHi ? `<text x="${x + bw / 2}" y="${h - 6}" text-anchor="middle" font-size="8" fill="#5d6b7c">${esc(lab)}</text>` : '';
-    return shape + val + xl;
-  }).join('');
-  return `<svg viewBox="0 0 ${W} ${h}" width="100%" role="img" xmlns="http://www.w3.org/2000/svg">${grid}${marks}</svg>`;
-}
-// 가로 막대 목록(이름 · 막대 · 값)
-const hbars = (rows, color = '#1e88e5') => { const max = Math.max(...rows.map(r => r[1]), 1); return `<div class="hb">${rows.map(([k, v]) => `<div><span>${esc(k)}</span><i><b style="width:${(v / max * 100).toFixed(1)}%;background:${color}"></b></i><em>${n(v)}</em></div>`).join('')}</div>`; };
 
 (async () => {
   const g = D.ga, s = D.gsc, c = D.cloudflare, ct = D.content, dg = D.diagnosis.scores;
