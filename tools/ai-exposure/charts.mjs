@@ -5,8 +5,9 @@ import { esc } from './lib.mjs';
 export const n = v => Number(v).toLocaleString('ko-KR');
 
 // 세로 막대(날짜별 값 등). data: [[라벨, 값], ...], hi: 값을 표시할 라벨 목록
-export function bars(data, { h = 150, unit = '', hi = null, labelEvery = 1, color = '#1e88e5', hiColor = '#0b2545' } = {}) {
-  const W = 640, padL = 30, padB = 22, padT = 16, cw = W - padL - 6, ch = h - padB - padT;
+// w: viewBox 너비 — 반 칸에 넣을 때 320 정도로 줄이면 글자가 작아지지 않는다
+export function bars(data, { h = 150, w = 640, unit = '', hi = null, labelEvery = 1, color = '#1e88e5', hiColor = '#0b2545' } = {}) {
+  const W = w, padL = 30, padB = 22, padT = 16, cw = W - padL - 6, ch = h - padB - padT;
   const max = Math.max(...data.map(d => d[1]), 1);
   const step = Math.pow(10, Math.floor(Math.log10(max))); const top = Math.ceil(max / step) * step;
   const slot = cw / data.length, bw = Math.max(4, Math.min(26, slot - 4)), r = Math.min(4, bw / 2);
