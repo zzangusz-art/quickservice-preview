@@ -287,6 +287,12 @@ function exportCsv(res, A) {
   res.writeHead(200, { 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': `attachment; filename="visits-${A.from}_${A.today}.csv"`, 'Cache-Control': 'no-store' }).end('﻿' + lines.join('\r\n'));
 }
 
+// /healthz 용 저장 상태(serve.mjs). 비밀값 없음
+export function storageStatus() {
+  const h = history();
+  return { dir: DATA_DIR, volume: VOLUME, onVolume: !!VOLUME && DATA_DIR === VOLUME, writable: !STORE.err, error: STORE.err, saved: SAVED.n, lastSaved: SAVED.ok, lastError: SAVED.fail, history: h ? `${h.from}~${h.to}` : '' };
+}
+
 // serve.mjs 에서 부른다. 처리했으면 true
 export async function handleAdmin(req, res, ctx) {
   const url = new URL(req.url, 'http://localhost');

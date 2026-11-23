@@ -12,7 +12,7 @@ import path from 'node:path';
 import zlib from 'node:zlib';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { handleAdmin } from './admin/admin.mjs';
+import { handleAdmin, storageStatus } from './admin/admin.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PORT = Number(process.env.PORT) || 5520;
@@ -143,8 +143,35 @@ function legacyTarget(reqUrl) {
   return u.pathname.slice(1); // 그 밖의 경로(robots.txt 등)는 같은 경로로
 }
 
+const STARTED = Date.now();
+const kstIso = ms => new Date(ms + 9 * 3600e3).toISOString().slice(0, 19) + '+09:00';
+function healthz(res) {
+  const st = storageStatus();
+  const warnings = [];
+  if (!st.volume) warnings.push('볼륨이 연결되지 않아 방문 기록이 배포 때마다 초기화됩니다(Railway → Settings → Volumes, 마운트 경로 /data)');
+  if (st.error) warnings.push(`볼륨에 쓸 수 없어 임시 폴더에 저장 중입니다(${st.error}) — Railway Variables 에 RAILWAY_RUN_UID=0`);
+  if (!live) warnings.push('사이트를 빌드하는 중입니다');
+  const body = {
+    ok: !!live && !warnings.length,
+    commit: (process.env.RAILWAY_GIT_COMMIT_SHA || '').slice(0, 7) || null,
+    branch: process.env.RAILWAY_GIT_BRANCH || null,
+    commitMessage: (process.env.RAILWAY_GIT_COMMIT_MESSAGE || '').replace(/\s+/g, ' ').trim().slice(0, 120) || null,
+    mode: PROD ? 'production' : 'preview',
+    site: CANON ? CANON.origin + '/' : PUBLIC,
+    railwayDomain: process.env.RAILWAY_PUBLIC_DOMAIN || null,
+    startedAt: kstIso(STARTED),
+    builtAt: live ? kstIso(Number(path.basename(live)) || STARTED) : null,
+    volume: { connected: st.onVolume, mount: st.volume || null, writable: st.writable },
+    visits: { savedSinceStart: st.saved, lastSaved: st.lastSaved || null, history: st.history || null },
+    warnings,
+  };
+  res.writeHead(live ? 200 : 503, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow' }).end(JSON.stringify(body, null, 1));
+}
+
 const server = http.createServer((req, res) => {
   const host = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim().toLowerCase().replace(/:\d+$/, '');
+  // 배포 확인: 지금 서비스 중인 커밋·볼륨 연결·빌드 시각(어느 호스트로 열어도 같은 값, 표준 공정 B7 완료 기준)
+  if (req.url === '/healthz' || req.url.startsWith('/healthz?')) { healthz(res); return; }
   if (CANON && LEGACY_HOST.test(host)) {
     res.writeHead(301, { Location: CANON.origin + '/' + legacyTarget(req.url), 'Cache-Control': 'public, max-age=86400' }).end();
     return;
