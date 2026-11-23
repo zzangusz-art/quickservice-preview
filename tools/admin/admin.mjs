@@ -12,8 +12,17 @@ import { checkTargets, keywordDupes, suspectPairs } from '../blog/overlap.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const VOLUME = process.env.RAILWAY_VOLUME_MOUNT_PATH || '';
-const DATA_DIR = process.env.QS_DATA_DIR || VOLUME || path.join(ROOT, '.data');
-fs.mkdirSync(DATA_DIR, { recursive: true });
+// 저장 폴더에 실제로 써 보고 시작한다. 볼륨 권한 문제는 오류 없이 기록만 사라지므로(2026-11-23 관리자 0건 원인 조사),
+// 쓸 수 없으면 저장소의 .data(배포 때 초기화)로 바꾸고 관리자 화면에 이유를 띄운다.
+const canWrite = (dir) => { try { fs.mkdirSync(dir, { recursive: true }); const t = path.join(dir, `.w-${process.pid}`); fs.writeFileSync(t, 'ok'); fs.unlinkSync(t); return ''; } catch (e) { return e.code || e.message; } };
+const WANTED = process.env.QS_DATA_DIR || VOLUME || path.join(ROOT, '.data');
+const STORE = (() => {
+  const err = canWrite(WANTED); if (!err) return { dir: WANTED, err: '' };
+  const fb = path.join(ROOT, '.data'); console.error(`[admin] 방문 기록 폴더에 쓸 수 없음(${WANTED}: ${err}) — ${fb} 로 저장`);
+  return { dir: fb, err: err + (canWrite(fb) ? ' · 임시 폴더도 쓸 수 없음' : '') };
+})();
+const DATA_DIR = STORE.dir;
+console.log(`[admin] 방문 기록 저장 위치: ${DATA_DIR}${VOLUME && DATA_DIR === VOLUME ? ' (Railway 볼륨)' : ''}`);
 const PW = () => process.env.ADMIN_PASSWORD || '';
 const KEY = () => crypto.createHash('sha256').update('qs-admin|' + PW()).digest();
 const kst = (ms = Date.now()) => new Date(ms + 9 * 3600e3).toISOString();
@@ -31,7 +40,17 @@ function readBody(req, max) {
   return new Promise((resolve) => { let size = 0; const parts = []; req.on('data', (c) => { size += c.length; if (size > max) { req.destroy(); resolve(null); } else parts.push(c); }); req.on('end', () => resolve(Buffer.concat(parts).toString('utf8'))); req.on('error', () => resolve(null)); });
 }
 const fileOf = (d) => path.join(DATA_DIR, `hits-${d.slice(0, 7)}.jsonl`);
-const append = (rec) => fs.appendFile(fileOf(rec.d), JSON.stringify(rec) + '\n', () => { /* 기록 실패는 조용히 넘김 */ });
+// 저장 결과는 관리자 화면 아래 「기록 저장」 줄에 보인다(서버 시작 뒤 저장 건수·마지막 저장·마지막 오류)
+const SAVED = { n: 0, ok: '', fail: '' };
+const stamp = () => kst().slice(0, 16).replace('T', ' ');
+const append = (rec) => fs.appendFile(fileOf(rec.d), JSON.stringify(rec) + '\n', (e) => {
+  if (e) { SAVED.fail = `${stamp()} ${e.code || e.message}`; console.error('[admin] 방문 기록 저장 실패:', e.message); } else { SAVED.n++; SAVED.ok = stamp(); }
+});
+function storeLine() {
+  let size = 0; try { size = fs.statSync(fileOf(kstDate())).size; } catch (_) { /* 이번 달 파일 없음 */ }
+  const kind = VOLUME && DATA_DIR === VOLUME ? 'Railway 볼륨' : '임시 폴더 — 배포 때 초기화';
+  return `<p class="muted" style="font-size:12px">기록 저장: ${esc(DATA_DIR)} (${kind}) · 이번 달 파일 ${n(Math.round(size / 1024))}KB · 서버 시작 뒤 저장 ${n(SAVED.n)}건 · 마지막 저장 ${esc(SAVED.ok || '-')}${SAVED.fail ? ` · <span class="warn">마지막 오류 ${esc(SAVED.fail)}</span>` : ''}</p>`;
+}
 
 // ── /api/t : 방문 기록 ──
 const rate = new Map();
@@ -207,8 +226,10 @@ export async function handleAdmin(req, res, ctx) {
   if (url.pathname === '/admin/export.csv') { exportCsv(res, A); return true; }
   const tab = url.searchParams.get('tab') === 'content' ? 'content' : 'traffic';
   const link = (t, d) => `/admin/?tab=${t}&days=${d}`;
-  const warn = ctx.PROD && !VOLUME ? '<div class="note">Railway 볼륨이 연결되지 않아 방문 기록이 배포 때마다 초기화됩니다. Railway → 서비스 → Settings → Volumes 에서 볼륨(마운트 경로 /data)을 연결하면 계속 쌓입니다.</div>' : '';
+  const warn = STORE.err
+    ? `<div class="note"><b>방문 기록을 볼륨에 저장하지 못하고 있습니다</b>(${esc(WANTED)}: ${esc(STORE.err)}). 지금은 임시 폴더에 쌓이며 배포 때마다 초기화됩니다. Railway → 서비스 → Variables 에 <b>RAILWAY_RUN_UID</b> = <b>0</b> 을 추가하면(자동 재배포) 볼륨에 저장됩니다.</div>`
+    : ctx.PROD && !VOLUME && !process.env.QS_DATA_DIR ? '<div class="note">Railway 볼륨이 연결되지 않아 방문 기록이 배포 때마다 초기화됩니다. Railway → 서비스 → Settings → Volumes 에서 볼륨(마운트 경로 /data)을 연결하면 계속 쌓입니다.</div>' : '';
   page(res, shell('퀵서비스다 관리자', `<header><b>퀵서비스다 관리자</b><nav><a class="${tab === 'traffic' ? 'on' : ''}" href="${link('traffic', days)}">유입·트래픽</a><a class="${tab === 'content' ? 'on' : ''}" href="${link('content', days)}">콘텐츠</a></nav><span class="sp"></span><nav>${[7, 30, 90].map(d => `<a class="${d === days ? 'on' : ''}" href="${link(tab, d)}">${d}일</a>`).join('')}</nav><a href="/admin/logout">로그아웃</a></header>
-<main>${warn}${tab === 'content' ? contentHtml(A) : trafficHtml(A)}</main>`));
+<main>${warn}${tab === 'content' ? contentHtml(A) : trafficHtml(A)}${storeLine()}</main>`));
   return true;
 }
