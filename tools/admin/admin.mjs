@@ -49,7 +49,7 @@ const append = (rec) => fs.appendFile(fileOf(rec.d), JSON.stringify(rec) + '\n',
 function storeLine() {
   let size = 0; try { size = fs.statSync(fileOf(kstDate())).size; } catch (_) { /* 이번 달 파일 없음 */ }
   const kind = VOLUME && DATA_DIR === VOLUME ? 'Railway 볼륨' : '임시 폴더 — 배포 때 초기화';
-  return `<p class="muted" style="font-size:12px">기록 저장: ${esc(DATA_DIR)} (${kind}) · 이번 달 파일 ${n(Math.round(size / 1024))}KB · 서버 시작 뒤 저장 ${n(SAVED.n)}건 · 마지막 저장 ${esc(SAVED.ok || '-')}${SAVED.fail ? ` · <span class="warn">마지막 오류 ${esc(SAVED.fail)}</span>` : ''}</p>`;
+  return `<p class="muted" style="font-size:12px">기록 저장: ${esc(DATA_DIR)} (${kind}) · 이번 달 파일 ${n(Math.round(size / 1024))}KB · 서버 시작 뒤 저장 ${n(SAVED.n)}건 · 마지막 저장 ${esc(SAVED.ok || '-')}${SAVED.fail ? ` · <span class="warn">마지막 오류 ${esc(SAVED.fail)}</span>` : ''} · <a href="/admin/import">이전 기록 가져오기</a></p>`;
 }
 
 // ── /api/t : 방문 기록 ──
@@ -78,6 +78,24 @@ async function collect(req, res, ctx) {
   return done();
 }
 
+// ── 이전 기록: 관리자 자체 기록이 볼륨에 쌓이기 전 기간을 GA4에서 읽어 와 함께 보여 준다 ──
+//  DATA_DIR/ga4-history.json (로그인 뒤 /admin/import 로 올림, 공개 저장소에는 넣지 않음)
+//  { source:'GA4', from, to, readAt, daily:[[날짜, 사용자, 세션, 페이지뷰, 온라인접수, 전화, 요금문의, 카카오톡]], channels:[[채널키, 세션, 참여율, 평균, 주요전환]],
+//    sources:[[출처, 채널키, 세션, 문의, 설명]], pages:[[경로, 조회]] } — 이 기간(to까지)의 자체 기록은 겹치지 않게 뺀다
+const HIST_FILE = () => path.join(DATA_DIR, 'ga4-history.json');
+const HIST_EV = ['order_online', 'contact_call', 'quote_submit', 'contact_kakao']; // daily 4~7번째 칸
+let HIST = { mtime: -1, val: null };
+const isDay = (s) => /^\d{4}-\d{2}-\d{2}$/.test(String(s));
+const validHistory = (h) => !!h && h.source === 'GA4' && isDay(h.from) && isDay(h.to) && h.from <= h.to && Array.isArray(h.daily) && h.daily.length <= 400
+  && h.daily.every(r => Array.isArray(r) && isDay(r[0]) && r.length >= 4 && r.slice(1).every(v => Number.isFinite(Number(v))));
+function history() {
+  try {
+    const st = fs.statSync(HIST_FILE());
+    if (st.mtimeMs !== HIST.mtime) { const h = JSON.parse(fs.readFileSync(HIST_FILE(), 'utf8')); HIST = { mtime: st.mtimeMs, val: validHistory(h) ? h : null }; }
+  } catch (_) { HIST = { mtime: -1, val: null }; }
+  return HIST.val;
+}
+
 // ── 집계 ──
 let CACHE = { key: '', at: 0, val: null };
 function aggregate(days) {
@@ -95,8 +113,9 @@ function aggregate(days) {
       S.set(r.s, x);
     }
   }
-  // 점검용 방문(utm_campaign=admin_check…, 저장 확인할 때 보냄)은 집계에서 뺀다
-  const sessions = [...S.values()].map(x => ({ ...x, ch: x.v ? x.v.ch : 'unknown', src: x.v ? x.v.src : '(첫 페이지 기록 없음)', kw: x.v ? x.v.kw : '', land: x.v ? x.v.land : (x.pv[0] || {}).p || '', dev: x.v ? x.v.dev : '', camp: x.v ? x.v.camp : '', conv: x.ev.some(e => LEADS.has(e.e)) })).filter(x => !String(x.camp || '').startsWith('admin_check'));
+  // 점검용 방문(utm_campaign=admin_check…, 저장 확인할 때 보냄)은 집계에서 빼고, 이전 기록(GA4)이 덮는 날짜의 자체 기록도 뺀다(이중 집계 방지)
+  const HH = history();
+  const sessions = [...S.values()].filter(x => !(HH && x.d <= HH.to)).map(x => ({ ...x, ch: x.v ? x.v.ch : 'unknown', src: x.v ? x.v.src : '(첫 페이지 기록 없음)', kw: x.v ? x.v.kw : '', land: x.v ? x.v.land : (x.pv[0] || {}).p || '', dev: x.v ? x.v.dev : '', camp: x.v ? x.v.camp : '', conv: x.ev.some(e => LEADS.has(e.e)) })).filter(x => !String(x.camp || '').startsWith('admin_check'));
   const inc = (m, k, f) => { const o = m.get(k) || f(); m.set(k, o); return o; };
   const daily = new Map(); for (let i = days - 1; i >= 0; i--) daily.set(kstDate(Date.now() - i * 864e5), { v: 0, pv: 0, c: 0 });
   const ch = new Map(), src = new Map(), kw = new Map(), land = new Map(), pages = new Map(), dev = new Map(), camp = new Map(), ev = new Map();
@@ -111,8 +130,24 @@ function aggregate(days) {
     for (const p of x.pv) { inc(pages, p.p, () => ({ pv: 0 })).pv++; const d2 = daily.get(p.d); if (d2) d2.pv++; }
     for (const e of x.ev) inc(ev, e.e, () => ({ n: 0 })).n++;
   }
+  // 이전 기록(GA4): 기간 안의 날짜는 일별 그래프·합계에 더하고, 기간 전체를 덮는 보기(30·90일)에서는 페이지 조회도 더한다
+  const H = HH; let hist = null;
+  if (H) {
+    const rows = H.daily.filter(r => r[0] >= from && r[0] <= today && r[0] <= H.to);
+    const hev = Object.fromEntries(HIST_EV.map(e => [e, 0])); let hv = 0, hpv = 0;
+    for (const r of rows) {
+      const s = Number(r[2]) || 0, p = Number(r[3]) || 0, leads = HIST_EV.reduce((a, e, i) => a + (Number(r[4 + i]) || 0), 0);
+      hv += s; hpv += p; HIST_EV.forEach((e, i) => { hev[e] += Number(r[4 + i]) || 0; });
+      const dd = daily.get(r[0]); if (dd) { dd.v += s; dd.pv += p; dd.c += leads; dd.g = true; }
+    }
+    const full = from <= H.from;
+    if (full) for (const [p, n2] of (H.pages || [])) inc(pages, p, () => ({ pv: 0 })).pv += Number(n2) || 0;
+    for (const e of HIST_EV) if (hev[e]) inc(ev, e, () => ({ n: 0 })).n += hev[e];
+    hist = { ...H, days: rows.length, v: hv, pv: hpv, ev: hev, leads: Object.values(hev).reduce((a, b) => a + b, 0), full };
+  }
   const sort = (m, k) => [...m.entries()].sort((a, b) => b[1][k] - a[1][k]);
-  const val = { from, today, days, sessions, total: sessions.length, pv: sessions.reduce((s, x) => s + x.pv.length, 0), conv: sessions.filter(x => x.conv).length,
+  const ownLeads = sessions.reduce((a, x) => a + x.ev.filter(e => LEADS.has(e.e)).length, 0);
+  const val = { from, today, days, sessions, total: sessions.length, pv: sessions.reduce((s, x) => s + x.pv.length, 0), conv: sessions.filter(x => x.conv).length, ownLeads, hist,
     daily: [...daily.entries()], ch: sort(ch, 'v'), src: sort(src, 'v'), kw: sort(kw, 'v'), land: sort(land, 'v'), pages: sort(pages, 'pv'), dev: sort(dev, 'v'), camp: sort(camp, 'v'), ev: sort(ev, 'n'),
     recent: sessions.sort((a, b) => b.first.localeCompare(a.first)).slice(0, 60) };
   CACHE = { key, at: Date.now(), val }; return val;
@@ -159,30 +194,48 @@ const tbl = (head, rows, empty = '아직 기록 없음') => rows.length ? `<tabl
 function chart(daily) {
   const W = 1100, H = 170, L = 30, B = 22, max = Math.max(4, ...daily.map(([, x]) => x.pv)); const bw = (W - L) / daily.length;
   const y = (v) => 8 + (1 - v / max) * (H - B - 8);
-  const bars = daily.map(([d, x], i) => `<rect x="${L + i * bw + bw * 0.15}" y="${y(x.pv)}" width="${bw * 0.7}" height="${H - B - y(x.pv)}" fill="#b9d8f6"><title>${d} 페이지뷰 ${x.pv}</title></rect><rect x="${L + i * bw + bw * 0.3}" y="${y(x.v)}" width="${bw * 0.4}" height="${H - B - y(x.v)}" fill="#1e88e5"><title>${d} 방문 ${x.v}${x.c ? ` · 문의 ${x.c}` : ''}</title></rect>`).join('');
+  const bars = daily.map(([d, x], i) => `<rect x="${L + i * bw + bw * 0.15}" y="${y(x.pv)}" width="${bw * 0.7}" height="${H - B - y(x.pv)}" fill="${x.g ? '#dbe7f3' : '#b9d8f6'}"><title>${d}${x.g ? ' (GA4 이전 기록)' : ''} 페이지뷰 ${x.pv}</title></rect><rect x="${L + i * bw + bw * 0.3}" y="${y(x.v)}" width="${bw * 0.4}" height="${H - B - y(x.v)}" fill="${x.g ? '#7fa9d6' : '#1e88e5'}"><title>${d}${x.g ? ' (GA4 이전 기록)' : ''} 방문 ${x.v}${x.c ? ` · 문의 ${x.c}` : ''}</title></rect>`).join('');
   const step = Math.ceil(daily.length / 12);
   return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="일별 방문·페이지뷰">${[0, .5, 1].map(f => `<line x1="${L}" x2="${W}" y1="${y(max * f)}" y2="${y(max * f)}" stroke="#e3e8f0"/><text x="${L - 4}" y="${y(max * f) + 4}" font-size="10" text-anchor="end" fill="#6b7485">${Math.round(max * f)}</text>`).join('')}${bars}${daily.map(([d], i) => i % step ? '' : `<text x="${L + i * bw + bw / 2}" y="${H - 6}" font-size="10" text-anchor="middle" fill="#6b7485">${+d.slice(5, 7)}/${+d.slice(8)}</text>`).join('')}</svg>
-<p class="muted" style="margin:4px 0 0"><span style="color:#1e88e5">■</span> 방문 <span style="color:#b9d8f6">■</span> 페이지뷰</p>`;
+<p class="muted" style="margin:4px 0 0"><span style="color:#1e88e5">■</span> 방문 <span style="color:#b9d8f6">■</span> 페이지뷰${daily.some(([, x]) => x.g) ? ' · <span style="color:#7fa9d6">■</span> 옅은 막대 = 이전 기록(GA4 세션·페이지뷰)' : ''}</p>`;
 }
 const chLabel = (c) => CHANNELS[c] || '알 수 없음';
 
 function trafficHtml(A) {
   const evRow = A.ev.map(([e, x]) => `<tr><td>${esc(EVENTS[e] || e)}${LEADS.has(e) ? ' <span class="tag">문의</span>' : ''}</td><td class="r">${n(x.n)}</td></tr>`);
   const chs = [...A.ch].sort((a, b) => (CHANNEL_ORDER.indexOf(a[0]) + 1 || 99) - (CHANNEL_ORDER.indexOf(b[0]) + 1 || 99));
-  return `<div class="kpi"><div><b>${n(A.total)}</b><span>방문(탭 단위 세션)</span></div><div><b>${n(A.pv)}</b><span>페이지뷰</span></div><div><b>${n(A.conv)}</b><span>문의 행동이 있었던 방문(전화·카톡·온라인 접수·요금 문의)</span></div><div><b>${pct(A.conv, A.total)}</b><span>문의 전환율</span></div><div><b>${n(A.ch.find(c => c[0] === 'ai')?.[1].v || 0)}</b><span>AI 검색·챗봇 유입</span></div></div>
+  const H = A.hist && A.hist.days ? A.hist : null;
+  return `${H ? `<h2>전체 <small>이전 기록(GA4 ${H.from} ~ ${H.to}) + 사이트 자체 기록(${H.to < A.today ? kstDate(Date.parse(H.to + 'T00:00:00+09:00') + 864e5) + ' ~' : '-'}) · 보기 기간 ${A.from} ~ ${A.today}</small></h2>
+<div class="kpi"><div><b>${n(H.v + A.total)}</b><span>방문(GA4 세션 ${n(H.v)} + 자체 ${n(A.total)})</span></div><div><b>${n(H.pv + A.pv)}</b><span>페이지뷰(GA4 ${n(H.pv)} + 자체 ${n(A.pv)})</span></div><div><b>${n(H.leads + A.ownLeads)}</b><span>문의 행동 횟수(전화·카톡·온라인 접수·요금 문의)</span></div></div>
+<h2>사이트 자체 기록 <small>${H.to < A.today ? kstDate(Date.parse(H.to + 'T00:00:00+09:00') + 864e5) : A.today} ~ ${A.today}</small></h2>` : ''}<div class="kpi"><div><b>${n(A.total)}</b><span>방문(탭 단위 세션)</span></div><div><b>${n(A.pv)}</b><span>페이지뷰</span></div><div><b>${n(A.conv)}</b><span>문의 행동이 있었던 방문(전화·카톡·온라인 접수·요금 문의)</span></div><div><b>${pct(A.conv, A.total)}</b><span>문의 전환율</span></div><div><b>${n(A.ch.find(c => c[0] === 'ai')?.[1].v || 0)}</b><span>AI 검색·챗봇 유입</span></div></div>
 <h2>일별 방문 <small>${A.from} ~ ${A.today}</small></h2><div class="card">${chart(A.daily)}</div>
 <div class="grid">
 <div><h2>유입 채널</h2><div class="card">${tbl(['채널', '방문', '비율', '전환'], chs.map(([c, x]) => `<tr><td>${esc(chLabel(c))}<div class="bar" style="width:${Math.max(2, x.v / Math.max(1, A.total) * 100)}%"></div></td><td class="r">${n(x.v)}</td><td class="r">${pct(x.v, A.total)}</td><td class="r">${n(x.c)}</td></tr>`))}</div></div>
-<div><h2>문의 행동</h2><div class="card">${tbl(['행동', '횟수'], evRow)}</div></div>
+<div><h2>문의 행동 ${H ? '<small>이전 기록 포함</small>' : ''}</h2><div class="card">${tbl(['행동', '횟수'], evRow)}</div></div>
 <div><h2>유입 출처 상위</h2><div class="card">${tbl(['출처', '채널', '방문', '전환'], A.src.slice(0, 25).map(([s, x]) => `<tr><td>${esc(s)}</td><td class="muted">${esc(chLabel(x.ch))}</td><td class="r">${n(x.v)}</td><td class="r">${n(x.c)}</td></tr>`))}</div></div>
 <div><h2>검색어 <small>네이버 등 리퍼러에 검색어가 남는 경우만</small></h2><div class="card">${tbl(['검색어', '출처', '방문', '전환'], A.kw.slice(0, 30).map(([k, x]) => `<tr><td>${esc(k)}</td><td class="muted">${esc(x.src)}</td><td class="r">${n(x.v)}</td><td class="r">${n(x.c)}</td></tr>`), '아직 검색어가 남은 방문 없음(구글은 검색어를 넘기지 않음)')}</div></div>
 <div><h2>첫 페이지(랜딩) 상위</h2><div class="card">${tbl(['페이지', '방문', '전환'], A.land.slice(0, 25).map(([p, x]) => `<tr><td><a href="${esc(p)}" target="_blank" rel="noopener">${esc(p)}</a></td><td class="r">${n(x.v)}</td><td class="r">${n(x.c)}</td></tr>`))}</div></div>
-<div><h2>많이 본 페이지</h2><div class="card">${tbl(['페이지', '페이지뷰'], A.pages.slice(0, 25).map(([p, x]) => `<tr><td><a href="${esc(p)}" target="_blank" rel="noopener">${esc(p)}</a></td><td class="r">${n(x.pv)}</td></tr>`))}</div></div>
+<div><h2>많이 본 페이지 ${H && H.full ? '<small>이전 기록 포함</small>' : ''}</h2><div class="card">${tbl(['페이지', '페이지뷰'], A.pages.slice(0, 25).map(([p, x]) => `<tr><td><a href="${esc(p)}" target="_blank" rel="noopener">${esc(p)}</a></td><td class="r">${n(x.pv)}</td></tr>`))}</div></div>
 <div><h2>기기</h2><div class="card">${tbl(['기기', '방문', '비율'], A.dev.map(([d, x]) => `<tr><td>${{ mobile: '모바일', desktop: 'PC', tablet: '태블릿' }[d] || esc(d)}</td><td class="r">${n(x.v)}</td><td class="r">${pct(x.v, A.total)}</td></tr>`))}</div></div>
 <div><h2>캠페인 링크(UTM)</h2><div class="card">${tbl(['캠페인', '방문', '전환'], A.camp.map(([c, x]) => `<tr><td>${esc(c)}</td><td class="r">${n(x.v)}</td><td class="r">${n(x.c)}</td></tr>`), '없음 — 블로그·카톡에 링크를 걸 때 ?utm_source=naver_blog&utm_campaign=이름 을 붙이면 따로 집계됩니다')}</div></div>
 </div>
+${histHtml(A)}
 <h2>최근 방문 60건</h2><div class="card">${tbl(['시각', '채널', '출처', '검색어', '첫 페이지', '페이지뷰', '행동'], A.recent.map(x => `<tr><td class="muted" style="white-space:nowrap">${esc(x.first.slice(5, 16).replace('T', ' '))}</td><td>${esc(chLabel(x.ch))}</td><td>${esc(x.src)}</td><td>${esc(x.kw)}</td><td>${esc(x.land)}</td><td class="r">${x.pv.length}</td><td>${x.ev.map(e => `<span class="${LEADS.has(e.e) ? 'ok' : 'muted'}">${esc(EVENTS[e.e] || e.e)}</span>`).join(' ')}</td></tr>`))}</div>
 <p class="muted">기록 방식: 사이트 스크립트가 탭마다 임시 방문 번호(쿠키·IP 저장 없음)로 첫 페이지의 유입 경로, 페이지뷰, 문의 버튼 클릭만 보냅니다. 관리자 화면을 연 브라우저와 봇은 제외합니다. 자세한 사용자 분석은 GA4(G-5GKY3M0EL3)에서 봅니다. <a href="/admin/export.csv?days=${A.days}">방문 기록 CSV 내려받기</a></p>`;
+}
+
+// 이전 기록(GA4) 기간 전체 요약 — 보기 기간과 상관없이 가져온 기간 그대로
+function histHtml(A) {
+  const H = A.hist; if (!H) return '';
+  const all = H.daily.reduce((a, r) => ({ v: a.v + (Number(r[2]) || 0), pv: a.pv + (Number(r[3]) || 0), l: a.l + HIST_EV.reduce((s, e, i) => s + (Number(r[4 + i]) || 0), 0) }), { v: 0, pv: 0, l: 0 });
+  const evTot = HIST_EV.map((e, i) => [e, H.daily.reduce((a, r) => a + (Number(r[4 + i]) || 0), 0)]).filter(([, v]) => v);
+  return `<h2>이전 기록(GA4) <small>${esc(H.from)} ~ ${esc(H.to)} · 방문 ${n(all.v)} · 페이지뷰 ${n(all.pv)} · 문의 행동 ${n(all.l)}회 · ${esc(H.readAt || '')} GA4에서 가져옴</small></h2>
+<div class="grid">
+<div class="card"><b>유입 채널</b>${tbl(['채널', '방문', '참여율', '평균', '주요 전환'], (H.channels || []).map(([c, v, e, avg, k]) => `<tr><td>${esc(chLabel(c))}</td><td class="r">${n(v)}</td><td class="r">${esc(String(e))}%</td><td class="r">${esc(avg)}</td><td class="r">${n(k)}</td></tr>`))}</div>
+<div class="card"><b>유입 출처와 문의</b>${tbl(['출처', '방문', '문의'], (H.sources || []).map(([s, c, v, l, d]) => `<tr><td>${esc(s)}${d ? `<br><span class="muted" style="font-size:12px">${esc(d)}</span>` : ''}</td><td class="r">${n(v)}</td><td class="r">${l ? `<span class="ok">${n(l)}</span>` : 0}</td></tr>`))}</div>
+<div class="card"><b>문의 행동</b>${tbl(['행동', '횟수'], evTot.map(([e, v]) => `<tr><td>${esc(EVENTS[e] || e)}</td><td class="r">${n(v)}</td></tr>`))}<b style="display:block;margin-top:10px">많이 본 페이지</b>${tbl(['페이지', '조회'], (H.pages || []).slice(0, 15).map(([p, v]) => `<tr><td><a href="${esc(p)}" target="_blank" rel="noopener">${esc(p)}</a></td><td class="r">${n(v)}</td></tr>`))}</div>
+</div>
+<p class="muted" style="font-size:12px">이전 기록은 관리자 자체 기록이 쌓이기 전 기간을 GA4에서 날짜별로 읽어 온 값입니다(방문 = GA4 세션). 검색어·기기·최근 방문 목록은 자체 기록에만 있습니다.</p>`;
 }
 
 let POSTS = { at: 0, val: null };
@@ -202,8 +255,28 @@ function contentHtml(A) {
 ${dupes.length ? `<div class="note">주 키워드가 같은 글: ${dupes.map(d => `「${esc(d.kw)}」 ${d.posts.map(p => esc(p.slug)).join(', ')}`).join(' / ')}</div>` : ''}
 <div class="grid"><div><h2>카테고리별 발행</h2><div class="card">${tbl(['카테고리', '글 수'], Object.entries(cats).sort((a, b) => b[1] - a[1]).map(([c, k]) => `<tr><td>${esc(c)}</td><td class="r">${k}</td></tr>`))}</div></div>
 <div><h2>서비스·안내 페이지 조회 <small>${A.days}일</small></h2><div class="card">${tbl(['페이지', '페이지뷰'], svc.map(([p, x]) => `<tr><td><a href="${esc(p)}" target="_blank" rel="noopener">${esc(p)}</a></td><td class="r">${n(x.pv)}</td></tr>`))}</div></div></div>
-<h2>블로그 글 <small>조회·전환은 최근 ${A.days}일, 전환 = 그 글로 들어와 문의 행동까지 한 방문 · 겹침 ✔ 없음 △ 문형만 비슷 ⚠ 같은 검색어</small></h2>
+<h2>블로그 글 <small>조회·전환은 최근 ${A.days}일${A.hist && A.hist.full ? '(조회는 GA4 이전 기록 포함)' : ''}, 전환 = 그 글로 들어와 문의 행동까지 한 방문 · 겹침 ✔ 없음 △ 문형만 비슷 ⚠ 같은 검색어</small></h2>
 <div class="card">${tbl(['상태', '날짜', '제목', '카테고리', '주 키워드', '조회', '전환', '겹침'], [...pub.map(p => row(p, true)), ...[...sch].reverse().map(p => row(p, false))])}</div>`;
+}
+
+// 이전 기록 올리기(로그인 필요): GA4 일별 집계 JSON → DATA_DIR/ga4-history.json
+async function importHistory(req, res) {
+  const json = (code, o) => res.writeHead(code, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }).end(JSON.stringify(o));
+  const raw = await readBody(req, 400 * 1024); let h = null; try { h = JSON.parse(raw || ''); } catch (_) { /* 형식 오류는 아래에서 */ }
+  if (!validHistory(h)) return json(400, { ok: false, error: 'GA4 이전 기록 형식이 아닙니다(source·from·to·daily 확인)' });
+  const list = (a, max) => Array.isArray(a) ? a.slice(0, max) : [];
+  const keep = { source: 'GA4', property: clip(h.property, 40), from: h.from, to: h.to, readAt: clip(h.readAt, 20) || kstDate(), note: clip(h.note, 500), daily: h.daily, channels: list(h.channels, 20), sources: list(h.sources, 30), pages: list(h.pages, 200) };
+  try { fs.writeFileSync(HIST_FILE(), JSON.stringify(keep)); } catch (e) { return json(500, { ok: false, error: '저장 실패: ' + (e.code || e.message) }); }
+  CACHE = { key: '', at: 0, val: null }; HIST = { mtime: -1, val: null };
+  json(200, { ok: true, days: keep.daily.length, from: keep.from, to: keep.to });
+}
+function importHtml() {
+  const H = history();
+  return `<h2>이전 기록 가져오기 <small>GA4에서 읽은 일별 집계(JSON)</small></h2>
+<div class="card"><p>${H ? `지금 들어 있는 이전 기록: <b>${esc(H.from)} ~ ${esc(H.to)}</b> (${H.daily.length}일, ${esc(H.readAt || '')} 가져옴). 새로 올리면 바뀝니다.` : '아직 이전 기록이 없습니다.'}</p>
+<textarea id="hj" rows="10" style="width:100%;font-family:monospace;font-size:12px" placeholder='{"source":"GA4","from":"2026-10-28","to":"2026-11-22","daily":[["2026-10-28",14,16,40,1,0,0,0], ...]}'></textarea>
+<p><button id="hb" style="padding:8px 14px;border:0;border-radius:8px;background:#1e88e5;color:#fff;font-weight:700">올리기</button> <span id="hm" class="muted"></span></p></div>
+<script>document.getElementById('hb').onclick=async()=>{const m=document.getElementById('hm');m.textContent='올리는 중…';try{const r=await fetch('/admin/import',{method:'POST',headers:{'Content-Type':'application/json'},body:document.getElementById('hj').value});const j=await r.json();m.textContent=j.ok?'저장했습니다: '+j.from+' ~ '+j.to+' ('+j.days+'일)':'실패: '+j.error;}catch(e){m.textContent='실패: '+e.message;}};</script>`;
 }
 
 function exportCsv(res, A) {
@@ -220,6 +293,7 @@ export async function handleAdmin(req, res, ctx) {
   if (!url.pathname.startsWith('/admin/')) return false;
   if (url.pathname === '/admin/login' && req.method === 'POST') { await login(req, res, ctx); return true; }
   if (url.pathname === '/admin/logout') { res.writeHead(303, { Location: '/admin/', 'Set-Cookie': 'qs_adm=; Path=/admin; Max-Age=0' }).end(); return true; }
+  if (url.pathname === '/admin/import' && req.method === 'POST') { if (!authed(req)) { res.writeHead(401, { 'Content-Type': 'application/json; charset=utf-8' }).end('{"ok":false,"error":"로그인이 필요합니다"}'); return true; } await importHistory(req, res); return true; }
   if (req.method !== 'GET' && req.method !== 'HEAD') { res.writeHead(405, { Allow: 'GET' }).end(); return true; }
   if (!authed(req)) { page(res, loginHtml('')); return true; }
   const days = [7, 30, 90].includes(Number(url.searchParams.get('days'))) ? Number(url.searchParams.get('days')) : 30;
@@ -231,6 +305,6 @@ export async function handleAdmin(req, res, ctx) {
     ? `<div class="note"><b>방문 기록을 볼륨에 저장하지 못하고 있습니다</b>(${esc(WANTED)}: ${esc(STORE.err)}). 지금은 임시 폴더에 쌓이며 배포 때마다 초기화됩니다. Railway → 서비스 → Variables 에 <b>RAILWAY_RUN_UID</b> = <b>0</b> 을 추가하면(자동 재배포) 볼륨에 저장됩니다.</div>`
     : ctx.PROD && !VOLUME && !process.env.QS_DATA_DIR ? '<div class="note">Railway 볼륨이 연결되지 않아 방문 기록이 배포 때마다 초기화됩니다. Railway → 서비스 → Settings → Volumes 에서 볼륨(마운트 경로 /data)을 연결하면 계속 쌓입니다.</div>' : '';
   page(res, shell('퀵서비스다 관리자', `<header><b>퀵서비스다 관리자</b><nav><a class="${tab === 'traffic' ? 'on' : ''}" href="${link('traffic', days)}">유입·트래픽</a><a class="${tab === 'content' ? 'on' : ''}" href="${link('content', days)}">콘텐츠</a></nav><span class="sp"></span><nav>${[7, 30, 90].map(d => `<a class="${d === days ? 'on' : ''}" href="${link(tab, d)}">${d}일</a>`).join('')}</nav><a href="/admin/logout">로그아웃</a></header>
-<main>${warn}${tab === 'content' ? contentHtml(A) : trafficHtml(A)}${storeLine()}</main>`));
+<main>${warn}${url.pathname === '/admin/import' ? importHtml() : tab === 'content' ? contentHtml(A) : trafficHtml(A)}${storeLine()}</main>`));
   return true;
 }
