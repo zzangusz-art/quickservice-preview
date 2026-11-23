@@ -95,7 +95,8 @@ function aggregate(days) {
       S.set(r.s, x);
     }
   }
-  const sessions = [...S.values()].map(x => ({ ...x, ch: x.v ? x.v.ch : 'unknown', src: x.v ? x.v.src : '(첫 페이지 기록 없음)', kw: x.v ? x.v.kw : '', land: x.v ? x.v.land : (x.pv[0] || {}).p || '', dev: x.v ? x.v.dev : '', camp: x.v ? x.v.camp : '', conv: x.ev.some(e => LEADS.has(e.e)) }));
+  // 점검용 방문(utm_campaign=admin_check…, 저장 확인할 때 보냄)은 집계에서 뺀다
+  const sessions = [...S.values()].map(x => ({ ...x, ch: x.v ? x.v.ch : 'unknown', src: x.v ? x.v.src : '(첫 페이지 기록 없음)', kw: x.v ? x.v.kw : '', land: x.v ? x.v.land : (x.pv[0] || {}).p || '', dev: x.v ? x.v.dev : '', camp: x.v ? x.v.camp : '', conv: x.ev.some(e => LEADS.has(e.e)) })).filter(x => !String(x.camp || '').startsWith('admin_check'));
   const inc = (m, k, f) => { const o = m.get(k) || f(); m.set(k, o); return o; };
   const daily = new Map(); for (let i = days - 1; i >= 0; i--) daily.set(kstDate(Date.now() - i * 864e5), { v: 0, pv: 0, c: 0 });
   const ch = new Map(), src = new Map(), kw = new Map(), land = new Map(), pages = new Map(), dev = new Map(), camp = new Map(), ev = new Map();
